@@ -2,6 +2,8 @@
 
 Utataneで使うmacOS向けSHIORIなどのビルド・配布用リポジトリ。
 
+[配布カタログからダウンロード](https://dl.wmsci.com/utatane/modules/preview/)
+
 ## SHIORI
 
 - [YAYA](docs/yaya.md) — macOS移植版

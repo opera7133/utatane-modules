@@ -39,7 +39,7 @@ jobs:
   packages:
     needs: catalog
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 90
     env:
       DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
     steps:
@@ -52,6 +52,17 @@ jobs:
           version: "0.6.14"
           enable-cache: true
       - run: uv sync --locked
+      - name: Cache Rust dependencies and build outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            sources/minato/target
+            sources/pasta/target
+            build/cache/minato-rust
+            build/cache/pasta-rust
+          key: macos15-xcode26-rust193-${{ hashFiles('sources/minato/Cargo.lock', 'sources/pasta/Cargo.lock') }}
       - name: Test independent Swift engines
         run: swift test --package-path native
       - name: Set up Rust for SHIORI ports
@@ -195,3 +206,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes lftp
           bash scripts/deploy_ftps.sh build/signed "$MODULES_CHANNEL"
+      - name: Verify published HTTPS snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=https://dl.wmsci.com/utatane/modules
+          if [[ "$MODULES_CHANNEL" == staging ]]; then
+            base="$base/preview"
+          fi
+          for name in index.json index.sig index.html; do
+            curl --fail --show-error --silent --location --retry 5 --retry-all-errors --retry-delay 3 \
+              "$base/$name?run=$GITHUB_RUN_ID" -o "$RUNNER_TEMP/$name"
+            cmp "build/signed/$name" "$RUNNER_TEMP/$name"
+          done
