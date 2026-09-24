@@ -21,14 +21,14 @@ private func withFixture(_ dictionary: String, _ body: (URL, URL) throws -> Void
     try body(master, root.appending(path: "state/variables.json"))
 }
 
-@Test func `japanese dictionary`() throws {
+@Test("Japanese dictionary") func japaneseDictionary() throws {
     try withFixture("$_Variable\n{$username=\"ユーザ\"}\n\n$OnBoot\n起動。{$username}。") { master, state in
         let session = try NativeMisakaSession(masterDirectoryURL: master, variableStoreURL: state)
         #expect(try session.request(request("OnBoot")).value == "起動。ユーザ。")
     }
 }
 
-@Test func `reference and sequential selection`() throws {
+@Test("Reference and sequential selection") func referenceAndSequentialSelection() throws {
     try withFixture("$OnChoiceSelect; {$if ({$reference(0)}==\"talk\")}\n{$_Talk}\n\n$_Talk; sequential;\nA\n\nB") { master, state in
         let session = try NativeMisakaSession(masterDirectoryURL: master, variableStoreURL: state)
         #expect(try session.request(request("OnChoiceSelect", reference: "talk")).value == "A")
@@ -51,7 +51,7 @@ private func withFixture(_ dictionary: String, _ body: (URL, URL) throws -> Void
     }
 }
 
-@Test func `restore between defaults and constants`() throws {
+@Test("Restore between defaults and constants") func restoreBetweenDefaultsAndConstants() throws {
     try withFixture("$_Variable\n{$saved=\"default\"}\n\n$_Constant\n{$constant=\"fresh\"}\n\n$OnBoot\n{$backup()}{$saved}:{$constant}") { master, state in
         try FileManager.default.createDirectory(at: state.deletingLastPathComponent(), withIntermediateDirectories: true)
         try JSONEncoder().encode(["saved": ["restored"], "constant": ["stale"]]).write(to: state)
@@ -63,7 +63,7 @@ private func withFixture(_ dictionary: String, _ body: (URL, URL) throws -> Void
     }
 }
 
-@Test func `sessions are independent`() throws {
+@Test("Sessions are independent") func sessionsAreIndependent() throws {
     try withFixture("$_Variable\n{$count=0}\n\n$OnBoot\n{$count++}{$count}") { master, state in
         let first = try NativeMisakaSession(masterDirectoryURL: master, variableStoreURL: state)
         let second = try NativeMisakaSession(masterDirectoryURL: master, variableStoreURL: state.appendingPathExtension("other"))
@@ -73,13 +73,13 @@ private func withFixture(_ dictionary: String, _ body: (URL, URL) throws -> Void
     }
 }
 
-@Test func `missing configuration throws`() throws {
+@Test("Missing configuration throws") func missingConfigurationThrows() throws {
     #expect(throws: NativeMisakaError.self) {
         try NativeMisakaSession(masterDirectoryURL: URL(fileURLWithPath: "/nonexistent-utatane-module-test"))
     }
 }
 
-@Test func `header only response`() throws {
+@Test("Header only response") func headerOnlyResponse() throws {
     try withFixture("$OnResult\n{$appendheader(\"Reference0: result\")}") { master, state in
         let session = try NativeMisakaSession(masterDirectoryURL: master, variableStoreURL: state)
         let result = try session.request(request("OnResult"))
