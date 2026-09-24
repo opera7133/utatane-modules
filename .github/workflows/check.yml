@@ -1,0 +1,195 @@
+name: Check development packages
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: Catalog channel to publish
+        type: choice
+        options: [staging, stable]
+        default: staging
+
+concurrency:
+  group: utatane-modules-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  catalog:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4
+        with:
+          version: "0.6.14"
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run --locked python scripts/catalog.py validate
+      - run: uv run --locked python -m unittest discover -s tests -v
+      - run: uv run --locked python scripts/catalog.py generate --output catalog/generated
+
+  packages:
+    needs: catalog
+    runs-on: macos-14
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4
+        with:
+          version: "0.6.14"
+          enable-cache: true
+      - run: uv sync --locked
+      - name: Test independent Swift engines
+        run: swift test --package-path native
+      - name: Set up Rust for SHIORI ports
+        run: |
+          rustup toolchain install 1.93.0 --profile minimal
+          rustup target add --toolchain 1.93.0 aarch64-apple-darwin x86_64-apple-darwin
+      - name: Test minato
+        working-directory: sources/minato
+        run: cargo +1.93.0 test --locked
+      - name: Test pasta
+        working-directory: sources/pasta
+        run: cargo +1.93.0 test --locked -p pasta_shiori -p pasta_lua -p pasta_dsl -p pasta_core
+      - name: Build Universal ZIPs and execute native ABI tests
+        run: |
+          uv run --locked python scripts/build.py kagari --archs arm64 x86_64
+          uv run --locked python scripts/build.py misaka-native --archs arm64 x86_64
+          uv run --locked python scripts/build.py minato --archs arm64 x86_64
+          uv run --locked python scripts/build.py pasta --archs arm64 x86_64
+          uv run --locked python scripts/build.py yaya --archs arm64 x86_64
+          uv run --locked python scripts/build.py satori --archs arm64 x86_64
+          for module in saori-cpuid kenonoke textcopy2 mciaudior wmove; do
+            uv run --locked python scripts/build.py "$module" --archs arm64 x86_64
+          done
+      - name: Test all packaged SHIORI and SAORI on arm64
+        run: uv run --locked python scripts/smoke_packages.py dist/*.zip
+      - uses: actions/upload-artifact@v7
+        with:
+          name: modules-universal-zips
+          path: dist/*.zip
+          if-no-files-found: error
+
+  verify-intel:
+    needs: packages
+    runs-on: macos-15-intel
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4
+        with:
+          version: "0.6.14"
+          enable-cache: true
+      - run: uv sync --locked
+      - uses: actions/download-artifact@v8
+        with:
+          name: modules-universal-zips
+          path: dist
+      - name: Check the same universal ZIPs on Intel
+        run: uv run --locked python scripts/smoke_packages.py --report build/abi-x86_64.json dist/*.zip
+      - uses: actions/upload-artifact@v7
+        with:
+          name: modules-abi-intel
+          path: build/abi-x86_64.json
+          if-no-files-found: error
+
+  snapshot:
+    needs: [catalog, packages, verify-intel]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4
+        with:
+          version: "0.6.14"
+          enable-cache: true
+      - run: uv sync --locked
+      - uses: actions/download-artifact@v8
+        with:
+          name: modules-universal-zips
+          path: dist
+      - uses: actions/download-artifact@v8
+        with:
+          name: modules-abi-intel
+          path: build
+      - name: Generate a self-contained development catalog
+        run: uv run --locked python scripts/catalog.py generate --output catalog/generated --package dist/*.zip --abi-report build/abi-x86_64.json
+      - name: Verify signing of the complete catalog
+        run: |
+          openssl genpkey -algorithm Ed25519 -out "$RUNNER_TEMP/catalog-private.pem"
+          openssl pkey -in "$RUNNER_TEMP/catalog-private.pem" -pubout -out "$RUNNER_TEMP/catalog-public.pem"
+          uv run --locked python scripts/sign_catalog.py sign catalog/generated "$RUNNER_TEMP/catalog-signed" --private-key "$RUNNER_TEMP/catalog-private.pem"
+          uv run --locked python scripts/sign_catalog.py verify "$RUNNER_TEMP/catalog-signed" --public-key "$RUNNER_TEMP/catalog-public.pem"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: modules-development-tested
+          path: catalog/generated/
+          if-no-files-found: error
+
+  publish:
+    needs: snapshot
+    if: >-
+      vars.MODULES_PUBLISH_ENABLED == 'true' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-24.04
+    environment: modules-publish
+    permissions:
+      contents: read
+    env:
+      MODULES_CHANNEL: ${{ inputs.channel || 'staging' }}
+      MODULES_DEPLOY_ROOT: ${{ secrets.MODULES_DEPLOY_ROOT }}
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USERNAME: ${{ secrets.DEPLOY_USERNAME }}
+      DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4
+        with:
+          version: "0.6.14"
+          enable-cache: true
+      - run: uv sync --locked
+      - uses: actions/download-artifact@v8
+        with:
+          name: modules-development-tested
+          path: build/development
+      - name: Sign and verify the exact tested snapshot
+        env:
+          MODULES_SIGNING_KEY_B64: ${{ secrets.MODULES_SIGNING_KEY_B64 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          test -n "$MODULES_SIGNING_KEY_B64"
+          printf '%s' "$MODULES_SIGNING_KEY_B64" | base64 -d > "$RUNNER_TEMP/catalog-private.pem"
+          openssl pkey -in "$RUNNER_TEMP/catalog-private.pem" -pubout -out "$RUNNER_TEMP/catalog-public.pem"
+          actual=$(openssl pkey -pubin -in "$RUNNER_TEMP/catalog-public.pem" -outform DER | tail -c 32 | base64 -w0)
+          expected=$(cat catalog/public-key.txt)
+          test "$actual" = "$expected"
+          uv run --locked python scripts/sign_catalog.py sign build/development build/signed --private-key "$RUNNER_TEMP/catalog-private.pem" --channel "$MODULES_CHANNEL"
+          uv run --locked python scripts/sign_catalog.py verify build/signed --public-key "$RUNNER_TEMP/catalog-public.pem" --channel "$MODULES_CHANNEL"
+      - name: Upload signed catalog and immutable ZIPs
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes lftp
+          bash scripts/deploy_ftps.sh build/signed "$MODULES_CHANNEL"

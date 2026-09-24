@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "minato",
+  "displayName": "minato (Utatane macOS build)",
+  "kinds": [
+    "shiori"
+  ],
+  "origin": "upstream-port",
+  "upstream": {
+    "url": "https://github.com/mizuki-yura/minato",
+    "author": "mizuki-yura"
+  },
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/minato/blob/ef26c629bfde2d0cde9de7bd3d6ba32e488fd598/LICENSE",
+  "instructions": "docs/minato.md",
+  "limitations": [
+    "Windows用SAORI/DLLは実行できません。macOS用SAORIを使用してください。",
+    "同じプロセス内では1セッション。Utataneはゴーストごとにプロセスを分離します。"
+  ],
+  "version": "0.1.0",
+  "revision": 2,
+  "abi": "shiori-utf8-v1",
+  "minimumOS": "14.0",
+  "source": {
+    "url": "https://github.com/opera7133/minato.git",
+    "path": "sources/minato",
+    "commit": "ef26c629bfde2d0cde9de7bd3d6ba32e488fd598"
+  },
+  "recipe": "recipes/minato/build.sh",
+  "requiredFiles": [
+    "lib/libminato.dylib",
+    "LICENSES/minato-MIT.txt",
+    "LICENSES/THIRD-PARTY-LICENSES.toml",
+    "README.md"
+  ]
+}

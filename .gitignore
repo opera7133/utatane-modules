@@ -1,0 +1,22 @@
+# 手元の設計・調査メモ。公開物には入れない。
+/Internal-Docs/
+/.local/
+
+# ローカルのビルド、試験、配布準備
+/.build/
+/build/
+/dist/
+/work/
+/catalog/generated/
+.DS_Store
+
+# Python tooling
+/.venv/
+__pycache__/
+*.pyc
+
+# SwiftPM generated products
+/native/.build/
+/native/.swiftpm/
+/native/bridge/.build/
+/native/bridge/.swiftpm/

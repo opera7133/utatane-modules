@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Module source entry v1 (development)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "displayName",
+    "kinds",
+    "origin",
+    "upstream",
+    "delivery",
+    "license",
+    "licenseURL",
+    "instructions",
+    "limitations"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9.-]*$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "abi": {
+      "type": "string",
+      "minLength": 1
+    },
+    "minimumOS": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "source": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "url",
+            "path",
+            "commit"
+          ],
+          "properties": {
+            "url": {
+              "type": "string",
+              "pattern": "^https://[^\\s]+$"
+            },
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "commit": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "path"
+          ],
+          "properties": {
+            "kind": {
+              "const": "local"
+            },
+            "path": {
+              "const": "native"
+            }
+          }
+        }
+      ]
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kinds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "shiori",
+          "saori",
+          "plugin"
+        ]
+      }
+    },
+    "origin": {
+      "enum": [
+        "upstream-port",
+        "independent"
+      ]
+    },
+    "upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "author"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "pattern": "^https://[^\\s]+$"
+        },
+        "author": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "delivery": {
+      "enum": [
+        "binary",
+        "instructions-only"
+      ]
+    },
+    "license": {
+      "type": "string",
+      "minLength": 1
+    },
+    "licenseURL": {
+      "type": "string",
+      "pattern": "^https://[^\\s]+$"
+    },
+    "instructions": {
+      "type": "string",
+      "minLength": 1
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "recipe": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requiredFiles": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "delivery": {
+            "const": "binary"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "version",
+          "revision",
+          "abi",
+          "minimumOS",
+          "source",
+          "recipe",
+          "requiredFiles"
+        ]
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "source"
+              ]
+            },
+            {
+              "required": [
+                "recipe"
+              ]
+            },
+            {
+              "required": [
+                "requiredFiles"
+              ]
+            },
+            {
+              "required": [
+                "abi"
+              ]
+            },
+            {
+              "required": [
+                "version"
+              ]
+            },
+            {
+              "required": [
+                "revision"
+              ]
+            },
+            {
+              "required": [
+                "minimumOS"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

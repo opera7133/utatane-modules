@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Utatane Modules</title>
+    <link rel="stylesheet" href="./catalog.css" />
+    <script src="./catalog.js" defer></script>
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a class="brand" href="./">Utatane Modules</a>
+        <a href="./index.json">カタログAPI</a>
+      </div>
+    </header>
+
+    <main class="container">
+      <h1>モジュールを探す</h1>
+      <p class="intro">
+        macOS向けのSHIORI・SAORI・プラグインをダウンロードできます。
+      </p>
+      <div class="toolbar">
+        <label class="search">
+          <span class="visually-hidden">モジュールを検索</span>
+          <input
+            id="search"
+            type="search"
+            placeholder="名前で探す"
+            autocomplete="off"
+          />
+        </label>
+        <div class="filters" role="group" aria-label="種類で絞り込む">
+          <button type="button" data-kind="all" aria-pressed="true">
+            すべて
+          </button>
+          <button type="button" data-kind="shiori" aria-pressed="false">
+            SHIORI
+          </button>
+          <button type="button" data-kind="saori" aria-pressed="false">
+            SAORI
+          </button>
+          <button type="button" data-kind="plugin" aria-pressed="false">
+            プラグイン
+          </button>
+        </div>
+      </div>
+      <p id="channel" class="notice" role="status"></p>
+      <p id="count" class="count" role="status">読み込み中…</p>
+      <div id="modules" class="modules"></div>
+      <noscript
+        ><p>
+          一覧の表示にはJavaScriptが必要です。<a href="./index.json"
+            >カタログJSON</a
+          >からもダウンロードできます。
+        </p></noscript
+      >
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>同梱・再配布の前に、各モジュールのライセンスを確認してください。</p>
+        <a href="https://github.com/opera7133/utatane-modules">ソースコード</a>
+      </div>
+    </footer>
+  </body>
+</html>

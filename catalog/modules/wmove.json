@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "wmove",
+  "displayName": "wmove (Utatane native)",
+  "kinds": [
+    "saori"
+  ],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane",
+    "author": "opera7133"
+  },
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/saori.md",
+  "limitations": [
+    "Windows版のすべての機能を再現するものではありません。対応コマンドは導入手順を参照してください。",
+    "ウィンドウ操作にはホストからの接続が必要です。接続がない場合は501を返します。"
+  ],
+  "version": "0.1.0",
+  "revision": 1,
+  "abi": "saori-utf8-v1",
+  "minimumOS": "14.0",
+  "source": {
+    "kind": "local",
+    "path": "native"
+  },
+  "recipe": "recipes/wmove/build.sh",
+  "requiredFiles": [
+    "lib/libwmove.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ]
+}

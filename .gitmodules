@@ -1,0 +1,20 @@
+[submodule "sources/kagari"]
+	path = sources/kagari
+	url = https://github.com/opera7133/kagari_shiori.git
+	branch = utatane-macos
+[submodule "sources/minato"]
+	path = sources/minato
+	url = https://github.com/opera7133/minato.git
+	branch = utatane-macos
+[submodule "sources/pasta"]
+	path = sources/pasta
+	url = https://github.com/opera7133/pasta.git
+	branch = utatane-macos
+[submodule "sources/yaya"]
+	path = sources/yaya
+	url = https://github.com/opera7133/yaya-shiori.git
+	branch = utatane-macos
+[submodule "sources/satori"]
+	path = sources/satori
+	url = https://github.com/opera7133/satoriya-shiori.git
+	branch = utatane-vendor

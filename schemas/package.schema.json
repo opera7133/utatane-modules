@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Module ZIP manifest v1 (development)",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9.-]*$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "abi": {
+      "type": "string",
+      "minLength": 1
+    },
+    "minimumOS": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "source": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "url",
+            "path",
+            "commit"
+          ],
+          "properties": {
+            "url": {
+              "type": "string",
+              "pattern": "^https://[^\\s]+$"
+            },
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "commit": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "path"
+          ],
+          "properties": {
+            "kind": {
+              "const": "local"
+            },
+            "path": {
+              "const": "native"
+            }
+          }
+        }
+      ]
+    },
+    "architectures": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "arm64",
+          "x86_64"
+        ]
+      }
+    },
+    "signing": {
+      "const": "ad-hoc"
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nativeABI",
+        "utataneUI"
+      ],
+      "properties": {
+        "nativeABI": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "arm64",
+              "x86_64"
+            ]
+          }
+        },
+        "utataneUI": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "build": {
+      "type": "object",
+      "required": [
+        "repositoryCommit",
+        "dirty",
+        "clang",
+        "sdk",
+        "macOS",
+        "inputHashes"
+      ],
+      "properties": {
+        "repositoryCommit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dirty": {
+          "type": "boolean"
+        },
+        "clang": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sdk": {
+          "type": "string",
+          "minLength": 1
+        },
+        "macOS": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inputHashes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "files": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "id",
+    "version",
+    "revision",
+    "abi",
+    "minimumOS",
+    "source",
+    "architectures",
+    "signing",
+    "verification",
+    "build",
+    "files"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "aosora",
+  "displayName": "蒼空 (Aosora)",
+  "kinds": [
+    "shiori",
+    "saori"
+  ],
+  "origin": "upstream-port",
+  "upstream": {
+    "url": "https://github.com/kanadelab/aosora-shiori",
+    "author": "kanadelab"
+  },
+  "delivery": "instructions-only",
+  "license": "LicenseRef-Aosora-Source-Terms",
+  "licenseURL": "https://github.com/kanadelab/aosora-shiori/blob/HEAD/license.txt",
+  "instructions": "docs/aosora.md",
+  "limitations": [
+    "このカタログからソース・ビルド済みモジュールを配布しない。",
+    "記載したSHIORI/SAORIは上流の用途。Utataneで両方を検証済みという意味ではない。"
+  ]
+}

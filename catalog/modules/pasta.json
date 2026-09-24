@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "pasta",
+  "displayName": "pasta (Utatane macOS build)",
+  "kinds": [
+    "shiori"
+  ],
+  "origin": "upstream-port",
+  "upstream": {
+    "url": "https://github.com/ekicyou/pasta",
+    "author": "ekicyou"
+  },
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/pasta/blob/6c064330c5d960b419c1e6cda3c5e5b3f4b07527/LICENSE",
+  "instructions": "docs/pasta.md",
+  "limitations": [
+    "Windows専用のLua FFI呼び出しやDLLは実行できません。",
+    "同じプロセス内では1セッション。Utataneはゴーストごとにプロセスを分離します。"
+  ],
+  "version": "0.3.5",
+  "revision": 2,
+  "abi": "shiori-utf8-v1",
+  "minimumOS": "14.0",
+  "source": {
+    "url": "https://github.com/opera7133/pasta.git",
+    "path": "sources/pasta",
+    "commit": "6c064330c5d960b419c1e6cda3c5e5b3f4b07527"
+  },
+  "recipe": "recipes/pasta/build.sh",
+  "requiredFiles": [
+    "lib/libpasta.dylib",
+    "LICENSES/pasta-MIT.txt",
+    "LICENSES/dependencies.json",
+    "README.md"
+  ]
+}

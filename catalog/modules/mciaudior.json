@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "mciaudior",
+  "displayName": "mciaudior (Utatane native)",
+  "kinds": [
+    "saori"
+  ],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane",
+    "author": "opera7133"
+  },
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/saori.md",
+  "limitations": [
+    "Windows版のすべての機能を再現するものではありません。対応コマンドは導入手順を参照してください。"
+  ],
+  "version": "0.1.0",
+  "revision": 1,
+  "abi": "saori-utf8-v1",
+  "minimumOS": "14.0",
+  "source": {
+    "kind": "local",
+    "path": "native"
+  },
+  "recipe": "recipes/mciaudior/build.sh",
+  "requiredFiles": [
+    "lib/libmciaudior.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ]
+}

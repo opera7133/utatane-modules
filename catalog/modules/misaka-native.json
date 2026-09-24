@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "misaka-native",
+  "displayName": "Utatane MISAKA Native",
+  "kinds": [
+    "shiori",
+    "plugin"
+  ],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane",
+    "author": "opera7133"
+  },
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane/blob/69ad7a2cd0c45bdd845e2978863c572b194dec19/LICENSE",
+  "instructions": "docs/misaka.md",
+  "limitations": [
+    "美坂の独自Swift実装。元のWindows DLLと完全互換であることは保証していません。",
+    "電文はUTF-8のSHIORI/3.0・PLUGIN/2.0に対応します。SAORIはホストサービスが必要です。"
+  ],
+  "version": "0.1.0",
+  "revision": 6,
+  "abi": "shiori-load-request-unload",
+  "minimumOS": "14.0",
+  "source": {
+    "kind": "local",
+    "path": "native"
+  },
+  "recipe": "recipes/misaka/build.sh",
+  "requiredFiles": [
+    "lib/libmisaka.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ]
+}

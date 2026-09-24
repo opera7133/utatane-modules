@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "kagari",
+  "displayName": "kagari (Utatane macOS build)",
+  "kinds": [
+    "shiori"
+  ],
+  "origin": "upstream-port",
+  "upstream": {
+    "url": "https://github.com/Tatakinov/kagari_shiori",
+    "author": "Tatakinov"
+  },
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/kagari_shiori/blob/491f119ada7b680a4cc75146019eebedd0a7d031/LICENSE",
+  "instructions": "docs/kagari.md",
+  "limitations": [
+    "kagari専用のインスタンスABI。汎用shiori.macos指定には未対応。",
+    "Windows用SAORI/DLLやLua拡張は実行できない。"
+  ],
+  "version": "1.0.1",
+  "revision": 6,
+  "abi": "kagari-instance-v1",
+  "minimumOS": "14.0",
+  "source": {
+    "url": "https://github.com/opera7133/kagari_shiori.git",
+    "path": "sources/kagari",
+    "commit": "491f119ada7b680a4cc75146019eebedd0a7d031"
+  },
+  "recipe": "recipes/kagari/build.sh",
+  "requiredFiles": [
+    "lib/libkagari.dylib",
+    "lib/liblua5.4.dylib",
+    "LICENSES/kagari-MIT.txt",
+    "LICENSES/sol2-MIT.txt",
+    "LICENSES/lua-header-with-license.txt",
+    "README.md",
+    "dependencies.json"
+  ]
+}

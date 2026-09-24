@@ -1,0 +1,16 @@
+[
+  {
+    "name": "mlua-sys",
+    "version": "0.10.0",
+    "file": "mlua-sys-0.10.0-MIT.txt",
+    "url": "https://raw.githubusercontent.com/mlua-rs/mlua/e7fa8d75bb3947648605562694d03c1ce4c82b20/LICENSE",
+    "sha256": "63b61a30d3e3abcfcb1bda4b99f4eea9fdb7d6ab05fbc513461fef6cf89baf29"
+  },
+  {
+    "name": "quick_cache",
+    "version": "0.6.24",
+    "file": "quick_cache-0.6.24-MIT.txt",
+    "url": "https://raw.githubusercontent.com/arthurprs/quick-cache/3a1461084b86ce433198e44bcf16aa07837eaa6e/LICENCE.md",
+    "sha256": "c845c85aa74d7eb1fb6848d2d96360a5edfe51dfbacbf96d7bb5193951e79b1a"
+  }
+]
