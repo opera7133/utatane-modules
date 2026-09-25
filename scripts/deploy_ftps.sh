@@ -28,7 +28,6 @@ set ftp:ssl-protect-data true
 set ssl:verify-certificate true
 set net:max-retries 3
 set net:timeout 20
-mkdir -p "$target"
 mirror --reverse --verbose --parallel=4 --exclude-glob index.json --exclude-glob index.sig "$snapshot" "$target"
 put "$snapshot/index.sig" -o "$target/index.sig.next"
 mv "$target/index.sig.next" "$target/index.sig"
