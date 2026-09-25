@@ -4,9 +4,9 @@ Utataneは辞書や設定からSHIORIを判別し、macOS向けの実装へ接�
 
 ## SHIORIの選択
 
-ゴーストが `shiori.macos` で指定したモジュールは自動判定より優先します。美坂・偽栞・minato・pasta・kagari・aosoraの同梱ライブラリの破損や関数の欠落を検出すると、同じSHIORIの共通導入版を試します。設定で無効にできます。辞書や保存データのエラーでは切り替えません。指定がなければ `shiori` と辞書・設定を使って判別します。`shiori` の省略時は `shiori.dll` が既定です。
+ゴーストが `shiori.macos` で指定したモジュールは自動判定より優先します。美坂・偽栞・ese-shiori・minato・pasta・kagari・aosoraの同梱ライブラリの破損や関数の欠落を検出すると、同じSHIORIの共通導入版を試します。設定で無効にできます。辞書や保存データのエラーでは切り替えません。指定がなければ `shiori` と辞書・設定を使って判別します。`shiori` の省略時は `shiori.dll` が既定です。
 
-[美坂](misaka.md)・[偽栞](nise-shiori.md)・[minato](minato.md)・[pasta](pasta.md)・[kagari](kagari.md)の配布版は、ゴースト同梱、Application Support、アプリ内の順に探します。`UTATANE_MISAKA_MODULE` / `UTATANE_NISE_SHIORI_MODULE` / `UTATANE_MINATO_MODULE` / `UTATANE_PASTA_MODULE` / `UTATANE_KAGARI_MODULE` は開発時の明示的な上書きです。
+[美坂](misaka.md)・[偽栞](nise-shiori.md)・[ese-shiori](ese-shiori.md)・[minato](minato.md)・[pasta](pasta.md)・[kagari](kagari.md)の配布版は、ゴースト同梱、Application Support、アプリ内の順に探します。`UTATANE_MISAKA_MODULE` / `UTATANE_NISE_SHIORI_MODULE` / `UTATANE_ESE_SHIORI_MODULE` / `UTATANE_MINATO_MODULE` / `UTATANE_PASTA_MODULE` / `UTATANE_KAGARI_MODULE` は開発時の明示的な上書きです。
 
 ## 辞書エンジン
 

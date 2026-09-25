@@ -1,11 +1,12 @@
 # 偽栞
 
-ZIP内の`nise-shiori/lib/libniseshiori.dylib`を`ghost/master/`に置き、`descript.txt`に次を指定します。
+ZIP内の`nise-shiori/lib/libniseshiori.dylib`を`ghost/master/`に置きます。Utataneでは既存の`descript.txt`の指定をそのまま使えます。
 
 ```text
 shiori,niseshiori.dll
-shiori.macos,libniseshiori.dylib
 ```
+
+他のベースウェアで必要なら`shiori.macos,libniseshiori.dylib`を追加してください。
 
 通常のSHIORI/3.0の`loadu`・`load`・`request`・`unload`で読み込めます。UTF-8とShift_JISの電文に対応します。同一プロセス内の同時セッションは1つです。
 

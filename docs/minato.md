@@ -1,11 +1,12 @@
 # minato
 
-ZIP内の `minato/lib/libminato.dylib` を `ghost/master/` に置き、`descript.txt` に指定します。
+ZIP内の `minato/lib/libminato.dylib` を `ghost/master/` に置きます。Utataneでは既存の`descript.txt`の指定をそのまま使えます。
 
 ```text
 shiori,minato.dll
-shiori.macos,libminato.dylib
 ```
+
+他のベースウェアで必要なら`shiori.macos,libminato.dylib`を追加してください。
 
 ZIP内の `LICENSES/` も含めて同梱してください。同梱せず共通導入する場合は、`minato/` を `~/Library/Application Support/Utatane/NativeShiori/` に置きます。
 

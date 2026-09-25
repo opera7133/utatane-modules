@@ -1,11 +1,12 @@
 # pasta
 
-ZIP内の `pasta/lib/libpasta.dylib` を `ghost/master/` に置き、`descript.txt` に指定します。
+ZIP内の `pasta/lib/libpasta.dylib` を `ghost/master/` に置きます。Utataneでは既存の`descript.txt`の指定をそのまま使えます。
 
 ```text
 shiori,pasta.dll
-shiori.macos,libpasta.dylib
 ```
+
+他のベースウェアで必要なら`shiori.macos,libpasta.dylib`を追加してください。
 
 `LICENSES/` も含めて同梱してください。共通導入の場合は、ZIP内の `pasta/` を `~/Library/Application Support/Utatane/NativeShiori/` に置きます。
 

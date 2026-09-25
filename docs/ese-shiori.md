@@ -1,11 +1,12 @@
 # ese-shiori (Native)
 
-ZIP内の`ese-shiori/lib/libese-shiori.dylib`を`ghost/master/`に置き、`descript.txt`に次を指定します。
+ZIP内の`ese-shiori/lib/libese-shiori.dylib`を`ghost/master/`に置きます。Utataneでは既存の`descript.txt`の指定をそのまま使えます。
 
 ```text
 shiori,ese-shiori.dll
-shiori.macos,libese-shiori.dylib
 ```
+
+他のベースウェアで必要なら`shiori.macos,libese-shiori.dylib`を追加してください。
 
 SHIORI/3.0の`loadu`・`load`・`request`・`unload`で読み込めます。電文はUTF-8・Shift_JIS・EUC-KRに対応します。辞書には`eseai.ini`と`eseai_*.txt`または`.dic`が必要です。
 
