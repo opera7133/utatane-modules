@@ -43,7 +43,29 @@ h1 { margin: 0 0 8px; font-size: clamp(26px, 5vw, 34px); }
 .action { display: inline-block; padding: 8px 12px; color: #fff; background: var(--primary); border-radius: 5px; font-size: 13px; text-decoration: none; white-space: nowrap; }
 .action:hover { background: #513d88; }
 .secondary { font-size: 13px; white-space: nowrap; }
+.text-link { padding: 0; color: #513d88; background: none; border: 0; text-decoration: underline; text-underline-offset: 2px; }
+.text-link:hover { color: #37245f; }
 .empty { margin: 0; padding: 20px; color: var(--muted); font-size: 14px; }
+dialog { width: min(720px, calc(100% - 28px)); max-height: min(80vh, 900px); padding: 0; color: inherit; background: #fff; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 16px 48px #24202d40; }
+dialog::backdrop { background: #17132180; }
+.dialog-header, .dialog-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 20px; }
+.dialog-header { border-bottom: 1px solid var(--border); }
+.dialog-header h2 { margin: 0; font-size: 18px; }
+.dialog-header button { padding: 0 5px; color: var(--muted); background: none; border: 0; font-size: 26px; line-height: 1; }
+.dialog-footer { border-top: 1px solid var(--border); font-size: 13px; }
+.dialog-footer button { padding: 7px 12px; color: #fff; background: var(--primary); border: 0; border-radius: 5px; }
+.document-content { max-height: calc(80vh - 116px); overflow: auto; padding: 8px 20px 20px; font-size: 14px; line-height: 1.7; }
+.document-content h2 { margin: 20px 0 10px; font-size: 20px; }
+.document-content h3 { margin: 18px 0 8px; font-size: 16px; }
+.document-content p { margin: 12px 0; }
+.document-content ul { padding-left: 24px; }
+.document-content code { padding: 1px 3px; background: #f2f0f5; border-radius: 3px; }
+.document-content pre { overflow: auto; padding: 12px; background: #f5f4f7; border-radius: 5px; line-height: 1.5; }
+.document-content pre code { padding: 0; background: none; }
+.document-content .license-text { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
+.document-content table { width: 100%; border-collapse: collapse; }
+.document-content td { padding: 7px 9px; border: 1px solid var(--border); }
+.document-content tr:first-child { font-weight: 650; background: #f5f4f7; }
 footer { border-top: 1px solid var(--border); border-bottom: 0; color: var(--muted); font-size: 12px; }
 footer p { margin: 0; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }

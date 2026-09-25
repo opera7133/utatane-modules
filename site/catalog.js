@@ -3,8 +3,13 @@ const count = document.querySelector("#count");
 const channel = document.querySelector("#channel");
 const search = document.querySelector("#search");
 const filters = [...document.querySelectorAll("[data-kind]")];
+const dialog = document.querySelector("#document-dialog");
+const documentTitle = document.querySelector("#document-title");
+const documentContent = document.querySelector("#document-content");
+const documentSource = document.querySelector("#document-source");
 let modules = [];
 let selectedKind = "all";
+let documentRequest = 0;
 
 function safePath(path) {
   return (
@@ -29,6 +34,158 @@ function link(label, path, className) {
   return node;
 }
 
+function appendInline(parent, source, baseURL) {
+  const pattern = /(`[^`]+`|\[[^\]]+\]\([^)]+\))/g;
+  let position = 0;
+  for (const match of source.matchAll(pattern)) {
+    parent.append(document.createTextNode(source.slice(position, match.index)));
+    const token = match[0];
+    if (token.startsWith("`")) {
+      parent.append(element("code", "", token.slice(1, -1)));
+    } else {
+      const separator = token.indexOf("](");
+      const label = token.slice(1, separator);
+      const path = token.slice(separator + 2, -1);
+      const destination = new URL(path, baseURL);
+      if (destination.protocol === "https:" || destination.origin === location.origin) {
+        const anchor = element("a", "", label);
+        anchor.href = destination.href;
+        anchor.target = "_blank";
+        anchor.rel = "noopener noreferrer";
+        parent.append(anchor);
+      } else {
+        parent.append(document.createTextNode(label));
+      }
+    }
+    position = match.index + token.length;
+  }
+  parent.append(document.createTextNode(source.slice(position)));
+}
+
+function renderMarkdown(source, baseURL) {
+  const fragment = document.createDocumentFragment();
+  const lines = source.replace(/\r\n?/g, "\n").split("\n");
+  let paragraph = [];
+  let list = null;
+  let code = null;
+  let table = null;
+  function flushParagraph() {
+    if (!paragraph.length) return;
+    const node = element("p");
+    appendInline(node, paragraph.join(" "), baseURL);
+    fragment.append(node);
+    paragraph = [];
+  }
+  for (const line of lines) {
+    if (line.startsWith("```")) {
+      flushParagraph();
+      list = null;
+      table = null;
+      if (code) {
+        code = null;
+      } else {
+        const pre = element("pre");
+        code = element("code");
+        pre.append(code);
+        fragment.append(pre);
+      }
+      continue;
+    }
+    if (code) {
+      code.textContent += `${line}\n`;
+      continue;
+    }
+    if (!line.trim()) {
+      flushParagraph();
+      list = null;
+      table = null;
+      continue;
+    }
+    const heading = /^(#{1,3})\s+(.+)$/.exec(line);
+    if (heading) {
+      flushParagraph();
+      list = null;
+      table = null;
+      const node = element(`h${Math.min(heading[1].length + 1, 4)}`);
+      appendInline(node, heading[2], baseURL);
+      fragment.append(node);
+      continue;
+    }
+    if (line.startsWith("|")) {
+      flushParagraph();
+      list = null;
+      if (/^\|[\s:|-]+\|$/.test(line)) continue;
+      if (!table) {
+        table = element("table");
+        fragment.append(table);
+      }
+      const row = element("tr");
+      for (const cell of line.slice(1, -1).split("|")) {
+        const node = element("td");
+        appendInline(node, cell.trim(), baseURL);
+        row.append(node);
+      }
+      table.append(row);
+      continue;
+    }
+    table = null;
+    const bullet = /^[-*]\s+(.+)$/.exec(line);
+    if (bullet) {
+      flushParagraph();
+      if (!list) {
+        list = element("ul");
+        fragment.append(list);
+      }
+      const item = element("li");
+      appendInline(item, bullet[1], baseURL);
+      list.append(item);
+      continue;
+    }
+    list = null;
+    paragraph.push(line.trim());
+  }
+  flushParagraph();
+  return fragment;
+}
+
+function rawGitHubURL(value) {
+  try {
+    const url = new URL(value);
+    const parts = url.pathname.split("/").filter(Boolean);
+    if (url.protocol !== "https:" || url.hostname !== "github.com" ||
+        parts.length < 5 || parts[2] !== "blob" ||
+        !parts.every((part) => /^[a-zA-Z0-9._-]+$/.test(part))) return null;
+    return `https://raw.githubusercontent.com/${parts.join("/").replace("/blob/", "/")}`;
+  } catch {
+    return null;
+  }
+}
+
+async function showDocument(title, fetchURL, sourceURL, markdown) {
+  const request = ++documentRequest;
+  documentTitle.textContent = title;
+  documentContent.replaceChildren(element("p", "", "読み込み中…"));
+  documentSource.href = sourceURL;
+  dialog.showModal();
+  try {
+    const response = await fetch(fetchURL);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const body = await response.text();
+    if (request !== documentRequest) return;
+    documentContent.replaceChildren(markdown ? renderMarkdown(body, fetchURL) : element("pre", "license-text", body));
+  } catch {
+    if (request === documentRequest) {
+      documentContent.replaceChildren(element("p", "", "本文を読み込めませんでした。元のファイルを開いて確認してください。"));
+    }
+  }
+}
+
+document.querySelector("#document-close").addEventListener("click", () => dialog.close());
+document.querySelector("#document-done").addEventListener("click", () => dialog.close());
+dialog.addEventListener("click", (event) => {
+  if (event.target === dialog) dialog.close();
+});
+
 function card(module) {
   const item = element("article", "module");
   const info = element("div", "module-info");
@@ -51,12 +208,11 @@ function card(module) {
       : "ダウンロードなし";
   info.append(element("p", "meta", availability));
   const credit = element("p", "credit", `${module.upstream.author} · `);
-  if (
-    typeof module.licenseURL === "string" &&
-    module.licenseURL.startsWith("https://")
-  ) {
-    const license = element("a", "", module.license);
-    license.href = module.licenseURL;
+  const licenseURL = rawGitHubURL(module.licenseURL);
+  if (licenseURL) {
+    const license = element("button", "text-link", module.license);
+    license.type = "button";
+    license.addEventListener("click", () => showDocument(`${module.displayName} のライセンス`, licenseURL, module.licenseURL, false));
     credit.append(license);
   } else {
     credit.append(module.license);
@@ -70,8 +226,15 @@ function card(module) {
       actions.append(download);
     }
   }
-  const instructions = link("導入手順", module.instructions, "secondary");
-  if (instructions) actions.append(instructions);
+  if (safePath(module.instructions)) {
+    const instructions = element("button", "text-link secondary", "導入手順");
+    instructions.type = "button";
+    instructions.addEventListener("click", () => {
+      const url = new URL(`./${module.instructions}`, location.href).href;
+      showDocument(`${module.displayName} の導入手順`, url, url, true);
+    });
+    actions.append(instructions);
+  }
   item.append(info, actions);
   return item;
 }

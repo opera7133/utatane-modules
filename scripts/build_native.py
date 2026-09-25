@@ -56,8 +56,11 @@ def build_native(entry, architectures, cache, destination):
         with tempfile.TemporaryDirectory(dir=cache, prefix="native-") as temporary:
             work = Path(temporary)
             package = work / entry["id"]
+            # Every local module belongs to the same Swift package. Keep one
+            # scratch directory so later products reuse compiled dependencies.
+            scratch = cache / "native-swift" / "_".join(architectures)
             subprocess.run(["sh", str(ROOT / entry["recipe"]), str(ROOT / "native"),
-                            str(package / "lib"), str(work / "swift"), " ".join(architectures)], check=True)
+                            str(package / "lib"), str(scratch), " ".join(architectures)], check=True)
             verify_library(package / f"lib/lib{product}.dylib", architectures, misaka=misaka)
             (package / "LICENSES").mkdir()
             shutil.copyfile(ROOT / "LICENSE", package / "LICENSES/utatane-MIT.txt")
