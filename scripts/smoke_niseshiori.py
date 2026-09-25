@@ -2,6 +2,7 @@
 """Exercise a relocated niseshiori ZIP through a plain C SHIORI host."""
 
 from pathlib import Path
+import os
 import subprocess
 import sys
 import tempfile
@@ -30,6 +31,11 @@ def smoke(archive):
                        check=True, timeout=30)
         if not (master / "nise-shiori-state.json").is_file():
             raise ValueError("Expected persisted niseshiori state")
+        state = root / "separate state/nise.json"
+        subprocess.run([str(executable), str(package / "lib/libniseshiori.dylib"), str(master)],
+                       check=True, timeout=30, env={**os.environ, "NISESHIORI_STATE_PATH": str(state)})
+        if not state.is_file():
+            raise ValueError("Expected state at the baseware-selected path")
 
 
 if __name__ == "__main__":

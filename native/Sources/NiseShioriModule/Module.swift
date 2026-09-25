@@ -21,7 +21,17 @@ private func load(_ input: UnsafeMutableRawPointer?, _ length: Int32, utf8Only: 
     guard session.lock.try() else { return 0 }
     defer { session.lock.unlock() }
     guard session.engine == nil else { return 0 }
-    session.engine = try? NiseShioriSession(masterDirectoryURL: URL(fileURLWithPath: path))
+    let stateURL: URL?
+    if let statePath = ProcessInfo.processInfo.environment["NISESHIORI_STATE_PATH"] {
+        guard statePath.hasPrefix("/"), !statePath.contains("\0") else { return 0 }
+        stateURL = URL(fileURLWithPath: statePath)
+    } else {
+        stateURL = nil
+    }
+    session.engine = try? NiseShioriSession(
+        masterDirectoryURL: URL(fileURLWithPath: path),
+        stateStoreURL: stateURL
+    )
     return session.engine == nil ? 0 : 1
 }
 
