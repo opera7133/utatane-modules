@@ -101,7 +101,7 @@ public final class DynamicSaoriRegistry: SaoriCalling, @unchecked Sendable {
 
     public init(baseDirectoryURL: URL, catalogRootURL: URL? = nil) {
         self.baseDirectoryURL = baseDirectoryURL
-        self.catalogRootURL = catalogRootURL ?? ProcessInfo.processInfo.environment["SHINO_SAORI_ROOT"].map(URL.init(fileURLWithPath:))
+        self.catalogRootURL = catalogRootURL ?? (ProcessInfo.processInfo.environment["UTATANE_SAORI_ROOT"] ?? ProcessInfo.processInfo.environment["SHINO_SAORI_ROOT"]).map(URL.init(fileURLWithPath:))
     }
 
     public func load(_ path: String) {

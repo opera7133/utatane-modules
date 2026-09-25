@@ -15,7 +15,7 @@
   "instructions": "docs/yuhna.md",
   "limitations": ["結奈SecondEdition Unit 10の独自Swift実装です。未観測の命令、編集機能、SAORIには対応しません。"],
   "version": "10",
-  "revision": 1,
+  "revision": 2,
   "abi": "shiori-load-request-unload",
   "minimumOS": "14.0",
   "source": {"kind": "local", "path": "native"},

@@ -15,7 +15,7 @@
   "instructions": "docs/ese-shiori.md",
   "limitations": ["ese-shioriの独自Swift実装です。Windows版の全機能・全電文との互換性は保証しません。"],
   "version": "3.03",
-  "revision": 1,
+  "revision": 2,
   "abi": "shiori-load-request-unload",
   "minimumOS": "14.0",
   "source": {"kind": "local", "path": "native"},

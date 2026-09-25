@@ -24,7 +24,7 @@ shiori.macos,libmisaka.dylib
 
 Utataneでの変数保存先はApplication Supportです。Windows DLLや暗号化辞書の実行には対応しません。同時に使用できる美坂の配布版は1種類です。異なる版へ切り替える際はUtataneを再起動してください。
 
-通常の入口は `loadu` / `load`・`request`・`unload`。パスと電文はUTF-8、長さは32ビット符号付き整数です。入力はモジュールが、応答は呼び出し側が `free` します。この入口はライブラリごとに1セッションで、保存先は辞書フォルダです。Utataneは内部接続でセッション・保存先・SAORIを管理します。
+通常の入口は `loadu` / `load`・`request`・`unload`。パスと電文はUTF-8、長さは32ビット符号付き整数です。入力はモジュールが、応答は呼び出し側が `free` します。この入口はライブラリごとに1セッションです。`UTATANE_GHOST_STATE_DIR`を指定した場合は、そのフォルダに変数を保存します。Utataneは内部接続で複数セッションとSAORIを管理します。
 
 ## ライセンス
 

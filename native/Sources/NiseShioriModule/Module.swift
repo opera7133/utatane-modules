@@ -22,12 +22,11 @@ private func load(_ input: UnsafeMutableRawPointer?, _ length: Int32, utf8Only: 
     defer { session.lock.unlock() }
     guard session.engine == nil else { return 0 }
     let stateURL: URL?
-    if let statePath = ProcessInfo.processInfo.environment["NISESHIORI_STATE_PATH"] {
-        guard statePath.hasPrefix("/"), !statePath.contains("\0") else { return 0 }
-        stateURL = URL(fileURLWithPath: statePath)
-    } else {
-        stateURL = nil
-    }
+    do {
+        stateURL = try ModuleEnvironment.stateFile(
+            named: "nise-shiori-state.json", legacyEnvironmentKey: "NISESHIORI_STATE_PATH"
+        )
+    } catch { return 0 }
     session.engine = try? NiseShioriSession(
         masterDirectoryURL: URL(fileURLWithPath: path),
         stateStoreURL: stateURL

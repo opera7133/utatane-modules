@@ -56,7 +56,7 @@ public actor AkariSession {
         )
         self.saoriCaller = saoriCaller ?? DynamicSaoriRegistry(
             baseDirectoryURL: masterDirectoryURL,
-            catalogRootURL: ProcessInfo.processInfo.environment["AKARI_SAORI_ROOT"].map(URL.init(fileURLWithPath:))
+            catalogRootURL: (ProcessInfo.processInfo.environment["UTATANE_SAORI_ROOT"] ?? ProcessInfo.processInfo.environment["AKARI_SAORI_ROOT"]).map(URL.init(fileURLWithPath:))
         )
         self.httpFetcher = httpFetcher
         persistsVariables = true

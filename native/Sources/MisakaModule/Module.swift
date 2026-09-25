@@ -88,7 +88,17 @@ public func moduleCreate(_ config: UnsafePointer<UMConfig>?, _ host: UnsafePoint
     }
     let services = HostServices(host?.pointee)
     do {
-        let engine = try NativeMisakaSession(masterDirectoryURL: master, variableStoreURL: state,
+        let stateFile = state.lastPathComponent == "module-state.json"
+            ? state.deletingLastPathComponent().appending(path: "misaka-vars.json") : state
+        let oldPluginState = master.appending(path: "misaka_vars.json")
+        if !FileManager.default.fileExists(atPath: stateFile.path),
+           FileManager.default.fileExists(atPath: oldPluginState.path),
+           (try oldPluginState.resourceValues(forKeys: [.isRegularFileKey])).isRegularFile == true {
+            try FileManager.default.createDirectory(at: stateFile.deletingLastPathComponent(),
+                                                    withIntermediateDirectories: true)
+            try FileManager.default.copyItem(at: oldPluginState, to: stateFile)
+        }
+        let engine = try NativeMisakaSession(masterDirectoryURL: master, variableStoreURL: stateFile,
                                              saoriCaller: services, savesOnDeinit: false)
         if let failure = services.failure {
             return emit(failure, error, code: 6)
@@ -158,6 +168,6 @@ public func moduleDiscard(_ id: UInt64) -> Int32 {
 }
 
 /// Identifies this Swift image for content-based reuse by the Utatane loader.
-@_cdecl("utatane_misaka_bridge") public func misakaBridgeVersion() -> UInt32 {
+@_cdecl("utatane_module_bridge") public func misakaBridgeVersion() -> UInt32 {
     1
 }

@@ -16,7 +16,7 @@
   "instructions": "docs/nise-shiori.md",
   "limitations": ["偽栞の独自Swift実装です。元のWindows DLLと完全互換ではありません。"],
   "version": "1.0.20",
-  "revision": 2,
+  "revision": 3,
   "abi": "shiori-load-request-unload",
   "minimumOS": "14.0",
   "source": {"kind": "local", "path": "native"},

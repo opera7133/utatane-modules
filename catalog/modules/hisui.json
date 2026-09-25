@@ -15,7 +15,7 @@
   "instructions": "docs/hisui.md",
   "limitations": ["翡翠 phase00.20の独自Swift実装です。元のWindows DLLと完全互換ではありません。"],
   "version": "0.20",
-  "revision": 1,
+  "revision": 2,
   "abi": "shiori-load-request-unload",
   "minimumOS": "14.0",
   "source": {"kind": "local", "path": "native"},

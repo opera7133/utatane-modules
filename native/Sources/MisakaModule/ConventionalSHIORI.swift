@@ -25,7 +25,12 @@ public func shioriLoadUTF8(_ input: UnsafeMutableRawPointer?, _ length: Int32) -
     guard state.engine == nil else { return 0 }
     do {
         let host = HostServices(nil)
-        let engine = try NativeMisakaSession(masterDirectoryURL: URL(fileURLWithPath: path), saoriCaller: host, savesOnDeinit: false)
+        let master = URL(fileURLWithPath: path)
+        let stateURL = try ModuleEnvironment.stateFile(
+            named: "misaka-vars.json", legacyEnvironmentKey: "MISAKA_VARIABLE_STORE_PATH"
+        )
+        let engine = try NativeMisakaSession(masterDirectoryURL: master, variableStoreURL: stateURL,
+                                             saoriCaller: host, savesOnDeinit: false)
         guard host.failure == nil else { return 0 }
         state.host = host
         state.engine = engine

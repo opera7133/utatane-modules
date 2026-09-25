@@ -39,7 +39,7 @@ public final class KawariSession: @unchecked Sendable {
         Self.installNativeSaoriCallback()
         self.saoriRegistry = saoriRegistry ?? DynamicSaoriRegistry(
             baseDirectoryURL: masterDirectoryURL,
-            catalogRootURL: ProcessInfo.processInfo.environment["KAWARI_SAORI_ROOT"].map(URL.init(fileURLWithPath:))
+            catalogRootURL: (ProcessInfo.processInfo.environment["UTATANE_SAORI_ROOT"] ?? ProcessInfo.processInfo.environment["KAWARI_SAORI_ROOT"]).map(URL.init(fileURLWithPath:))
         )
         let preparation = try Self.prepareDirectoryIfNeeded(masterDirectoryURL)
         let preparedDirectory = preparation.directory

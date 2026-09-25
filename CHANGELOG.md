@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Swift製SHIORIの保存先と共通SAORI導入先をモジュール共通の環境変数で受け取れるようにしました。保存ファイル名は各dylibが決めます。
+
 - pastaのタイムアウト回復テストを同期で制御し、CIの処理速度による失敗をなくした。
 - 華和梨 8.2.8を通常のSHIORI入口を持つmacOS版dylibとして追加した。
 - 灯 2.003の辞書・AZRとSAORI呼び出しに対応する独立Swift SHIORI `libakari.dylib`を追加した。
