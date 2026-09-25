@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- 華和梨 8.2.8を通常のSHIORI入口を持つmacOS版dylibとして追加した。
+- 灯 2.003の辞書・AZRとSAORI呼び出しに対応する独立Swift SHIORI `libakari.dylib`を追加した。
+- 結奈SecondEdition Unit 10の辞書を読み込む独立Swift SHIORI `libyuhna.dylib`を追加した。
+- 翡翠 phase00.20の辞書を読み込む独立Swift SHIORI `libhisui.dylib`を追加した。
+- 忍 0.9.7の辞書とSAORI呼び出しに対応する独立Swift SHIORI `libshino.dylib`を追加した。
+
 - pastaの時間依存テストを待ち合わせ方式へ変更し、CIでの偶発的な失敗を防ぎました。
 - ese-shioriの辞書処理を通常のSHIORI入口を持つdylibへ移し、状態と書き込みファイルをゴーストの外へ保存できるようにしました。
 - カタログで原版の1〜3区切りの数字バージョンをそのまま表示できるようにしました。

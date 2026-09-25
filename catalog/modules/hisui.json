@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "hisui",
+  "displayName": "翡翠 (Native)",
+  "kinds": ["shiori"],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane-modules",
+    "author": "opera7133"
+  },
+  "originalURL": "http://www.cokage.ne.jp/~juju/hisui.htm",
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/hisui.md",
+  "limitations": ["翡翠 phase00.20の独自Swift実装です。元のWindows DLLと完全互換ではありません。"],
+  "version": "0.20",
+  "revision": 1,
+  "abi": "shiori-load-request-unload",
+  "minimumOS": "14.0",
+  "source": {"kind": "local", "path": "native"},
+  "recipe": "recipes/hisui/build.sh",
+  "requiredFiles": [
+    "lib/libhisui.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ]
+}

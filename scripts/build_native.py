@@ -45,7 +45,7 @@ def build_native(entry, architectures, cache, destination):
     ese = identity == "ese-shiori"
     saori = entry["kinds"] == ["saori"]
     product = "misaka" if misaka else "niseshiori" if nise else "ese-shiori" if ese else identity.replace("-", "_")
-    smoke_script = "smoke_misaka.py" if misaka else "smoke_niseshiori.py" if nise else "smoke_ese_shiori.py" if ese else "smoke_saori.py"
+    smoke_script = "smoke_misaka.py" if misaka else "smoke_niseshiori.py" if nise else "smoke_ese_shiori.py" if ese else f"smoke_{identity}.py" if identity in ("yuhna", "hisui", "shino", "akari", "kawari") else "smoke_saori.py"
     host = platform.machine()
     if host not in architectures:
         raise ValueError("Include the host architecture to execute the packaged ABI")
@@ -68,6 +68,11 @@ def build_native(entry, architectures, cache, destination):
             verify_library(package / f"lib/lib{product}.dylib", architectures, misaka=misaka)
             (package / "LICENSES").mkdir()
             shutil.copyfile(ROOT / "LICENSE", package / "LICENSES/utatane-MIT.txt")
+            if identity == "kawari":
+                shutil.copyfile(ROOT / "native/Sources/CKawariModule/Vendor/KAWARI/LICENSE",
+                                package / "LICENSES/KAWARI.txt")
+                random_source = (ROOT / "native/Sources/CKawariModule/Vendor/KAWARI/build/src/misc/mt19937ar.cpp").read_text()
+                (package / "LICENSES/Mersenne-Twister.txt").write_text(random_source.split("*/", 1)[0] + "*/\n")
             shutil.copyfile(ROOT / entry["instructions"], package / "README.md")
             try:
                 commit = subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "--verify", "HEAD"],

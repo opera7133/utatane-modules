@@ -83,6 +83,11 @@ jobs:
           uv run --locked python scripts/build.py misaka-native --archs arm64 x86_64
           uv run --locked python scripts/build.py nise-shiori --archs arm64 x86_64
           uv run --locked python scripts/build.py ese-shiori --archs arm64 x86_64
+          uv run --locked python scripts/build.py yuhna --archs arm64 x86_64
+          uv run --locked python scripts/build.py hisui --archs arm64 x86_64
+          uv run --locked python scripts/build.py shino --archs arm64 x86_64
+          uv run --locked python scripts/build.py akari --archs arm64 x86_64
+          uv run --locked python scripts/build.py kawari --archs arm64 x86_64
           uv run --locked python scripts/build.py minato --archs arm64 x86_64
           uv run --locked python scripts/build.py pasta --archs arm64 x86_64
           uv run --locked python scripts/build.py yaya --archs arm64 x86_64

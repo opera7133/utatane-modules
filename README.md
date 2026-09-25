@@ -14,6 +14,11 @@ Utataneで使うmacOS向けSHIORIなどのビルド・配布用リポジトリ�
 - [美坂](docs/misaka.md) — 独自Swift実装
 - [偽栞](docs/nise-shiori.md) — 独自Swift実装
 - [ese-shiori](docs/ese-shiori.md) — 独自Swift実装
+- [結奈](docs/yuhna.md) — 独自Swift実装
+- [翡翠](docs/hisui.md) — 独自Swift実装
+- [忍](docs/shino.md) — 独自Swift実装
+- [灯](docs/akari.md) — 独自Swift実装
+- [華和梨](docs/kawari.md) — macOS移植版
 - [蒼空](docs/aosora.md) — 手動導入の案内
 
 ## SAORI

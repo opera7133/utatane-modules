@@ -3,8 +3,7 @@
   "id": "aosora",
   "displayName": "蒼空 (Aosora)",
   "kinds": [
-    "shiori",
-    "saori"
+    "shiori"
   ],
   "origin": "upstream-port",
   "upstream": {

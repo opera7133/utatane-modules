@@ -14,7 +14,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--utatane", type=Path, required=True)
     parser.add_argument("--package", type=Path, required=True)
-    parser.add_argument("--module", choices=("misaka-native", "minato", "pasta", "nise-shiori", "ese-shiori"), default="misaka-native")
+    parser.add_argument("--module", choices=("misaka-native", "minato", "pasta", "nise-shiori", "ese-shiori", "yuhna", "hisui", "shino", "akari", "kawari"), default="misaka-native")
     parser.add_argument("--host", type=Path, help="Use an existing native SHIORI host when testing conventional SHIORI")
     args = parser.parse_args()
     checkout = args.utatane.resolve()
@@ -25,7 +25,10 @@ def main():
     if args.module == "misaka-native" and host_header.read_bytes() != (ROOT / "native/bridge/include/misaka_host_bridge.h").read_bytes():
         raise ValueError("Utatane's imported module header differs from native/bridge/include/misaka_host_bridge.h")
     suite_name = {"minato": "MinatoNativeTests", "pasta": "PastaNativeTests",
-                  "nise-shiori": "NiseShioriNativeTests", "ese-shiori": "EseShioriNativeTests"}.get(args.module)
+                  "nise-shiori": "NiseShioriNativeTests", "ese-shiori": "EseShioriNativeTests",
+                  "yuhna": "YuhnaNativeTests", "hisui": "HisuiNativeTests",
+                  "shino": "ShinoNativeTests", "akari": "AkariNativeTests",
+                  "kawari": "KawariNativeTests"}.get(args.module)
     suite = checkout / (f"packages/plugin/Tests/{suite_name}.swift" if suite_name
                         else "packages/shiori/native/misaka/Tests/MisakaModuleIntegrationTests.swift")
     if not suite.is_file():

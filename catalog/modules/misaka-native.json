@@ -3,8 +3,7 @@
   "id": "misaka-native",
   "displayName": "MISAKA (Native)",
   "kinds": [
-    "shiori",
-    "plugin"
+    "shiori"
   ],
   "origin": "independent",
   "upstream": {

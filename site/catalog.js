@@ -37,7 +37,8 @@ function link(label, path, className) {
 function externalLink(label, url) {
   try {
     const destination = new URL(url);
-    if (destination.protocol !== "https:" && destination.protocol !== "http:") return null;
+    if (destination.protocol !== "https:" && destination.protocol !== "http:")
+      return null;
     const node = element("a", "text-link", label);
     node.href = destination.href;
     node.target = "_blank";
@@ -61,7 +62,10 @@ function appendInline(parent, source, baseURL) {
       const label = token.slice(1, separator);
       const path = token.slice(separator + 2, -1);
       const destination = new URL(path, baseURL);
-      if (destination.protocol === "https:" || destination.origin === location.origin) {
+      if (
+        destination.protocol === "https:" ||
+        destination.origin === location.origin
+      ) {
         const anchor = element("a", "", label);
         anchor.href = destination.href;
         anchor.target = "_blank";
@@ -166,9 +170,14 @@ function rawGitHubURL(value) {
   try {
     const url = new URL(value);
     const parts = url.pathname.split("/").filter(Boolean);
-    if (url.protocol !== "https:" || url.hostname !== "github.com" ||
-        parts.length < 5 || parts[2] !== "blob" ||
-        !parts.every((part) => /^[a-zA-Z0-9._-]+$/.test(part))) return null;
+    if (
+      url.protocol !== "https:" ||
+      url.hostname !== "github.com" ||
+      parts.length < 5 ||
+      parts[2] !== "blob" ||
+      !parts.every((part) => /^[a-zA-Z0-9._-]+$/.test(part))
+    )
+      return null;
     return `https://raw.githubusercontent.com/${parts.join("/").replace("/blob/", "/")}`;
   } catch {
     return null;
@@ -186,16 +195,30 @@ async function showDocument(title, fetchURL, sourceURL, markdown) {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const body = await response.text();
     if (request !== documentRequest) return;
-    documentContent.replaceChildren(markdown ? renderMarkdown(body, fetchURL) : element("pre", "license-text", body));
+    documentContent.replaceChildren(
+      markdown
+        ? renderMarkdown(body, fetchURL)
+        : element("pre", "license-text", body),
+    );
   } catch {
     if (request === documentRequest) {
-      documentContent.replaceChildren(element("p", "", "本文を読み込めませんでした。元のファイルを開いて確認してください。"));
+      documentContent.replaceChildren(
+        element(
+          "p",
+          "",
+          "本文を読み込めませんでした。元のファイルを開いて確認してください。",
+        ),
+      );
     }
   }
 }
 
-document.querySelector("#document-close").addEventListener("click", () => dialog.close());
-document.querySelector("#document-done").addEventListener("click", () => dialog.close());
+document
+  .querySelector("#document-close")
+  .addEventListener("click", () => dialog.close());
+document
+  .querySelector("#document-done")
+  .addEventListener("click", () => dialog.close());
 dialog.addEventListener("click", (event) => {
   if (event.target === dialog) dialog.close();
 });
@@ -226,17 +249,34 @@ function card(module) {
   if (licenseURL) {
     const license = element("button", "text-link", module.license);
     license.type = "button";
-    license.addEventListener("click", () => showDocument(`${module.displayName} のライセンス`, licenseURL, module.licenseURL, false));
+    license.addEventListener("click", () =>
+      showDocument(
+        `${module.displayName} のライセンス`,
+        licenseURL,
+        module.licenseURL,
+        false,
+      ),
+    );
     credit.append(license);
   } else {
     credit.append(module.license);
   }
   info.append(credit);
   const sources = element("p", "source-links");
-  const original = externalLink("原作", module.originalURL || (
-    module.origin === "upstream-port" || module.upstream.author !== "opera7133" ? module.upstream.url : null
-  ));
-  const implementation = externalLink("macOS版のソース", module.origin === "independent" ? "https://github.com/opera7133/utatane-modules/tree/main/native" : null);
+  const original = externalLink(
+    "原作",
+    module.originalURL ||
+      (module.origin === "upstream-port" ||
+      module.upstream.author !== "opera7133"
+        ? module.upstream.url
+        : null),
+  );
+  const implementation = externalLink(
+    "macOS版のソース",
+    module.origin === "independent"
+      ? "https://github.com/opera7133/utatane-modules/tree/main/native"
+      : null,
+  );
   if (original) sources.append(original);
   if (implementation) sources.append(implementation);
   if (sources.childNodes.length) info.append(sources);

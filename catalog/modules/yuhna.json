@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "yuhna",
+  "displayName": "結奈 (Native)",
+  "kinds": ["shiori"],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane-modules",
+    "author": "opera7133"
+  },
+  "originalURL": "https://web.archive.org/web/20041208082656/http://star.ruru.jp/r/yuhna/index.asp",
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/yuhna.md",
+  "limitations": ["結奈SecondEdition Unit 10の独自Swift実装です。未観測の命令、編集機能、SAORIには対応しません。"],
+  "version": "10",
+  "revision": 1,
+  "abi": "shiori-load-request-unload",
+  "minimumOS": "14.0",
+  "source": {"kind": "local", "path": "native"},
+  "recipe": "recipes/yuhna/build.sh",
+  "requiredFiles": [
+    "lib/libyuhna.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ]
+}

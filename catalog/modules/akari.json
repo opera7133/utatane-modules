@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "akari",
+  "displayName": "灯 (Native)",
+  "kinds": ["shiori"],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane-modules",
+    "author": "opera7133"
+  },
+  "originalURL": "https://le.silk.to/akari.php",
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/akari.md",
+  "limitations": ["灯 2.003の独自Swift実装です。元のWindows DLLと完全互換ではありません。"],
+  "version": "2.003",
+  "revision": 1,
+  "abi": "shiori-load-request-unload",
+  "minimumOS": "14.0",
+  "source": {"kind": "local", "path": "native"},
+  "recipe": "recipes/akari/build.sh",
+  "requiredFiles": [
+    "lib/libakari.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ]
+}
