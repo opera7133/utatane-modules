@@ -535,7 +535,9 @@ public final class KawariSession: @unchecked Sendable {
         defer { kawariSaoriLock.unlock() }
         activeKawariSaori.registry = saoriRegistry
         defer { activeKawariSaori.registry = nil }
-        guard let data = request.data(using: .shiftJIS) else {
+        // KAWARI's native boundary only accepts Shift_JIS. Notifications can
+        // list other installed ghosts whose names use characters outside it.
+        guard let data = request.data(using: .shiftJIS, allowLossyConversion: true) else {
             throw KawariError.undecodableResponse
         }
         var responseLength = Int64(data.count)

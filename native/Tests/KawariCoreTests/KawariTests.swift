@@ -14,6 +14,11 @@ import Testing
     let session = try KawariSession(masterDirectoryURL: root)
     let request = ShioriRequest(method: "GET", headers: .init([.init(name: "ID", value: "OnBoot")]))
     #expect(try session.request(request).value?.contains("起動") == true)
+    let notification = ShioriRequest(method: "NOTIFY", headers: .init([
+        .init(name: "ID", value: "installedkeroname"),
+        .init(name: "Reference0", value: "우뉴")
+    ]))
+    #expect(try session.request(notification).statusCode == 200)
 }
 
 @Test(.enabled(if: ProcessInfo.processInfo.environment["KAWARI_TEST_MASTER"] != nil))

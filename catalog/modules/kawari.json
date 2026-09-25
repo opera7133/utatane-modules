@@ -15,7 +15,7 @@
   "instructions": "docs/kawari.md",
   "limitations": ["華和梨 8.2.8のmacOS移植版です。Windows固有操作や元の全機能との互換性は保証しません。"],
   "version": "8.2.8",
-  "revision": 1,
+  "revision": 2,
   "abi": "shiori-load-request-unload",
   "minimumOS": "14.0",
   "source": {"kind": "local", "path": "native"},

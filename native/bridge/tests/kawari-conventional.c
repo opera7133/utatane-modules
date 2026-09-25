@@ -36,6 +36,12 @@ int main(int argc, char **argv) {
     char *text = calloc((size_t)n + 1, 1);
     assert(text); memcpy(text, result, (size_t)n); free(result);
     assert(strstr(text, "Value: \\0起動\\e")); free(text);
+    const char *foreign_name = "NOTIFY SHIORI/3.0\r\nCharset: UTF-8\r\nID: installedkeroname\r\nReference0: 우뉴\r\n\r\n";
+    result = send_request(request, foreign_name, strlen(foreign_name), &n);
+    assert(result && n > 0);
+    text = calloc((size_t)n + 1, 1);
+    assert(text); memcpy(text, result, (size_t)n); free(result);
+    assert(strstr(text, "SHIORI/3.0 200 OK\r\n")); free(text);
     result = send_request(request, shift_jis, strlen(shift_jis), &n);
     assert(result && n > 0);
     text = calloc((size_t)n + 1, 1);
