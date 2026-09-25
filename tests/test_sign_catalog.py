@@ -75,12 +75,13 @@ class SignedCatalogTests(unittest.TestCase):
         sign(self.source, self.stable, self.private)
         base = "https://example.test/modules/preview/"
 
-        def local_response(url, timeout):
+        def local_response(request, timeout):
             self.assertEqual(timeout, 60)
-            name = url.removeprefix(base)
+            self.assertEqual(request.get_header("User-agent"), "Utatane-Modules-Catalog/1.0")
+            name = request.full_url.removeprefix(base)
             response = io.BytesIO((self.stable / name).read_bytes())
             response.status = 200
-            response.url = url
+            response.url = request.full_url
             return response
 
         destination = self.root / "fetched"

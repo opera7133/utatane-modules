@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import subprocess
 from urllib.parse import urljoin, urlsplit
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 from catalog import relative_path
 
@@ -23,7 +23,8 @@ def fetch(base, destination, public_key):
         url = urljoin(base, name)
         if not url.startswith(base):
             raise ValueError(f"URL escapes catalog: {name}")
-        with urlopen(url, timeout=60) as response:
+        request = Request(url, headers={"User-Agent": "Utatane-Modules-Catalog/1.0"})
+        with urlopen(request, timeout=60) as response:
             if response.status != 200 or response.url != url:
                 raise ValueError(f"Unexpected response for {name}")
             body = response.read(limit + 1)
