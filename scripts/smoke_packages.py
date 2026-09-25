@@ -40,7 +40,8 @@ def smoke_commands(archives):
         elif expected[identity]["kinds"] == ["saori"]:
             commands.append([sys.executable, "scripts/smoke_saori.py", str(archive)])
         else:
-            script = "smoke_misaka.py" if identity == "misaka-native" else f"smoke_{identity}.py"
+            script = {"misaka-native": "smoke_misaka.py", "nise-shiori": "smoke_niseshiori.py"}.get(
+                identity, f"smoke_{identity}.py")
             commands.append([sys.executable, f"scripts/{script}", str(archive)])
     return commands, found
 

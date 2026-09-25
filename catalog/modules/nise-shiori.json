@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "nise-shiori",
+  "displayName": "偽栞",
+  "kinds": ["shiori"],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane-modules",
+    "author": "opera7133"
+  },
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/nise-shiori.md",
+  "limitations": ["偽栞の独自Swift実装です。元のWindows DLLと完全互換ではありません。"],
+  "version": "0.1.0",
+  "revision": 1,
+  "abi": "shiori-load-request-unload",
+  "minimumOS": "14.0",
+  "source": {"kind": "local", "path": "native"},
+  "recipe": "recipes/nise-shiori/build.sh",
+  "requiredFiles": [
+    "lib/libniseshiori.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ]
+}

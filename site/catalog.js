@@ -37,7 +37,7 @@ function link(label, path, className) {
 function externalLink(label, url) {
   try {
     const destination = new URL(url);
-    if (destination.protocol !== "https:") return null;
+    if (destination.protocol !== "https:" && destination.protocol !== "http:") return null;
     const node = element("a", "text-link", label);
     node.href = destination.href;
     node.target = "_blank";
@@ -233,8 +233,10 @@ function card(module) {
   }
   info.append(credit);
   const sources = element("p", "source-links");
-  const original = externalLink("原作", module.originalURL || (module.origin === "upstream-port" ? module.upstream.url : null));
-  const implementation = externalLink("macOS版のソース", module.origin === "independent" ? module.upstream.url : null);
+  const original = externalLink("原作", module.originalURL || (
+    module.origin === "upstream-port" || module.upstream.author !== "opera7133" ? module.upstream.url : null
+  ));
+  const implementation = externalLink("macOS版のソース", module.origin === "independent" ? "https://github.com/opera7133/utatane-modules/tree/main/native" : null);
   if (original) sources.append(original);
   if (implementation) sources.append(implementation);
   if (sources.childNodes.length) info.append(sources);

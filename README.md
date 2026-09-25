@@ -12,6 +12,7 @@ Utataneで使うmacOS向けSHIORIなどのビルド・配布用リポジトリ�
 - [minato](docs/minato.md) — macOS移植版
 - [pasta](docs/pasta.md) — macOS移植版
 - [美坂](docs/misaka.md) — 独自Swift実装
+- [偽栞](docs/nise-shiori.md) — 独自Swift実装
 - [蒼空](docs/aosora.md) — 手動導入の案内
 
 ## SAORI

@@ -41,7 +41,10 @@ def build_native(entry, architectures, cache, destination):
     from build import archive_package, output
     identity = entry["id"]
     misaka = identity == "misaka-native"
-    product = "misaka" if misaka else identity.replace("-", "_")
+    nise = identity == "nise-shiori"
+    saori = entry["kinds"] == ["saori"]
+    product = "misaka" if misaka else "niseshiori" if nise else identity.replace("-", "_")
+    smoke_script = "smoke_misaka.py" if misaka else "smoke_niseshiori.py" if nise else "smoke_saori.py"
     host = platform.machine()
     if host not in architectures:
         raise ValueError("Include the host architecture to execute the packaged ABI")
@@ -73,9 +76,9 @@ def build_native(entry, architectures, cache, destination):
             inputs = [ROOT / "pyproject.toml", ROOT / "uv.lock", ROOT / ".python-version", ROOT / entry["recipe"], ROOT / f"catalog/modules/{identity}.json", ROOT / "LICENSE"]
             inputs += [p for directory in ("native",) for p in (ROOT / directory).rglob("*")
                        if p.is_file() and not any(part.startswith(".") for part in p.relative_to(ROOT).parts)]
-            inputs += [ROOT / "scripts" / name for name in ("build.py", "build_native.py", "catalog.py", "smoke_misaka.py" if misaka else "smoke_saori.py")]
+            inputs += [ROOT / "scripts" / name for name in ("build.py", "build_native.py", "catalog.py", smoke_script)]
             inputs += [ROOT / entry["instructions"], ROOT / "schemas/package.schema.json"]
-            if not misaka:
+            if saori:
                 inputs.append(ROOT / "recipes/saori/build.sh")
             manifest = {
                 "schemaVersion": 1,
@@ -93,7 +96,7 @@ def build_native(entry, architectures, cache, destination):
             candidate = work / name
             archive_package(package, candidate)
             verify_package(candidate, entry)
-            subprocess.run([sys.executable, str(ROOT / ("scripts/smoke_misaka.py" if misaka else "scripts/smoke_saori.py")), str(candidate)], check=True, timeout=60)
+            subprocess.run([sys.executable, str(ROOT / "scripts" / smoke_script), str(candidate)], check=True, timeout=60)
             with tempfile.TemporaryDirectory(dir=destination, prefix=".package-") as incoming:
                 staged = Path(incoming) / name
                 shutil.copyfile(candidate, staged)
