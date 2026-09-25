@@ -86,7 +86,7 @@
           },
           "originalURL": {
             "type": "string",
-            "pattern": "^https://[^\\s]+$"
+            "pattern": "^https?://[^\\s]+$"
           },
           "delivery": {
             "enum": [
@@ -140,7 +140,7 @@
               "properties": {
                 "version": {
                   "type": "string",
-                  "pattern": "^\\d+\\.\\d+\\.\\d+$"
+                  "pattern": "^\\d+(?:\\.\\d+){0,2}$"
                 },
                 "revision": {
                   "type": "integer",

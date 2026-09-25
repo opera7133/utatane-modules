@@ -14,6 +14,7 @@ uv run --locked python scripts/build.py satori --archs arm64 x86_64
 uv run --locked python scripts/build.py kagari --archs arm64 x86_64
 uv run --locked python scripts/build.py misaka-native --archs arm64 x86_64
 uv run --locked python scripts/build.py nise-shiori --archs arm64 x86_64
+uv run --locked python scripts/build.py ese-shiori --archs arm64 x86_64
 for module in saori-cpuid kenonoke textcopy2 mciaudior wmove; do
   uv run --locked python scripts/build.py "$module" --archs arm64 x86_64
 done

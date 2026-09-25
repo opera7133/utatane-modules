@@ -38,10 +38,26 @@ public enum LegacyTextDecoder {
 
     public static func encode(_ text: String, charset: String) -> Data? {
         guard let encoding = encoding(named: charset) else { return nil }
+        // macOS maps U+005C to the full-width reverse solidus in Shift_JIS.
+        // Encode the other spans normally, retaining SakuraScript's ASCII 0x5c.
+        if ["shift_jis", "shift-jis", "cp932", "windows-31j"].contains(charset.lowercased()),
+           text.contains("\\")
+        {
+            var output = Data()
+            for (index, part) in text.components(separatedBy: "\\").enumerated() {
+                if index > 0 { output.append(0x5c) }
+                guard let bytes = transcode(Data(part.utf8), from: "UTF-8", to: charset) else { return nil }
+                output.append(bytes)
+            }
+            return output
+        }
+        if let data = transcode(Data(text.utf8), from: "UTF-8", to: charset) {
+            return data
+        }
         if let data = text.data(using: encoding) {
             return data
         }
-        return transcode(Data(text.utf8), from: "UTF-8", to: charset)
+        return nil
     }
 
     public static func encoding(named charset: String) -> String.Encoding? {

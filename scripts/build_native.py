@@ -42,9 +42,10 @@ def build_native(entry, architectures, cache, destination):
     identity = entry["id"]
     misaka = identity == "misaka-native"
     nise = identity == "nise-shiori"
+    ese = identity == "ese-shiori"
     saori = entry["kinds"] == ["saori"]
-    product = "misaka" if misaka else "niseshiori" if nise else identity.replace("-", "_")
-    smoke_script = "smoke_misaka.py" if misaka else "smoke_niseshiori.py" if nise else "smoke_saori.py"
+    product = "misaka" if misaka else "niseshiori" if nise else "ese-shiori" if ese else identity.replace("-", "_")
+    smoke_script = "smoke_misaka.py" if misaka else "smoke_niseshiori.py" if nise else "smoke_ese_shiori.py" if ese else "smoke_saori.py"
     host = platform.machine()
     if host not in architectures:
         raise ValueError("Include the host architecture to execute the packaged ABI")

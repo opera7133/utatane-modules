@@ -43,6 +43,15 @@ class CatalogTests(unittest.TestCase):
         entries = modules(self.root, check_sources=False)
         self.assertEqual({x["delivery"] for x in entries}, {"binary", "instructions-only"})
 
+    def test_original_numeric_versions_and_http_archive_links(self):
+        entries = {item["id"]: item for item in modules(self.root, check_sources=False)}
+        self.assertEqual(entries["misaka-native"]["version"], "101")
+        self.assertEqual(entries["ese-shiori"]["version"], "3.03")
+        self.assertEqual(entries["mciaudior"]["originalURL"], "http://umeici.onjn.jp")
+        self.edit("ese-shiori", lambda value: value.update(version="3.03-beta"))
+        with self.assertRaises(ValidationError):
+            modules(self.root, check_sources=False)
+
     def test_local_sources_are_validated_without_a_submodule(self):
         entry = read_json(self.root / "catalog/modules/misaka-native.json")
         with self.assertRaisesRegex(ValueError, "local native source"):

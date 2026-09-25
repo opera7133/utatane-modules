@@ -14,7 +14,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--utatane", type=Path, required=True)
     parser.add_argument("--package", type=Path, required=True)
-    parser.add_argument("--module", choices=("misaka-native", "minato", "pasta"), default="misaka-native")
+    parser.add_argument("--module", choices=("misaka-native", "minato", "pasta", "nise-shiori", "ese-shiori"), default="misaka-native")
     parser.add_argument("--host", type=Path, help="Use an existing native SHIORI host when testing conventional SHIORI")
     args = parser.parse_args()
     checkout = args.utatane.resolve()
@@ -24,7 +24,9 @@ def main():
     host_header = checkout / "packages/shiori/external/module/MisakaBridge/include/misaka_host_bridge.h"
     if args.module == "misaka-native" and host_header.read_bytes() != (ROOT / "native/bridge/include/misaka_host_bridge.h").read_bytes():
         raise ValueError("Utatane's imported module header differs from native/bridge/include/misaka_host_bridge.h")
-    suite = checkout / (f"packages/plugin/Tests/{args.module.title()}NativeTests.swift" if args.module != "misaka-native"
+    suite_name = {"minato": "MinatoNativeTests", "pasta": "PastaNativeTests",
+                  "nise-shiori": "NiseShioriNativeTests", "ese-shiori": "EseShioriNativeTests"}.get(args.module)
+    suite = checkout / (f"packages/plugin/Tests/{suite_name}.swift" if suite_name
                         else "packages/shiori/native/misaka/Tests/MisakaModuleIntegrationTests.swift")
     if not suite.is_file():
         raise ValueError("The selected Utatane checkout has no module integration tests")
@@ -32,14 +34,16 @@ def main():
         root = Path(temporary)
         safe_extract(archive, root)
         environment = dict(os.environ)
-        if args.module in ("minato", "pasta"):
-            library = root / f"{args.module}/lib/lib{args.module}.dylib"
+        if suite_name:
+            library_name = {"nise-shiori": "libniseshiori.dylib"}.get(args.module, f"lib{args.module}.dylib")
+            library = root / f"{args.module}/lib/{library_name}"
             host = args.host.resolve() if args.host else root / "utatane-shiori-host"
             if not args.host:
                 subprocess.run(["sh", str(checkout / "Scripts/build-native-shiori-host.sh"), str(host)], check=True)
-            environment.update({f"UTATANE_{args.module.upper()}_MODULE": str(library), "UTATANE_NATIVE_SHIORI_HOST": str(host)})
-            test_filter = f"{args.module.title()}Native"
-            expected = (f"Suite {args.module.title()}NativeTests passed", f"shared {args.module} runs two ghosts and recovers a broken bundled copy")
+            environment.update({f"UTATANE_{args.module.upper().replace('-', '_')}_MODULE": str(library),
+                                "UTATANE_NATIVE_SHIORI_HOST": str(host)})
+            test_filter = suite_name.removesuffix("Tests")
+            expected = (f"Suite {suite_name} passed",)
         else:
             library = root / "misaka-native/lib/libmisaka.dylib"
             environment["UTATANE_MISAKA_MODULE"] = str(library)

@@ -20,7 +20,7 @@
     "美坂の独自Swift実装。元のWindows DLLと完全互換であることは保証していません。",
     "電文はUTF-8のSHIORI/3.0・PLUGIN/2.0に対応します。SAORIはホストサービスが必要です。"
   ],
-  "version": "0.1.0",
+  "version": "101",
   "revision": 6,
   "abi": "shiori-load-request-unload",
   "minimumOS": "14.0",
