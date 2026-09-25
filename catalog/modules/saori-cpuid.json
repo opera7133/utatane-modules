@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "saori-cpuid",
-  "displayName": "saori_cpuid (Utatane native)",
+  "displayName": "saori_cpuid",
   "kinds": [
     "saori"
   ],
@@ -10,6 +10,7 @@
     "url": "https://github.com/opera7133/utatane",
     "author": "opera7133"
   },
+  "originalURL": "https://github.com/ukatech/csaori/tree/master/impl_saori/ccpuid",
   "delivery": "binary",
   "license": "MIT",
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",

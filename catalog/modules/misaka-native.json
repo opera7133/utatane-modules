@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "misaka-native",
-  "displayName": "Utatane MISAKA Native",
+  "displayName": "MISAKA (Native)",
   "kinds": [
     "shiori",
     "plugin"
@@ -11,6 +11,7 @@
     "url": "https://github.com/opera7133/utatane",
     "author": "opera7133"
   },
+  "originalURL": "https://web.archive.org/web/20080603184729/http://lovelove.rabi-en-rose.net/index_misaka.php",
   "delivery": "binary",
   "license": "MIT",
   "licenseURL": "https://github.com/opera7133/utatane/blob/69ad7a2cd0c45bdd845e2978863c572b194dec19/LICENSE",

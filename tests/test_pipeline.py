@@ -95,6 +95,9 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(entries["kagari"]["availability"], "not-built")
         self.assertEqual(entries["aosora"]["availability"], "instructions-only")
         self.assertEqual(entries["aosora"]["artifacts"], [])
+        self.assertEqual(entries["misaka-native"]["originalURL"],
+                         read_json(self.root / "catalog/modules/misaka-native.json")["originalURL"])
+        self.assertNotIn("originalURL", entries["kenonoke"])
         self.assertTrue((self.root / "snapshot/docs/aosora.md").is_file())
         page = (self.root / "snapshot/index.html").read_text()
         self.assertIn('href="./catalog.css"', page)

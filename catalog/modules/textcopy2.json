@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "textcopy2",
-  "displayName": "textcopy2 (Utatane native)",
+  "displayName": "textcopy2",
   "kinds": [
     "saori"
   ],
@@ -10,6 +10,7 @@
     "url": "https://github.com/opera7133/utatane",
     "author": "opera7133"
   },
+  "originalURL": "https://github.com/ukatech/csaori/tree/master/impl_saori/textcopy2",
   "delivery": "binary",
   "license": "MIT",
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",

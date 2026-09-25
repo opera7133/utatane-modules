@@ -123,6 +123,10 @@
         }
       }
     },
+    "originalURL": {
+      "type": "string",
+      "pattern": "^https://[^\\s]+$"
+    },
     "delivery": {
       "enum": [
         "binary",

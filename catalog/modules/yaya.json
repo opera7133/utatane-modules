@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "id": "yaya",
-  "displayName": "YAYA (Utatane macOS build)",
+  "displayName": "YAYA",
   "kinds": [
     "shiori"
   ],
   "origin": "upstream-port",
   "upstream": {
-    "url": "https://github.com/opera7133/yaya-shiori",
+    "url": "https://github.com/YAYA-shiori/yaya-shiori",
     "author": "SEIBIHAN"
   },
   "delivery": "binary",

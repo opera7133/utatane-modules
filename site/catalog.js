@@ -34,6 +34,20 @@ function link(label, path, className) {
   return node;
 }
 
+function externalLink(label, url) {
+  try {
+    const destination = new URL(url);
+    if (destination.protocol !== "https:") return null;
+    const node = element("a", "text-link", label);
+    node.href = destination.href;
+    node.target = "_blank";
+    node.rel = "noopener noreferrer";
+    return node;
+  } catch {
+    return null;
+  }
+}
+
 function appendInline(parent, source, baseURL) {
   const pattern = /(`[^`]+`|\[[^\]]+\]\([^)]+\))/g;
   let position = 0;
@@ -218,6 +232,12 @@ function card(module) {
     credit.append(module.license);
   }
   info.append(credit);
+  const sources = element("p", "source-links");
+  const original = externalLink("原作", module.originalURL || (module.origin === "upstream-port" ? module.upstream.url : null));
+  const implementation = externalLink("macOS版のソース", module.origin === "independent" ? module.upstream.url : null);
+  if (original) sources.append(original);
+  if (implementation) sources.append(implementation);
+  if (sources.childNodes.length) info.append(sources);
   const actions = element("div", "actions");
   if (artifact) {
     const download = link("ダウンロード", artifact.path, "action");

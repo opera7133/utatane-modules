@@ -187,6 +187,8 @@ def generate(output, packages, root=ROOT, abi_reports=()):
         filenames = set()
         for entry in entries:
             item = {k: entry[k] for k in ("id", "displayName", "kinds", "origin", "upstream", "delivery", "license", "licenseURL", "instructions", "limitations")}
+            if "originalURL" in entry:
+                item["originalURL"] = entry["originalURL"]
             instructions = staging / entry["instructions"]
             instructions.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(within(root, entry["instructions"]), instructions)

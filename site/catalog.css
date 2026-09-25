@@ -39,6 +39,7 @@ h1 { margin: 0 0 8px; font-size: clamp(26px, 5vw, 34px); }
 .badge { padding: 2px 6px; color: #513d88; background: #f2eef9; border-radius: 3px; font-size: 10px; font-weight: 650; }
 .module .detail, .module .meta { margin: 6px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .module .credit { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+.module .source-links { display: flex; gap: 12px; margin: 5px 0 0; font-size: 12px; }
 .actions { display: flex; flex: 0 0 auto; gap: 12px; align-items: center; }
 .action { display: inline-block; padding: 8px 12px; color: #fff; background: var(--primary); border-radius: 5px; font-size: 13px; text-decoration: none; white-space: nowrap; }
 .action:hover { background: #513d88; }

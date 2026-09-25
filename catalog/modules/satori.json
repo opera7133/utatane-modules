@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "id": "satori",
-  "displayName": "里々 (Utatane macOS build)",
+  "displayName": "里々",
   "kinds": [
     "shiori"
   ],
   "origin": "upstream-port",
   "upstream": {
-    "url": "https://github.com/opera7133/satoriya-shiori",
+    "url": "https://github.com/ukatech/satoriya-shiori",
     "author": "SEIBIHAN"
   },
   "delivery": "binary",
