@@ -7,9 +7,10 @@
   ],
   "origin": "independent",
   "upstream": {
-    "url": "http://umeici.onjn.jp",
-    "author": "umeici"
+    "url": "https://github.com/opera7133/utatane",
+    "author": "opera7133"
   },
+  "originalURL": "http://umeici.onjn.jp",
   "delivery": "binary",
   "license": "MIT",
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",

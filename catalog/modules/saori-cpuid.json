@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "saori-cpuid",
-  "displayName": "saori_cpuid",
+  "displayName": "saori_cpuid (Native)",
   "kinds": [
     "saori"
   ],
