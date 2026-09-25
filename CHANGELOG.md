@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- pastaのタイムアウト回復テストを同期で制御し、CIの処理速度による失敗をなくした。
 - 華和梨 8.2.8を通常のSHIORI入口を持つmacOS版dylibとして追加した。
 - 灯 2.003の辞書・AZRとSAORI呼び出しに対応する独立Swift SHIORI `libakari.dylib`を追加した。
 - 結奈SecondEdition Unit 10の辞書を読み込む独立Swift SHIORI `libyuhna.dylib`を追加した。

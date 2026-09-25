@@ -19,13 +19,13 @@
     "同じプロセス内では1セッション。Utataneはゴーストごとにプロセスを分離します。"
   ],
   "version": "0.3.5",
-  "revision": 3,
+  "revision": 4,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {
     "url": "https://github.com/opera7133/pasta.git",
     "path": "sources/pasta",
-    "commit": "0ca08a18f4618eb302ca8bf3a7f8e94a38f6bfde"
+    "commit": "d471c6a4c5655bbddb492ee4882b6898a104d3e3"
   },
   "recipe": "recipes/pasta/build.sh",
   "requiredFiles": [
