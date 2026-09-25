@@ -62,7 +62,9 @@ jobs:
             sources/pasta/target
             build/cache/minato-rust
             build/cache/pasta-rust
-          key: macos15-xcode26-rust193-${{ hashFiles('sources/minato/Cargo.lock', 'sources/pasta/Cargo.lock') }}
+          key: macos15-xcode26-rust193-${{ hashFiles('sources/minato/Cargo.lock', 'sources/minato/**/Cargo.toml', 'sources/minato/**/*.rs', 'sources/pasta/Cargo.lock', 'sources/pasta/**/Cargo.toml', 'sources/pasta/**/*.rs', 'recipes/minato/build.sh', 'recipes/pasta/build.sh') }}
+          restore-keys: |
+            macos15-xcode26-rust193-
       - name: Test independent Swift engines
         run: swift test --package-path native
       - name: Set up Rust for SHIORI ports
