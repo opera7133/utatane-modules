@@ -32,7 +32,7 @@ def verify_library(library, architectures, *, misaka=False):
         symbols = {line.split()[-1] for line in output("nm", "-arch", arch, "-gU", str(library)).splitlines() if line.split()}
         required = {"_load", "_loadu", "_request", "_unload"}
         if misaka:
-            required.add("_utatane_misaka_bridge")
+            required.add("_utatane_module_bridge")
         if not required <= symbols:
             raise ValueError("SHIORI entry points missing")
 
