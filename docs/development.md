@@ -28,13 +28,15 @@ uv run --locked python scripts/catalog.py generate \
 
 ZIPは `dist/`、カタログは `catalog/generated/` に出力します。`catalog/generated/` は `index.html` を含む静的な配布単位です。既存の出力は上書きしません。再実行時は `--output` で別の場所を指定してください。
 
-署名済みの検証用スナップショットは、OpenSSL 3と管理外のEd25519秘密鍵を使って作ります。`--channel stable` は全バイナリのABI・Utatane UI検証が記録された場合だけ通ります。
+署名済みスナップショットは、OpenSSL 3と管理外のEd25519秘密鍵を使って作ります。正式版はABI検証済みの同一ZIPを再ビルドせずに昇格します。任意のUI確認記録は `catalog/ui-verification.json` にZIPのSHA-256と版・リビジョンを付けて保存できます。
 
 ```sh
 uv run --locked python scripts/sign_catalog.py sign catalog/generated /path/to/signed-catalog \
   --private-key /path/to/private.pem
 uv run --locked python scripts/sign_catalog.py verify /path/to/signed-catalog \
   --public-key /path/to/public.pem
+uv run --locked python scripts/sign_catalog.py promote /path/to/signed-catalog /path/to/stable-catalog \
+  --private-key /path/to/private.pem --ui-evidence catalog/ui-verification.json
 ```
 
 ビルドはZIPを展開してABIテストまで実行します。実行するのはホストのCPU側です。依存アーカイブは `build/cache/downloads/` に保存し、再利用時もハッシュを照合します。

@@ -5,6 +5,7 @@
   "kinds": [
     "shiori"
   ],
+  "windowsFilenames": ["misaka.dll"],
   "origin": "independent",
   "upstream": {
     "url": "https://github.com/opera7133/utatane",

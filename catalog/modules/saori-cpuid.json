@@ -5,6 +5,7 @@
   "kinds": [
     "saori"
   ],
+  "windowsFilenames": ["saori_cpuid.dll"],
   "origin": "independent",
   "upstream": {
     "url": "https://github.com/opera7133/utatane",

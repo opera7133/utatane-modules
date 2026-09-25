@@ -4,6 +4,8 @@ on:
   pull_request:
   push:
     branches: [main]
+    paths-ignore:
+      - catalog/ui-verification.json
   workflow_dispatch:
     inputs:
       channel:
@@ -21,6 +23,7 @@ permissions:
 
 jobs:
   catalog:
+    if: inputs.channel != 'stable'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
@@ -167,9 +170,11 @@ jobs:
   publish:
     needs: snapshot
     if: >-
+      always() &&
       vars.MODULES_PUBLISH_ENABLED == 'true' &&
       github.ref == 'refs/heads/main' &&
-      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      (needs.snapshot.result == 'success' || (github.event_name == 'workflow_dispatch' && inputs.channel == 'stable'))
     runs-on: ubuntu-24.04
     environment: modules-publish
     permissions:
@@ -191,10 +196,11 @@ jobs:
           enable-cache: true
       - run: uv sync --locked
       - uses: actions/download-artifact@v8
+        if: env.MODULES_CHANNEL == 'staging'
         with:
           name: modules-development-tested
           path: build/development
-      - name: Sign and verify the exact tested snapshot
+      - name: Load signing key
         env:
           MODULES_SIGNING_KEY_B64: ${{ secrets.MODULES_SIGNING_KEY_B64 }}
         shell: bash
@@ -207,7 +213,17 @@ jobs:
           actual=$(openssl pkey -pubin -in "$RUNNER_TEMP/catalog-public.pem" -outform DER | tail -c 32 | base64 -w0)
           expected=$(cat catalog/public-key.txt)
           test "$actual" = "$expected"
-          uv run --locked python scripts/sign_catalog.py sign build/development build/signed --private-key "$RUNNER_TEMP/catalog-private.pem" --channel "$MODULES_CHANNEL"
+      - name: Sign or promote the exact tested snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$MODULES_CHANNEL" == stable ]]; then
+            uv run --locked python scripts/fetch_snapshot.py https://dl.wmsci.com/utatane/modules/preview/ build/staging --public-key "$RUNNER_TEMP/catalog-public.pem"
+            uv run --locked python scripts/sign_catalog.py verify build/staging --public-key "$RUNNER_TEMP/catalog-public.pem" --channel staging
+            uv run --locked python scripts/sign_catalog.py promote build/staging build/signed --private-key "$RUNNER_TEMP/catalog-private.pem" --ui-evidence catalog/ui-verification.json
+          else
+            uv run --locked python scripts/sign_catalog.py sign build/development build/signed --private-key "$RUNNER_TEMP/catalog-private.pem" --channel staging
+          fi
           uv run --locked python scripts/sign_catalog.py verify build/signed --public-key "$RUNNER_TEMP/catalog-public.pem" --channel "$MODULES_CHANNEL"
       - name: Upload signed catalog and immutable ZIPs
         shell: bash

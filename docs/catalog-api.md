@@ -14,4 +14,8 @@
 
 `module.json` の `source` と `build` にソース・ビルド条件、`files` に各ファイルのSHA-256を記録します。SHA-256とad-hoc署名は配布元の認証にはなりません。`signed: false` のカタログを信頼済みの自動導入元として扱わないでください。
 
-`staging` と `stable` は `signed: true` とし、`index.json` のバイト列に対するEd25519署名を64バイトの `index.sig` に保存します。検証側は組み込みの公開鍵で署名を確認してから、各ZIPのサイズとSHA-256を照合します。Utataneの自動導入対象は `stable` だけです。署名済みの一覧とファイル一式を同じディレクトリに配置してください。
+`windowsFilenames` には、そのモジュールが代わりに使えるWindows DLL名を列挙できます（例: `saori_cpuid.dll`）。Utataneは新しく導入したゴーストのDLL名と照合し、同梱・共通導入版のdylibがない場合にダウンロードを案内します。省略した場合は通常 `id + ".dll"` として照合します。
+
+`staging` と `stable` は `signed: true` とし、`index.json` のバイト列に対するEd25519署名を64バイトの `index.sig` に保存します。検証側は配布元に対応する公開鍵で署名を確認してから、各ZIPのサイズとSHA-256を照合します。Utataneの自動導入対象は `stable` だけです。署名済みの一覧とファイル一式を同じディレクトリに配置してください。
+
+別の配布元のカタログを使う場合は、UtataneのSHIORI設定にHTTPSの `index.json` URLと、その配布元のEd25519公開鍵（32バイトをBase64化した文字列）を設定します。URLだけの差し替えはできません。独自カタログも同じスキーマと署名方式を使えます。

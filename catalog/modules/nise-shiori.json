@@ -3,6 +3,7 @@
   "id": "nise-shiori",
   "displayName": "偽栞 (Native)",
   "kinds": ["shiori"],
+  "windowsFilenames": ["niseshiori.dll"],
   "origin": "independent",
   "upstream": {
     "url": "https://github.com/opera7133/utatane-modules",

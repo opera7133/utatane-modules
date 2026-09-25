@@ -5,6 +5,7 @@
   "kinds": [
     "shiori"
   ],
+  "windowsFilenames": ["yaya.dll", "aya.dll", "aya5.dll"],
   "origin": "upstream-port",
   "upstream": {
     "url": "https://github.com/YAYA-shiori/yaya-shiori",

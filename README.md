@@ -2,7 +2,7 @@
 
 Utataneで使うmacOS向けSHIORIなどのビルド・配布用リポジトリ。
 
-[配布カタログからダウンロード](https://dl.wmsci.com/utatane/modules/preview/)
+[配布カタログからダウンロード](https://dl.wmsci.com/utatane/modules/)
 
 ## SHIORI
 
