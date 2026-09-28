@@ -47,8 +47,14 @@ class CatalogTests(unittest.TestCase):
         entries = {item["id"]: item for item in modules(self.root, check_sources=False)}
         self.assertEqual(entries["misaka-native"]["version"], "101")
         self.assertEqual(entries["ese-shiori"]["version"], "3.03")
+        self.assertEqual(entries["yaya"]["version"], "Tc573-6")
+        self.assertEqual(entries["yaya-6"]["version"], "Tc603-2")
         self.assertEqual(entries["mciaudior"]["originalURL"], "http://umeici.onjn.jp")
         self.edit("ese-shiori", lambda value: value.update(version="3.03-beta"))
+        with self.assertRaises(ValidationError):
+            modules(self.root, check_sources=False)
+        self.edit("ese-shiori", lambda value: value.update(version="3.03"))
+        self.edit("yaya-6", lambda value: value.update(version="Tc603-2-beta"))
         with self.assertRaises(ValidationError):
             modules(self.root, check_sources=False)
 

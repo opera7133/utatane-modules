@@ -11,6 +11,7 @@
 | `candidate` | 検証済みの候補ZIPがある |
 
 成果物を選ぶ際はOS、CPU、ABIを照合します。`architectures` は収録CPU、`verification.nativeABI` は実行確認したCPUです。
+`version` は通常の数字表記のほか、YAYA の upstream 表記（例: `Tc603-2`）を使えます。移植側だけの変更は `revision` を上げて区別します。
 
 `module.json` の `source` と `build` にソース・ビルド条件、`files` に各ファイルのSHA-256を記録します。SHA-256とad-hoc署名は配布元の認証にはなりません。`signed: false` のカタログを信頼済みの自動導入元として扱わないでください。
 

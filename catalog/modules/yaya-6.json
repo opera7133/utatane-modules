@@ -18,7 +18,7 @@
     "Windows用SAORIは実行できません。同梱または共通導入したmacOS用SAORIを使用してください。",
     "同じプロセス内では1セッション。複数ゴーストは別プロセスで実行してください。"
   ],
-  "version": "6.3.2",
+  "version": "Tc603-2",
   "revision": 1,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",

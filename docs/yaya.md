@@ -1,6 +1,6 @@
 # YAYA
 
-macOS 14以降向けのSHIORIです。ZIPの`yaya/lib/libyaya.dylib`を`ghost/master/`へ置き、`descript.txt`に追記します。
+YAYA 5 系（Tc573-6）の macOS 14以降向けSHIORIです。ZIPの`yaya/lib/libyaya.dylib`を`ghost/master/`へ置き、`descript.txt`に追記します。
 
 ```text
 shiori.macos,libyaya.dylib
