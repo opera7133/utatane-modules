@@ -18,14 +18,14 @@
     "Windows専用のLua FFI呼び出しやDLLは実行できません。",
     "同じプロセス内では1セッション。Utataneはゴーストごとにプロセスを分離します。"
   ],
-  "version": "0.3.5",
-  "revision": 4,
+  "version": "0.3.6",
+  "revision": 1,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {
     "url": "https://github.com/opera7133/pasta.git",
     "path": "sources/pasta",
-    "commit": "d471c6a4c5655bbddb492ee4882b6898a104d3e3"
+    "commit": "dde6028f897a41510cac68a3e2b7f6c4d505ef30"
   },
   "recipe": "recipes/pasta/build.sh",
   "requiredFiles": [
