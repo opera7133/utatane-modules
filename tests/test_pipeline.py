@@ -115,8 +115,8 @@ class CatalogTests(unittest.TestCase):
         self.assertNotIn("originalURL", entries["kenonoke"])
         self.assertTrue((self.root / "snapshot/docs/aosora.md").is_file())
         page = (self.root / "snapshot/index.html").read_text()
-        self.assertIn('href="./catalog.css"', page)
-        self.assertIn('src="./catalog.js"', page)
+        self.assertIn(f'href="./catalog.css?v={sha256(self.root / "site/catalog.css")[:16]}"', page)
+        self.assertIn(f'src="./catalog.js?v={sha256(self.root / "site/catalog.js")[:16]}"', page)
         self.assertTrue((self.root / "snapshot/catalog.css").is_file())
         self.assertTrue((self.root / "snapshot/catalog.js").is_file())
 

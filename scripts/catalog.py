@@ -222,8 +222,15 @@ def generate(output, packages, root=ROOT, abi_reports=()):
         index = {"schemaVersion": 1, "channel": "development", "signed": False, "modules": public}
         Draft202012Validator(read_json(root / "schemas/index.schema.json")).validate(index)
         write_json(staging / "index.json", index)
-        for name in ("index.html", "catalog.css", "catalog.js"):
-            shutil.copyfile(within(root, f"site/{name}"), staging / name)
+        page = within(root, "site/index.html").read_text(encoding="utf-8")
+        for name, marker in (("catalog.css", "__CATALOG_CSS_SHA256__"),
+                             ("catalog.js", "__CATALOG_JS_SHA256__")):
+            source = within(root, f"site/{name}")
+            if page.count(marker) != 1:
+                raise ValueError(f"Missing cache version marker: {marker}")
+            page = page.replace(marker, sha256(source)[:16])
+            shutil.copyfile(source, staging / name)
+        (staging / "index.html").write_text(page, encoding="utf-8")
         staging.rename(output)
 
 
