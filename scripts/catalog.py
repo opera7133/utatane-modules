@@ -228,7 +228,7 @@ def generate(output, packages, root=ROOT, abi_reports=()):
             source = within(root, f"site/{name}")
             if page.count(marker) != 1:
                 raise ValueError(f"Missing cache version marker: {marker}")
-            page = page.replace(marker, sha256(source)[:16])
+            page = page.replace(marker, sha256(source))
             shutil.copyfile(source, staging / name)
         (staging / "index.html").write_text(page, encoding="utf-8")
         staging.rename(output)
