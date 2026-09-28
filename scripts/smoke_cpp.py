@@ -51,7 +51,7 @@ if STRSTR(_argv[0], "ID: OnYaya6", 0) >= 0 {
     _hash["items"] = IARRAY
     _hash["items"][0] = "nested"
     _value = _hash["items"][0]
-} elseif ''', "")
+} elseif ''', "if ")
         (root / "probe.dic").write_text(dictionary)
     else:
         (root / "dic00.txt").write_bytes("＊OnBoot\r\n：こんにちは。\r\n＊OnSet\r\n＄確認\t保存できた\r\n：設定。\r\n＊OnRead\r\n：値は（確認）。\r\n＊OnSaori\r\n：OSは（os_name）。\r\n＊OnKeyword\r\n：分類は（分類、酒場で日本酒を飲む）。\r\n".encode("cp932"))
