@@ -14,7 +14,7 @@ let documentRequest = 0;
 function safePath(path) {
   return (
     typeof path === "string" &&
-    /^[a-z0-9._/-]+$/.test(path) &&
+    /^[A-Za-z0-9._/-]+$/.test(path) &&
     !path.startsWith("/") &&
     !path.split("/").includes("..")
   );
