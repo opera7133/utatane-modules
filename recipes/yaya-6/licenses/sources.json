@@ -1,0 +1,7 @@
+{
+  "zlib-1.1.4.txt": {
+    "url": "https://raw.githubusercontent.com/madler/zlib/v1.1.4/zlib.h",
+    "sourceSHA256": "7388aeb8cc550dcbc158fd43dc90ee900f5fc6a3d055ceaf4c83aa441e6d387f",
+    "note": "Leading copyright and license comment; CRC32 was modified for AYA5 by C.Ponapalt."
+  }
+}

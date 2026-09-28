@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import re
+import runpy
 import shutil
 import subprocess
 import sys
@@ -19,24 +20,67 @@ def main():
     work.mkdir(parents=True, exist_ok=True)
     tree = work / "source"
     shutil.copytree(source, tree / "Vendor", ignore=shutil.ignore_patterns(".git"))
+    if identity == "yaya-6":
+        # The upstream POSIX makefile converts these CP932 translation units too.
+        for path in (tree / "Vendor").rglob("*.cpp"):
+            if path.parts[-2] in ("tinyxml2",):
+                continue
+            converted = subprocess.run(["iconv", "-f", "CP932", "-t", "UTF-8", "-c"],
+                                       input=path.read_bytes(), stdout=subprocess.PIPE, check=True)
+            path.write_bytes(converted.stdout)
     recipe = ROOT / f"recipes/{identity}"
     for file in recipe.glob("*.h"):
         shutil.copyfile(file, tree / file.name)
     # Rename only the legacy long-width entry points in a disposable build copy.
     # The pinned source and its history stay unchanged.
-    if identity == "yaya":
+    if identity in ("yaya", "yaya-6"):
         for filename in ("aya5.cpp", "aya5.h"):
             path = tree / "Vendor" / filename
             raw = path.read_bytes()
             raw = re.sub(rb'(?<!->)\b(loadu|load|unload|request)(?=\s*\()', rb'legacy_\1', raw)
             path.write_bytes(raw)
+    if identity == "yaya-6":
+        # Upstream's ptrdiff_t overload is ambiguous with the macOS arm64 ABI.
+        path = tree / "Vendor/function.cpp"
+        raw = path.read_bytes()
+        needle = b"CValue(st.linecount)"
+        if raw.count(needle) != 2: raise ValueError("YAYA 6 linecount patch anchor changed")
+        path.write_bytes(raw.replace(needle, b"CValue(static_cast<yaya::int_t>(st.linecount))"))
+        path = tree / "Vendor/sha1.h"
+        raw = path.read_bytes()
+        needle = b"#if (_MSC_VER >= 1400)"
+        if raw.count(needle) != 1: raise ValueError("YAYA 6 stdint patch anchor changed")
+        path.write_bytes(raw.replace(needle, b"#if defined(__APPLE__) || (_MSC_VER >= 1400)"))
+        path = tree / "Vendor/sysfunc.cpp"
+        raw = path.read_bytes()
+        needle = b'#include "sysfunc.h"'
+        if raw.count(needle) != 1: raise ValueError("YAYA 6 fcntl patch anchor changed")
+        path.write_bytes(raw.replace(needle, b"#undef FREAD\n#undef FWRITE\n" + needle))
+        path = tree / "Vendor/parser0.cpp"
+        raw = path.read_bytes()
+        needle = b"inline CDefine::CDefine("
+        if raw.count(needle) != 1: raise ValueError("YAYA 6 CDefine patch anchor changed")
+        path.write_bytes(raw.replace(needle, b"CDefine::CDefine("))
+        path = tree / "Vendor/basis.cpp"
+        raw = path.read_bytes()
+        needle = b"Ccct::MbcsToUcs2Buf(base_path, mbpath, CHARSET_UTF8);"
+        if raw.count(needle) != 2: raise ValueError("YAYA 6 path patch anchor changed")
+        start = raw.rfind(needle)
+        raw = raw[:start] + b"base_path = widen(mbpath);" + raw[start + len(needle):]
+        path.write_bytes(raw)
+        runpy.run_path(str(recipe / "patch_native_saori.py"))["patch"](tree)
+        path = tree / "Vendor/lib1.cpp"
+        raw = path.read_bytes()
+        needle = b'#include "lib.h"'
+        if raw.count(needle) != 1: raise ValueError("YAYA 6 libgen patch anchor changed")
+        path.write_bytes(raw.replace(needle, b'#include <libgen.h>\n' + needle))
     if identity == "yaya":
         path = tree / "Vendor/lib1.cpp"
         raw = path.read_bytes()
         needle = b"        nativeSaori = true;\n        hDLL = reinterpret_cast<void *>(1);\n        return 1;\n    }"
         if raw.count(needle) != 1: raise ValueError("YAYA SAORI adapter anchor changed")
         path.write_bytes(raw.replace(needle, needle + b"\n    return 0; // Conventional macOS SAORI only.\n"))
-    else:
+    elif identity == "satori":
         path = tree / "Vendor/satori/shiori_plugin.cpp"
         raw = path.read_bytes()
         start = raw.index(b"#ifdef POSIX\r\n\t\telse if")
@@ -52,7 +96,7 @@ def main():
         sources += [recipe / "CharsetPOSIX.cpp", recipe / "NativeSwiftSaori.cpp"]
     common = ["-O2", "-DNDEBUG", "-DPOSIX", "-fvisibility=hidden", "-mmacosx-version-min=14.0",
               "-I", str(tree), "-I", str(tree / "Vendor"), "-I", str(ROOT / "recipes/cpp")]
-    if identity == "yaya": common += ["-DYAYA_MODULE"]
+    if identity in ("yaya", "yaya-6"): common += ["-DYAYA_MODULE"]
     else: common += ["-DSATORI_DLL", "-I", str(tree / "Vendor/satori"), "-I", str(tree / "Vendor/_")]
     libraries = []
     for arch in archs.split():
@@ -61,7 +105,8 @@ def main():
         def compile_one(item):
             index, path = item
             obj = directory / f"{index}.o"
-            compiler = ["xcrun", "clang"] if path.suffix == ".c" else ["xcrun", "clang++", "-std=c++17"]
+            cpp_standard = "c++14" if identity == "yaya-6" and tree / "Vendor" in path.parents else "c++17"
+            compiler = ["xcrun", "clang"] if path.suffix == ".c" else ["xcrun", "clang++", f"-std={cpp_standard}"]
             subprocess.run(compiler + common + ["-arch", arch, "-c", str(path), "-o", str(obj)], check=True)
             return obj
         with ThreadPoolExecutor(max_workers=min(os.cpu_count() or 2, 6)) as pool:
@@ -74,9 +119,14 @@ def main():
     subprocess.run(["xcrun", "lipo", "-create", *map(str, libraries), "-output", str(final)], check=True)
     subprocess.run(["codesign", "--force", "--sign", "-", str(final)], check=True)
     licenses = output / "licenses"; licenses.mkdir()
-    license_id = "BSD-3-Clause" if identity == "yaya" else "BSD-2-Clause"
-    shutil.copyfile(source / ("LICENSE" if identity == "yaya" else "LICENSE.txt"), licenses / f"{identity}-{license_id}.txt")
+    license_id = "BSD-3-Clause" if identity in ("yaya", "yaya-6") else "BSD-2-Clause"
+    shutil.copyfile(source / ("LICENSE" if identity in ("yaya", "yaya-6") else "LICENSE.txt"), licenses / f"{identity}-{license_id}.txt")
     shutil.copyfile(ROOT / "LICENSE", licenses / "utatane-MIT.txt")
+    if identity == "yaya-6":
+        for source_name, notice_name in (("parson/LICENSE", "parson-MIT.txt"),
+                                         ("tinyxml2/LICENSE.txt", "tinyxml2-zlib.txt"),
+                                         ("sqlite/LICENSE", "sqlite-amalgamation-BSD-3-Clause.txt")):
+            shutil.copyfile(source / source_name, licenses / notice_name)
     extra_licenses = recipe / "licenses"
     if extra_licenses.is_dir():
         for path in extra_licenses.iterdir():

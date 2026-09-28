@@ -31,7 +31,7 @@ def verify_library(library, architectures):
 def build_upstream(entry, architectures, cache, destination):
     from build import archive_package, output
     identity = entry["id"]
-    cpp = identity in ("yaya", "satori")
+    cpp = identity in ("yaya", "yaya-6", "satori")
     host = platform.machine()
     if host not in architectures:
         raise ValueError("Include the host architecture to execute the packaged ABI")

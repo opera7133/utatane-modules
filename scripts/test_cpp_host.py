@@ -79,13 +79,17 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--host", type=Path, required=True)
     parser.add_argument("--yaya", type=Path, required=True)
+    parser.add_argument("--yaya-6", type=Path)
     parser.add_argument("--satori", type=Path, required=True)
     parser.add_argument("--saori", type=Path, required=True)
     parser.add_argument("--keyword", type=Path, required=True)
     args = parser.parse_args()
     with tempfile.TemporaryDirectory(prefix="Utatane C++ 配布 ") as temporary:
         root = Path(temporary)
-        for identity, archive in [("yaya", args.yaya), ("satori", args.satori), ("saori-cpuid", args.saori), ("kenonoke", args.keyword)]:
+        archives = [("yaya", args.yaya), ("satori", args.satori), ("saori-cpuid", args.saori), ("kenonoke", args.keyword)]
+        if args.yaya_6:
+            archives.append(("yaya-6", args.yaya_6))
+        for identity, archive in archives:
             verify_package(archive, read_json(ROOT / f"catalog/modules/{identity}.json"))
             safe_extract(archive, root / "packages")
         cpuid = root / "packages/saori-cpuid/lib/libsaori_cpuid.dylib"
@@ -96,7 +100,7 @@ def main():
         shared = root / "shared/saori-cpuid/lib"
         shared.mkdir(parents=True)
         shutil.copyfile(cpuid, shared / cpuid.name)
-        for identity in ("yaya", "satori"):
+        for identity in (("yaya", "yaya-6", "satori") if args.yaya_6 else ("yaya", "satori")):
             library = root / f"packages/{identity}/lib/lib{identity}.dylib"
             directories = []
             with ExitStack() as stack:
@@ -118,7 +122,7 @@ def main():
                     assert "macOS" in host.send("OnSaori")
                     response = host.send("OnKeyword")
                     assert "場所" in response, response
-                if identity == "yaya":
+                if identity in ("yaya", "yaya-6"):
                     assert "count=2" in hosts[0].send("OnBoot")
                     assert "count=2" in hosts[1].send("OnBoot")
                 else:
@@ -128,8 +132,8 @@ def main():
             with ExitStack() as stack:
                 host = Host(args.host.resolve(), library, directories[0], root / "shared")
                 stack.callback(host.abort)
-                response = host.send("OnBoot" if identity == "yaya" else "OnRead")
-                assert ("count=3" if identity == "yaya" else "保存できた") in response, response
+                response = host.send("OnBoot" if identity in ("yaya", "yaya-6") else "OnRead")
+                assert ("count=3" if identity in ("yaya", "yaya-6") else "保存できた") in response, response
                 host.close()
             print(f"PASS: Utatane helper + {identity}: shared/bundled libraries, two ghosts, native SAORI, save/reload")
 

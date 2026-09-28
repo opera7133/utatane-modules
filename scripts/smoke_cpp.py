@@ -15,13 +15,18 @@ import zipfile
 
 def prepare_dictionary(identity, root):
     (root / "keyword.txt").write_bytes("飲み物＝日本酒、酒\r\n場所＝酒場\r\n".encode("cp932"))
-    if identity == "yaya":
+    if identity in ("yaya", "yaya-6"):
         (root / "yaya.txt").write_text("charset, UTF-8\ndic, probe.dic\n")
-        (root / "probe.dic").write_text(r'''
+        dictionary = r'''
 request
 {
 _value = ""
-if STRSTR(_argv[0], "ID: OnKeyword", 0) >= 0 {
+if STRSTR(_argv[0], "ID: OnYaya6", 0) >= 0 {
+    _hash = IHASH()
+    _hash["items"] = IARRAY
+    _hash["items"][0] = "nested"
+    _value = _hash["items"][0]
+} elseif STRSTR(_argv[0], "ID: OnKeyword", 0) >= 0 {
     _loaded = LOADLIB("kenonoke.dll")
     _answer = REQUESTLIB("kenonoke.dll", "EXECUTE SAORI/1.0%(CHR(13))%(CHR(10))Charset: UTF-8%(CHR(13))%(CHR(10))Argument0: GETKEYWORD%(CHR(13))%(CHR(10))Argument1: 酒場で日本酒を飲む%(CHR(13))%(CHR(10))%(CHR(13))%(CHR(10))")
     _value = "failed"
@@ -39,7 +44,15 @@ if STRSTR(_argv[0], "ID: OnKeyword", 0) >= 0 {
 }
 "SHIORI/3.0 200 OK%(CHR(13))%(CHR(10))Charset: UTF-8%(CHR(13))%(CHR(10))Value: %(_value)%(CHR(13))%(CHR(10))%(CHR(13))%(CHR(10))"
 }
-''')
+'''
+        if identity == "yaya":
+            dictionary = dictionary.replace('''if STRSTR(_argv[0], "ID: OnYaya6", 0) >= 0 {
+    _hash = IHASH()
+    _hash["items"] = IARRAY
+    _hash["items"][0] = "nested"
+    _value = _hash["items"][0]
+} elseif ''', "")
+        (root / "probe.dic").write_text(dictionary)
     else:
         (root / "dic00.txt").write_bytes("＊OnBoot\r\n：こんにちは。\r\n＊OnSet\r\n＄確認\t保存できた\r\n：設定。\r\n＊OnRead\r\n：値は（確認）。\r\n＊OnSaori\r\n：OSは（os_name）。\r\n＊OnKeyword\r\n：分類は（分類、酒場で日本酒を飲む）。\r\n".encode("cp932"))
         (root / "satori_conf.txt").write_bytes("＠SAORI\r\nos_name,saori_cpuid.dll,os.name\r\n分類,kenonoke.dll,GETKEYWORD\r\n".encode("cp932"))
@@ -118,12 +131,14 @@ void *request(void *p, int32_t *n) {
             assert "こんにちは" in response and "Charset: UTF-8" in response, response
             response = send("OnSaori")
             assert "macOS" in response, response
+            if identity == "yaya-6":
+                assert "nested" in send("OnYaya6")
             if identity == "satori": assert "設定" in send("OnSet")
             assert library.unload() == 1
-            assert (root / ("yaya_variable.cfg" if identity == "yaya" else "satori_savedata.txt")).is_file()
+            assert (root / ("yaya_variable.cfg" if identity in ("yaya", "yaya-6") else "satori_savedata.txt")).is_file()
             assert library.loadu(owned(path), len(path)) == 1
-            response = send("OnBoot" if identity == "yaya" else "OnRead")
-            assert ("count=2" if identity == "yaya" else "保存できた") in response, response
+            response = send("OnBoot" if identity in ("yaya", "yaya-6") else "OnRead")
+            assert ("count=2" if identity in ("yaya", "yaya-6") else "保存できた") in response, response
             assert library.unload() == 1
             for invalid in (-1, 8 * 1024 * 1024 + 1):
                 length = Length(invalid, 0x12345678)

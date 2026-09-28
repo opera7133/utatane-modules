@@ -91,7 +91,7 @@ def build(identity, architectures, cache, destination):
     if entry["source"].get("kind") == "local":
         from build_native import build_native
         return build_native(entry, architectures, cache, destination)
-    if identity in ("minato", "pasta", "yaya", "satori"):
+    if identity in ("minato", "pasta", "yaya", "yaya-6", "satori"):
         from build_upstream import build_upstream
         return build_upstream(entry, architectures, cache, destination)
     if identity != "kagari":

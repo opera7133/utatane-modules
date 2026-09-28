@@ -10,6 +10,7 @@ uv run --locked python -m unittest discover -s tests -v
 swift test --package-path native
 
 uv run --locked python scripts/build.py yaya --archs arm64 x86_64
+uv run --locked python scripts/build.py yaya-6 --archs arm64 x86_64
 uv run --locked python scripts/build.py satori --archs arm64 x86_64
 uv run --locked python scripts/build.py kagari --archs arm64 x86_64
 uv run --locked python scripts/build.py misaka-native --archs arm64 x86_64
@@ -59,7 +60,7 @@ YAYA・里々とSAORIを実際のUtataneヘルパーで検証する場合：
 ```sh
 uv run --locked python scripts/test_cpp_host.py \
   --host /path/to/Utatane.app/Contents/Helpers/utatane-shiori-host \
-  --yaya /path/to/yaya.zip --satori /path/to/satori.zip \
+  --yaya /path/to/yaya.zip --yaya-6 /path/to/yaya-6.zip --satori /path/to/satori.zip \
   --saori /path/to/saori-cpuid.zip --keyword /path/to/kenonoke.zip
 uv run --locked python scripts/test_saori_host.py \
   --host /path/to/Utatane.app/Contents/Helpers/utatane-shiori-host \

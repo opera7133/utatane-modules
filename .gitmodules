@@ -22,3 +22,7 @@
 	path = native/Sources/CKawariModule/Vendor/KAWARI
 	url = https://github.com/opera7133/kawari.git
 	branch = utatane-macos
+[submodule "sources/yaya-6"]
+	path = sources/yaya-6
+	url = https://github.com/opera7133/yaya-shiori.git
+	branch = utatane-macos-6

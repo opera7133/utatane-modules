@@ -94,6 +94,7 @@ jobs:
           uv run --locked python scripts/build.py minato --archs arm64 x86_64
           uv run --locked python scripts/build.py pasta --archs arm64 x86_64
           uv run --locked python scripts/build.py yaya --archs arm64 x86_64
+          uv run --locked python scripts/build.py yaya-6 --archs arm64 x86_64
           uv run --locked python scripts/build.py satori --archs arm64 x86_64
           for module in saori-cpuid kenonoke textcopy2 mciaudior wmove; do
             uv run --locked python scripts/build.py "$module" --archs arm64 x86_64

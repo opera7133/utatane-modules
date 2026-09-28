@@ -34,7 +34,7 @@ def smoke_commands(archives):
 
     commands = []
     for identity, archive in sorted(found.items()):
-        if identity in ("yaya", "satori"):
+        if identity in ("yaya", "yaya-6", "satori"):
             commands.append([sys.executable, "scripts/smoke_cpp.py", str(archive),
                              "--saori-package", str(found["saori-cpuid"])])
         elif expected[identity]["kinds"] == ["saori"]:

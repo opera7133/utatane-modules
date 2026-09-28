@@ -7,6 +7,7 @@ Utataneで使うmacOS向けSHIORIなどのビルド・配布用リポジトリ�
 ## SHIORI
 
 - [YAYA](docs/yaya.md) — macOS移植版
+- [YAYA 6](docs/yaya-6.md) — 6系のmacOS移植版。5系と併存
 - [里々](docs/satori.md) — macOS移植版
 - [kagari](docs/kagari.md) — macOS移植版とLuaランタイム
 - [minato](docs/minato.md) — macOS移植版
