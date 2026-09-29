@@ -1,5 +1,7 @@
 # カタログAPI v1
 
+独自カタログを作る具体的な手順は[自分のモジュールカタログを作る](self-hosted-catalog.md)を参照してください。
+
 生成した `index.json` を読みます。形式はリポジトリの `schemas/index.schema.json`、ZIP内の `module.json` は `schemas/package.schema.json` を参照してください。
 
 `schemaVersion` は1。`modules` にモジュール情報と成果物を列挙します。`instructions` と成果物の `path` は `index.json` からの相対パスです。ZIPのファイル名には内容ハッシュの先頭16桁を付けます。生成先のディレクトリ全体を配布単位にします。`index.html` には検索・種類別の絞り込み・ダウンロードリンクがあり、配布先のディレクトリ名には依存しません。

@@ -2,7 +2,7 @@
 
 Utataneで使うmacOS向けSHIORIなどのビルド・配布用リポジトリ。
 
-[配布カタログからダウンロード](https://dl.wmsci.com/utatane/modules/)
+[配布カタログ](https://dl.wmsci.com/utatane/modules/) · [Utatane公式サイト](https://dl.wmsci.com/utatane/) · [NAR検査](https://utatane-validate.wmsci.com/)
 
 ## SHIORI
 
@@ -28,7 +28,9 @@ Utataneで使うmacOS向けSHIORIなどのビルド・配布用リポジトリ�
 
 ## その他ドキュメント
 
-[実行方式](docs/native-shiori.md) · [SHIORI開発](docs/shiori-development.md) · [ビルド手順](docs/development.md) · [カタログAPI](docs/catalog-api.md) · [変更履歴](CHANGELOG.md)
+- [掲載相談](docs/contributing-modules.md)・[自分のカタログを作る](docs/self-hosted-catalog.md)
+- [実行方式](docs/native-shiori.md)・[SHIORI開発](docs/shiori-development.md)・[ビルド手順](docs/development.md)
+- [カタログAPI](docs/catalog-api.md)・[変更履歴](CHANGELOG.md)
 
 ## ライセンス
 

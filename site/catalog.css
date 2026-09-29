@@ -16,6 +16,7 @@ button { cursor: pointer; }
 .navbar, footer { background: #fff; border-bottom: 1px solid var(--border); }
 .navbar .container, footer .container { min-height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .navbar a { font-size: 14px; text-decoration: none; }
+.related-links { display: flex; flex-wrap: wrap; gap: 8px 18px; }
 .navbar .brand { color: #25232a; font-size: 16px; font-weight: 650; }
 main { padding: 44px 0 56px; }
 h1 { margin: 0 0 8px; font-size: clamp(26px, 5vw, 34px); }
@@ -72,6 +73,7 @@ footer p { margin: 0; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
 @media (max-width: 640px) {
+  .navbar .container { align-items: flex-start; flex-direction: column; justify-content: center; gap: 8px; padding: 14px 0; }
   main { padding: 30px 0 40px; }
   .module { align-items: stretch; flex-direction: column; gap: 12px; padding: 16px; }
   .actions { justify-content: flex-start; }
