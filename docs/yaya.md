@@ -6,7 +6,7 @@ YAYA 5 系（Tc574-9）の macOS 14以降向けSHIORIです。ZIPの`yaya/lib/li
 shiori.macos,libyaya.dylib
 ```
 
-Utatane 0.2.14以降では通常のゴーストにYAYA 6を使います。5系は、この明示指定で使う互換用です。6系で保存した後に5系へ戻す場合は、ゴーストを終了してから導入前の保存ファイルを復元してください。詳しくは[UtataneのSHIORI案内](https://utatane.wmsci.com/docs/support/native-shiori/)を確認してください。
+Utatane 0.2.14以降では通常のゴーストにYAYA 6を使います。5系は、この明示指定で使う互換用です。6系で保存した後に5系へ戻す場合は、ゴーストを終了してから導入前の保存ファイルを復元してください。詳しくは[UtataneのSHIORI案内](https://dl.wmsci.com/utatane/docs/support/engines/)を確認してください。
 
 Windows用の`shiori`指定は残してください。再配布時は`LICENSES/`も同梱します。
 
