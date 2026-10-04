@@ -1,8 +1,8 @@
 # YAYA 6
 
-YAYA 6 系（Tc603-2）の macOS 14 以降向け SHIORI です。YAYA 5 系は別モジュールとして残ります。
-ゴースト内の `yaya.dll` に含まれる FileVersion が 6 の場合に使用します。
-判定できない場合は、既存の YAYA 5 系を使用します。
+YAYA 6 系（Tc603-10）の macOS 14 以降向け SHIORI です。YAYA 5 系は別モジュールとして残ります。
+Utatane 0.2.14以降では、DLLの版情報に関係なくYAYA 6を既定で使用します。
+YAYA 5へは自動で切り戻しません。5系を使う場合は、そのdylibを配置し、`shiori.macos,libyaya.dylib`を明示指定してください。
 
 ZIP の `yaya-6/lib/libyaya-6.dylib` を `ghost/master/` に置き、`descript.txt` に次を追記すると明示的に選べます。
 
