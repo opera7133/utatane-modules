@@ -5,7 +5,11 @@
   "kinds": [
     "shiori"
   ],
-  "windowsFilenames": ["yaya.dll", "aya.dll", "aya5.dll"],
+  "windowsFilenames": [
+    "yaya.dll",
+    "aya.dll",
+    "aya5.dll"
+  ],
   "origin": "upstream-port",
   "upstream": {
     "url": "https://github.com/YAYA-shiori/yaya-shiori",
@@ -13,20 +17,20 @@
   },
   "delivery": "binary",
   "license": "BSD-3-Clause",
-  "licenseURL": "https://github.com/opera7133/yaya-shiori/blob/115a16094bebf9d0619f522827206d9cb3179036/LICENSE",
+  "licenseURL": "https://github.com/opera7133/yaya-shiori/blob/e2718ac8c7e7de9adcfc7c304a88b638717888fb/LICENSE",
   "instructions": "docs/yaya.md",
   "limitations": [
     "Windows用SAORIは実行できません。同梱または共通導入したmacOS用SAORIを使用してください。",
     "同じプロセス内では1セッション。複数ゴーストは別プロセスで実行してください。"
   ],
-  "version": "Tc573-6",
-  "revision": 2,
+  "version": "Tc574-9",
+  "revision": 1,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {
     "url": "https://github.com/opera7133/yaya-shiori.git",
     "path": "sources/yaya",
-    "commit": "115a16094bebf9d0619f522827206d9cb3179036"
+    "commit": "e2718ac8c7e7de9adcfc7c304a88b638717888fb"
   },
   "recipe": "recipes/yaya/build.sh",
   "requiredFiles": [

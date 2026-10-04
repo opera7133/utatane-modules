@@ -76,7 +76,7 @@ jobs:
           rustup target add --toolchain 1.93.0 aarch64-apple-darwin x86_64-apple-darwin
       - name: Test minato
         working-directory: sources/minato
-        run: cargo +1.93.0 test --locked
+        run: cargo +1.93.0 test --locked --features cli
       - name: Test pasta
         working-directory: sources/pasta
         run: cargo +1.93.0 test --locked -p pasta_shiori -p pasta_lua -p pasta_dsl -p pasta_core

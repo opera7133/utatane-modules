@@ -20,6 +20,12 @@ def main():
     work.mkdir(parents=True, exist_ok=True)
     tree = work / "source"
     shutil.copytree(source, tree / "Vendor", ignore=shutil.ignore_patterns(".git"))
+    if identity == "satori":
+        # Unicode upstream retains CP932 source for VC6. Convert a build copy,
+        # including wide literals; never discard undecodable source bytes.
+        for path in (tree / "Vendor").rglob("*"):
+            if path.suffix in (".cpp", ".h"):
+                path.write_bytes(path.read_bytes().decode("cp932").encode("utf-8"))
     if identity == "yaya-6":
         # The upstream POSIX makefile converts these CP932 translation units too.
         for path in (tree / "Vendor").rglob("*.cpp"):
@@ -80,24 +86,14 @@ def main():
         needle = b"        nativeSaori = true;\n        hDLL = reinterpret_cast<void *>(1);\n        return 1;\n    }"
         if raw.count(needle) != 1: raise ValueError("YAYA SAORI adapter anchor changed")
         path.write_bytes(raw.replace(needle, needle + b"\n    return 0; // Conventional macOS SAORI only.\n"))
-    elif identity == "satori":
-        path = tree / "Vendor/satori/shiori_plugin.cpp"
-        raw = path.read_bytes()
-        start = raw.index(b"#ifdef POSIX\r\n\t\telse if")
-        end = raw.index(b"#endif\r\n\t\telse {", start)
-        replacement = b"#ifdef POSIX\n\t\telse if (true) {\n\t\t\tmDllData[fullpath].mRefCount=1;\n\t\t\tmDllData[fullpath].m_pSaoriClient=new NativeSwiftSaori(fullpath);\n\t\t}\n"
-        raw = raw[:start] + replacement + raw[end:]
-        raw = raw.replace(b'#include "../../NativeSwiftSaori.h"', b'#include "../../NativeSwiftSaori.h"\n#include "../_/charset.h"')
-        raw = raw.replace(b'mBaseFolder + filename', b'mBaseFolder + SJIStoUTF8(filename)')
-        path.write_bytes(raw)
     sources = [tree / "Vendor" / name for name in json.loads((recipe / "sources.json").read_text())]
     sources += [ROOT / "recipes/cpp/SHIORI.cpp", ROOT / "recipes/cpp/SaoriLibrary.cpp"]
     if identity == "satori":
-        sources += [recipe / "CharsetPOSIX.cpp", recipe / "NativeSwiftSaori.cpp"]
+        sources += [recipe / "NativeSwiftSaori.cpp"]
     common = ["-O2", "-DNDEBUG", "-DPOSIX", "-fvisibility=hidden", "-mmacosx-version-min=14.0",
               "-I", str(tree), "-I", str(tree / "Vendor"), "-I", str(ROOT / "recipes/cpp")]
     if identity in ("yaya", "yaya-6"): common += ["-DYAYA_MODULE"]
-    else: common += ["-DSATORI_DLL", "-I", str(tree / "Vendor/satori"), "-I", str(tree / "Vendor/_")]
+    else: common += ["-DSATORI_DLL", "-DSATORI_UNICODE_MODULE", "-I", str(tree / "Vendor/satori"), "-I", str(tree / "Vendor/_")]
     libraries = []
     for arch in archs.split():
         if arch not in ("arm64", "x86_64"): raise ValueError(arch)
@@ -128,6 +124,8 @@ def main():
                                          ("sqlite/LICENSE", "sqlite-amalgamation-BSD-3-Clause.txt")):
             shutil.copyfile(source / source_name, licenses / notice_name)
     extra_licenses = recipe / "licenses"
+    if identity == "satori":
+        shutil.copyfile(source / "deelx/deelx.h", licenses / "deelx.h")
     if extra_licenses.is_dir():
         for path in extra_licenses.iterdir():
             if path.is_file(): shutil.copyfile(path, licenses / path.name)

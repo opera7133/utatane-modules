@@ -1,0 +1,11 @@
+DEELX Regular Expression Engine (v1.3)
+Copyright 2006 ~ 2013 (c) RegExLab.com. All Rights Reserved.
+Author: Shi Shouwei (sswater shi)
+
+The author's website states that DEELX is free for personal use and
+commercial use. It does not identify the engine as BSD or MIT software.
+https://www.regexlab.com/en/deelx/
+
+SATORI uses the maintained fork https://github.com/ponapalt/deelx.
+The exact fork revision is pinned by SATORI's deelx submodule.
+The original header and copyright notice are included as LICENSES/deelx.h.

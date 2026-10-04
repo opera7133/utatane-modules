@@ -91,7 +91,7 @@ EXPORT void *request(void *data, int32_t *length) {
     if (!lock.owns_lock() || !instance) return nullptr;
     try {
         auto wire = convert(std::string(owned.get(), count), "UTF-8", "UTF-8");
-#ifndef YAYA_MODULE
+#if !defined(YAYA_MODULE) && !defined(SATORI_UNICODE_MODULE)
         charset(wire, "UTF-8", "Shift_JIS");
         wire = convert(wire, "CP932", "UTF-8");
 #endif
@@ -103,7 +103,7 @@ EXPORT void *request(void *data, int32_t *length) {
 #endif
         if (!output || size < 0 || size > limit) return nullptr;
         wire.assign(output.get(), size);
-#ifndef YAYA_MODULE
+#if !defined(YAYA_MODULE) && !defined(SATORI_UNICODE_MODULE)
         wire = convert(wire, "UTF-8", "CP932");
         charset(wire, "Shift_JIS", "UTF-8");
 #endif

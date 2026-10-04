@@ -56,6 +56,7 @@ if STRSTR(_argv[0], "ID: OnYaya6", 0) >= 0 {
     else:
         (root / "dic00.txt").write_bytes("＊OnBoot\r\n：こんにちは。\r\n＊OnSet\r\n＄確認\t保存できた\r\n：設定。\r\n＊OnRead\r\n：値は（確認）。\r\n＊OnSaori\r\n：OSは（os_name）。\r\n＊OnKeyword\r\n：分類は（分類、酒場で日本酒を飲む）。\r\n".encode("cp932"))
         (root / "satori_conf.txt").write_bytes("＠SAORI\r\nos_name,saori_cpuid.dll,os.name\r\n分類,kenonoke.dll,GETKEYWORD\r\n".encode("cp932"))
+        (root / "dic01.txt").write_text("＊OnUnicode\n：😀𠮷（length、😀𠮷）。\n＊OnUnicodeSet\n＄Unicode確認\t😀𠮷\n：設定。\n＊OnUnicodeRead\n：（Unicode確認）。\n", encoding="utf-8")
 
 
 def main():
@@ -133,12 +134,18 @@ void *request(void *p, int32_t *n) {
             assert "macOS" in response, response
             if identity == "yaya-6":
                 assert "nested" in send("OnYaya6")
-            if identity == "satori": assert "設定" in send("OnSet")
+            if identity == "satori":
+                assert "設定" in send("OnSet")
+                assert "😀𠮷2" in send("OnUnicode")
+                assert "設定" in send("OnUnicodeSet")
             assert library.unload() == 1
             assert (root / ("yaya_variable.cfg" if identity in ("yaya", "yaya-6") else "satori_savedata.txt")).is_file()
             assert library.loadu(owned(path), len(path)) == 1
             response = send("OnBoot" if identity in ("yaya", "yaya-6") else "OnRead")
             assert ("count=2" if identity in ("yaya", "yaya-6") else "保存できた") in response, response
+            if identity == "satori":
+                assert "😀𠮷" in send("OnUnicodeRead")
+                assert "😀𠮷" in (root / "satori_savedata.txt").read_text(encoding="utf-8")
             assert library.unload() == 1
             for invalid in (-1, 8 * 1024 * 1024 + 1):
                 length = Length(invalid, 0x12345678)

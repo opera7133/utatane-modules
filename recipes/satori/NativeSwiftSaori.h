@@ -3,12 +3,15 @@
 
 class NativeSwiftSaori : public SaoriClient {
 public:
-    explicit NativeSwiftSaori(const string& path) : path(path) {}
-    virtual bool load(const string&, const string&, const string&, const string&);
-    virtual void unload();
-    virtual string request(const string&);
-    virtual string get_version(const string&);
-    virtual int request(const std::vector<string>&, bool, string&, std::vector<string>&);
+    explicit NativeSwiftSaori(const wstring& path) : path(WtoUTF8(path)) {}
+    ~NativeSwiftSaori() override { unload(); }
+    bool load(const wstring&, const wstring&, const wstring&, const wstring&) override;
+    void unload() override;
+    wstring request(const wstring&) override;
+    wstring get_version(const wstring&) override;
+    bool version_reply_has_charset() const override { return hasCharset; }
+    int request(const std::vector<wstring>&, bool, wstring&, std::vector<wstring>&) override;
 protected:
-    string path;
+    std::string path;
+    bool hasCharset = true;
 };

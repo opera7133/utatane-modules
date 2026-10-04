@@ -12,26 +12,29 @@
   },
   "delivery": "binary",
   "license": "BSD-2-Clause",
-  "licenseURL": "https://github.com/opera7133/satoriya-shiori/blob/72eedbc24f9192d6845ef085fbfaec56faee89e5/LICENSE.txt",
+  "licenseURL": "https://github.com/opera7133/satoriya-shiori/blob/7677c20d0691158380252d89c40f33b5e5e45f34/LICENSE.txt",
   "instructions": "docs/satori.md",
   "limitations": [
+    "Unicode版はUTF-8で保存するため、旧版へ戻すとセーブデータが文字化けする場合があります。更新前にバックアップしてください。",
     "Windows用SAORIは実行できません。同梱または共通導入したmacOS用SAORIを使用してください。",
     "同じプロセス内では1セッション。複数ゴーストは別プロセスで実行してください。"
   ],
-  "version": "0.1.0",
-  "revision": 2,
+  "version": "2.3.2",
+  "revision": 1,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {
     "url": "https://github.com/opera7133/satoriya-shiori.git",
     "path": "sources/satori",
-    "commit": "72eedbc24f9192d6845ef085fbfaec56faee89e5"
+    "commit": "7677c20d0691158380252d89c40f33b5e5e45f34"
   },
   "recipe": "recipes/satori/build.sh",
   "requiredFiles": [
     "lib/libsatori.dylib",
     "LICENSES/satori-BSD-2-Clause.txt",
     "LICENSES/utatane-MIT.txt",
-    "README.md"
+    "README.md",
+    "LICENSES/deelx-notice.txt",
+    "LICENSES/deelx.h"
   ]
 }

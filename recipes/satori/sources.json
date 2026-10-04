@@ -1,5 +1,6 @@
 [
   "_/Sender.cpp",
+  "_/charset.cpp",
   "_/Utilities.cpp",
   "_/calc.cpp",
   "_/calc_float.cpp",
@@ -14,6 +15,7 @@
   "satori/satori.cpp",
   "satori/satoriTranslate.cpp",
   "satori/satori_AnalyzeRequest.cpp",
+  "satori/satori_builtin.cpp",
   "satori/satori_CreateResponce.cpp",
   "satori/satori_EventOperation.cpp",
   "satori/satori_Kakko.cpp",
