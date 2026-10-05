@@ -72,6 +72,8 @@ uv run --locked python scripts/test_saori_host.py \
 
 移植元は `sources/` のsubmodule、独自実装は `native/`、ビルド手順は `recipes/` に置きます。submoduleを更新したら `catalog/modules/` の固定コミットも更新してください。
 
+YAYA 6は上流 `YAYA-shiori/yaya-shiori` の `600` ブランチを直接参照します。既存checkoutで参照元を変更した場合は `git submodule sync sources/yaya-6` を実行してから再帰更新してください。依存のDEELX・Gumboもsubmoduleとして固定します。Utatane用の32ビットABI・SAORI接続は `recipes/cpp/` とビルド時パッチで維持し、上流に取り込まれたコンパイラ修正は重複させません。YAYA 5と里々は引き続き移植用forkを参照します。
+
 Python依存は `uv add` または `uv lock --upgrade-package 名前` で変更し、`pyproject.toml` と `uv.lock` を一緒に管理します。
 
 ## Utataneアプリへの組み込み

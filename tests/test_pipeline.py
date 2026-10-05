@@ -48,14 +48,14 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(entries["misaka-native"]["version"], "101")
         self.assertEqual(entries["ese-shiori"]["version"], "3.03")
         self.assertEqual(entries["yaya"]["version"], "Tc574-9")
-        self.assertEqual(entries["yaya-6"]["version"], "Tc603-10")
-        self.assertEqual(entries["satori"]["version"], "Mc203-3")
+        self.assertEqual(entries["yaya-6"]["version"], "Tc605-1")
+        self.assertEqual(entries["satori"]["version"], "Mc203-4")
         self.assertEqual(entries["mciaudior"]["originalURL"], "http://umeici.onjn.jp")
         self.edit("ese-shiori", lambda value: value.update(version="3.03-beta"))
         with self.assertRaises(ValidationError):
             modules(self.root, check_sources=False)
         self.edit("ese-shiori", lambda value: value.update(version="3.03"))
-        self.edit("yaya-6", lambda value: value.update(version="Tc603-10-beta"))
+        self.edit("yaya-6", lambda value: value.update(version="Tc605-1-beta"))
         with self.assertRaises(ValidationError):
             modules(self.root, check_sources=False)
 

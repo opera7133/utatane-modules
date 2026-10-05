@@ -11,6 +11,7 @@
   "file1.cpp",
   "function.cpp",
   "globalvariable.cpp",
+  "html.cpp",
   "jsonxml.cpp",
   "lib.cpp",
   "lib1.cpp",
@@ -35,5 +36,17 @@
   "value.cpp",
   "variable.cpp",
   "wsex.cpp",
-  "yamltoml.cpp"
+  "yamltoml.cpp",
+  "gumbo/src/attribute.c",
+  "gumbo/src/char_ref.c",
+  "gumbo/src/char_ref_gperf.c",
+  "gumbo/src/error.c",
+  "gumbo/src/parser.c",
+  "gumbo/src/string_buffer.c",
+  "gumbo/src/string_piece.c",
+  "gumbo/src/tag.c",
+  "gumbo/src/tokenizer.c",
+  "gumbo/src/utf8.c",
+  "gumbo/src/util.c",
+  "gumbo/src/vector.c"
 ]

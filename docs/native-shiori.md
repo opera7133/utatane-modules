@@ -12,7 +12,7 @@ Utataneは辞書や設定からSHIORIを判別し、macOS向けの実装へ接�
 
 | SHIORI | 読み込み・制約 |
 | --- | --- |
-| YAYA / AYA | 5 系と [6 系](yaya-6.md)を別々に配布。`yaya.dll` の FileVersion が 6 なら 6 系を選びます。`yaya.txt`、`aya5.txt`、`aya.txt` を読み込みます。旧 AYA のすべての版との互換性は保証しません |
+| YAYA / AYA | 5 系と [6 系](yaya-6.md)を別々に配布。Utatane 0.2.14以降はDLLの版情報に関係なく6系を既定で使い、5系は明示指定で使います。`yaya.txt`、`aya5.txt`、`aya.txt` を読み込みます。旧 AYA のすべての版との互換性は保証しません |
 | 里々 | ネイティブ実装。SSUは里々内蔵のものを使用 |
 | 華和梨 | [macOS版](kawari.md)。`kawarirc.kis`と旧`kawari.ini`を読み込みます |
 | 美坂 | `misaka.ini` と辞書をSwiftで実行。暗号化辞書は対象外 |

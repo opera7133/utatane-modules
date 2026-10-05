@@ -70,6 +70,8 @@ jobs:
             macos15-xcode26-rust193-
       - name: Test independent Swift engines
         run: swift test --package-path native
+      - name: Check YAYA charset conversion with AddressSanitizer
+        run: uv run --locked python -m unittest discover -s tests -p test_yaya_charset.py -v
       - name: Set up Rust for SHIORI ports
         run: |
           rustup toolchain install 1.93.0 --profile minimal

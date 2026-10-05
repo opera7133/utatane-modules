@@ -46,27 +46,8 @@ def main():
             raw = re.sub(rb'(?<!->)\b(loadu|load|unload|request)(?=\s*\()', rb'legacy_\1', raw)
             path.write_bytes(raw)
     if identity == "yaya-6":
-        # Upstream's ptrdiff_t overload is ambiguous with the macOS arm64 ABI.
-        path = tree / "Vendor/function.cpp"
-        raw = path.read_bytes()
-        needle = b"CValue(st.linecount)"
-        if raw.count(needle) != 2: raise ValueError("YAYA 6 linecount patch anchor changed")
-        path.write_bytes(raw.replace(needle, b"CValue(static_cast<yaya::int_t>(st.linecount))"))
-        path = tree / "Vendor/sha1.h"
-        raw = path.read_bytes()
-        needle = b"#if (_MSC_VER >= 1400)"
-        if raw.count(needle) != 1: raise ValueError("YAYA 6 stdint patch anchor changed")
-        path.write_bytes(raw.replace(needle, b"#if defined(__APPLE__) || (_MSC_VER >= 1400)"))
-        path = tree / "Vendor/sysfunc.cpp"
-        raw = path.read_bytes()
-        needle = b'#include "sysfunc.h"'
-        if raw.count(needle) != 1: raise ValueError("YAYA 6 fcntl patch anchor changed")
-        path.write_bytes(raw.replace(needle, b"#undef FREAD\n#undef FWRITE\n" + needle))
-        path = tree / "Vendor/parser0.cpp"
-        raw = path.read_bytes()
-        needle = b"inline CDefine::CDefine("
-        if raw.count(needle) != 1: raise ValueError("YAYA 6 CDefine patch anchor changed")
-        path.write_bytes(raw.replace(needle, b"CDefine::CDefine("))
+        # Compiler fixes are maintained upstream. Keep only Utatane's path
+        # conversion and conventional SAORI adapter in the build copy.
         path = tree / "Vendor/basis.cpp"
         raw = path.read_bytes()
         needle = b"Ccct::MbcsToUcs2Buf(base_path, mbpath, CHARSET_UTF8);"
@@ -75,11 +56,6 @@ def main():
         raw = raw[:start] + b"base_path = widen(mbpath);" + raw[start + len(needle):]
         path.write_bytes(raw)
         runpy.run_path(str(recipe / "patch_native_saori.py"))["patch"](tree)
-        path = tree / "Vendor/lib1.cpp"
-        raw = path.read_bytes()
-        needle = b'#include "lib.h"'
-        if raw.count(needle) != 1: raise ValueError("YAYA 6 libgen patch anchor changed")
-        path.write_bytes(raw.replace(needle, b'#include <libgen.h>\n' + needle))
     if identity == "yaya":
         path = tree / "Vendor/lib1.cpp"
         raw = path.read_bytes()
@@ -121,8 +97,11 @@ def main():
     if identity == "yaya-6":
         for source_name, notice_name in (("parson/LICENSE", "parson-MIT.txt"),
                                          ("tinyxml2/LICENSE.txt", "tinyxml2-zlib.txt"),
-                                         ("sqlite/LICENSE", "sqlite-amalgamation-BSD-3-Clause.txt")):
+                                         ("sqlite/LICENSE", "sqlite-amalgamation-BSD-3-Clause.txt"),
+                                         ("gumbo/doc/COPYING", "gumbo-Apache-2.0.txt")):
             shutil.copyfile(source / source_name, licenses / notice_name)
+        shutil.copyfile(source / "deelx/deelx.h", licenses / "deelx.h")
+        shutil.copyfile(source / "gumbo/src/gumbo.h", licenses / "gumbo.h")
     extra_licenses = recipe / "licenses"
     if identity == "satori":
         shutil.copyfile(source / "deelx/deelx.h", licenses / "deelx.h")

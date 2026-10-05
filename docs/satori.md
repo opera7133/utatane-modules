@@ -1,6 +1,6 @@
 # 里々
 
-里々Unicode版 Mc203-3を元にしたmacOS 14以降向けのSHIORIです。ZIPの`satori/lib/libsatori.dylib`を`ghost/master/`へ置き、`descript.txt`に追記します。
+里々Unicode版 Mc203-4を元にしたmacOS 14以降向けのSHIORIです。ZIPの`satori/lib/libsatori.dylib`を`ghost/master/`へ置き、`descript.txt`に追記します。
 
 ```text
 shiori.macos,libsatori.dylib
@@ -22,4 +22,4 @@ SAORIへの電文は基本UTF-8です。`GET Version`の応答に`Charset`がな
 
 里々本体のライセンスはBSD 2-Clause。接続部分はMITです。正規表現エンジンDEELXは作者が個人・商用利用を無償としています。各出典と通知はZIP内の`LICENSES/`、固定コミットは`module.json`とソースのsubmoduleに記録しています。
 
-配布カタログは本流の版名`Mc203-3`を表示します。更新判定にはUtatane 0.2.14以降を使用してください。旧表記`2.3.2`からの更新も判定できます。
+配布カタログは本流の版名`Mc203-4`を表示します。更新判定にはUtatane 0.2.14以降を使用してください。旧表記`2.3.2`からの更新も判定できます。

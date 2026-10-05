@@ -52,11 +52,23 @@ if STRSTR(_argv[0], "ID: OnYaya6", 0) >= 0 {
     _hash["items"][0] = "nested"
     _value = _hash["items"][0]
 } elseif ''', "if ")
+        if identity == "yaya-6":
+            (root / "probe.html").write_text('<meta charset="UTF-8"><p>😀𠮷', encoding="utf-8")
+            dictionary = dictionary.replace('} elseif STRSTR(_argv[0], "ID: OnKeyword", 0) >= 0 {', '''} elseif STRSTR(_argv[0], "ID: OnHtml", 0) >= 0 {
+    _html = PARSEHTML("<p>😀𠮷")
+    _file = FREADHTML("probe.html")
+    _value = _html["name"] + "|" + _html["children"][1]["children"][0]["text"] + "|" + _file["children"][1]["children"][0]["text"]
+} elseif STRSTR(_argv[0], "ID: OnKeyword", 0) >= 0 {''')
         (root / "probe.dic").write_text(dictionary)
     else:
         (root / "dic00.txt").write_bytes("＊OnBoot\r\n：こんにちは。\r\n＊OnSet\r\n＄確認\t保存できた\r\n：設定。\r\n＊OnRead\r\n：値は（確認）。\r\n＊OnSaori\r\n：OSは（os_name）。\r\n＊OnKeyword\r\n：分類は（分類、酒場で日本酒を飲む）。\r\n".encode("cp932"))
         (root / "satori_conf.txt").write_bytes("＠SAORI\r\nos_name,saori_cpuid.dll,os.name\r\n分類,kenonoke.dll,GETKEYWORD\r\n".encode("cp932"))
         (root / "dic01.txt").write_text("＊OnUnicode\n：😀𠮷（length、😀𠮷）。\n＊OnUnicodeSet\n＄Unicode確認\t😀𠮷\n：設定。\n＊OnUnicodeRead\n：（Unicode確認）。\n", encoding="utf-8")
+        images = root / "images"
+        images.mkdir()
+        for name in ("one.PNG", "two.jpeg", "ignored.txt"):
+            (images / name).write_bytes(b"")
+        (root / "dic02.txt").write_text("＊OnImages\n：images=（lsimg、images）。\n＊0headなでられ\n：stroke。\n", encoding="utf-8")
 
 
 def main():
@@ -96,8 +108,8 @@ def main():
         pointer = libc.malloc(max(len(data), 1))
         if not pointer: raise MemoryError()
         C.memmove(pointer, data, len(data)); return pointer
-    def send(event):
-        data = f"GET SHIORI/3.0\r\nCharset: UTF-8\r\nSender: Utatane\r\nSecurityLevel: local\r\nID: {event}\r\n\r\n".encode()
+    def send(event, headers="", sender="Utatane"):
+        data = f"GET SHIORI/3.0\r\nCharset: UTF-8\r\nSender: {sender}\r\nSecurityLevel: local\r\nID: {event}\r\n{headers}\r\n".encode()
         length = Length(len(data), 0x12345678)
         output = library.request(owned(data), C.cast(C.byref(length), C.POINTER(C.c_int32)))
         assert output and 0 < length.value <= 8 * 1024 * 1024 and length.guard == 0x12345678
@@ -134,10 +146,17 @@ void *request(void *p, int32_t *n) {
             assert "macOS" in response, response
             if identity == "yaya-6":
                 assert "nested" in send("OnYaya6")
+                assert "html|😀𠮷|😀𠮷" in send("OnHtml")
             if identity == "satori":
                 assert "設定" in send("OnSet")
                 assert "😀𠮷2" in send("OnUnicode")
                 assert "設定" in send("OnUnicodeSet")
+                assert "images=2" in send("OnImages")
+                for status in ("talking", "induction", "passive", "timecritical"):
+                    for _ in range(60):
+                        assert "stroke" not in send("OnMouseMove", f"Status: {status}\r\nReference3: 0\r\nReference4: head\r\n", sender="SSP")
+                responses = [send("OnMouseMove", "Status: \r\nReference3: 0\r\nReference4: head\r\n", sender="SSP") for _ in range(60)]
+                assert any("stroke" in response for response in responses)
             assert library.unload() == 1
             assert (root / ("yaya_variable.cfg" if identity in ("yaya", "yaya-6") else "satori_savedata.txt")).is_file()
             assert library.loadu(owned(path), len(path)) == 1
