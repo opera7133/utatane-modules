@@ -37,7 +37,7 @@ int main() {
                 runner = root / "probe"
                 compiled = subprocess.run(["xcrun", "clang++", "-std=c++14", "-DPOSIX", "-fsanitize=address",
                                 "-I", str(vendor), str(root / "probe.cpp"), str(root / "ccct.cpp"),
-                                "-o", str(runner)], capture_output=True)
+                                "-liconv", "-o", str(runner)], capture_output=True)
                 self.assertEqual(compiled.returncode, 0, compiled.stderr.decode(errors="replace"))
                 checked = subprocess.run([str(runner)], capture_output=True,
                                env={**os.environ, "ASAN_OPTIONS": "detect_leaks=0"})

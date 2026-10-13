@@ -26,6 +26,10 @@ Utataneで使うmacOS向けSHIORIなどのビルド・配布用リポジトリ�
 
 - [ネイティブSAORI](docs/saori.md) — システム情報、キーワード、コピー、音声、ウィンドウ操作
 
+## 上流更新の確認
+
+`python3 scripts/check_upstream.py` で、外部SHIORIの正式版・試験版・未取り込みコミットを一括確認できます。GitHub CLIのログインが必要です。[使い方](docs/development.md#上流更新の一括確認)を参照してください。
+
 ## その他ドキュメント
 
 - [掲載相談](docs/contributing-modules.md)・[自分のカタログを作る](docs/self-hosted-catalog.md)

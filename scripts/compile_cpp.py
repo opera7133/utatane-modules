@@ -28,9 +28,9 @@ def main():
                 path.write_bytes(path.read_bytes().decode("cp932").encode("utf-8"))
     if identity == "yaya-6":
         # The upstream POSIX makefile converts these CP932 translation units too.
-        for path in (tree / "Vendor").rglob("*.cpp"):
-            if path.parts[-2] in ("tinyxml2",):
-                continue
+        # Only root translation units are CP932; dependency/test sources may
+        # already be UTF-8 and must not pass through this converter.
+        for path in (tree / "Vendor").glob("*.cpp"):
             converted = subprocess.run(["iconv", "-f", "CP932", "-t", "UTF-8", "-c"],
                                        input=path.read_bytes(), stdout=subprocess.PIPE, check=True)
             path.write_bytes(converted.stdout)
@@ -46,15 +46,7 @@ def main():
             raw = re.sub(rb'(?<!->)\b(loadu|load|unload|request)(?=\s*\()', rb'legacy_\1', raw)
             path.write_bytes(raw)
     if identity == "yaya-6":
-        # Compiler fixes are maintained upstream. Keep only Utatane's path
-        # conversion and conventional SAORI adapter in the build copy.
-        path = tree / "Vendor/basis.cpp"
-        raw = path.read_bytes()
-        needle = b"Ccct::MbcsToUcs2Buf(base_path, mbpath, CHARSET_UTF8);"
-        if raw.count(needle) != 2: raise ValueError("YAYA 6 path patch anchor changed")
-        start = raw.rfind(needle)
-        raw = raw[:start] + b"base_path = widen(mbpath);" + raw[start + len(needle):]
-        path.write_bytes(raw)
+        # Compiler and POSIX UTF-8 path fixes are maintained upstream.
         runpy.run_path(str(recipe / "patch_native_saori.py"))["patch"](tree)
     if identity == "yaya":
         path = tree / "Vendor/lib1.cpp"

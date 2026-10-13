@@ -1,6 +1,6 @@
 # YAYA
 
-YAYA 5 系（Tc574-9）の macOS 14以降向けSHIORIです。ZIPの`yaya/lib/libyaya.dylib`を`ghost/master/`へ置き、`descript.txt`に追記します。
+YAYA 5 系（Tc574-11）の macOS 14以降向けSHIORIです。ZIPの`yaya/lib/libyaya.dylib`を`ghost/master/`へ置き、`descript.txt`に追記します。
 
 ```text
 shiori.macos,libyaya.dylib
@@ -18,4 +18,4 @@ SAORIのWindows DLL指定に対して、同じフォルダの`lib名前.dylib`�
 
 ライセンスはBSD 3-Clause。接続部分はMITです。出典と固定コミットはZIP内の`module.json`に記録しています。
 
-Tc574-9の配布リビジョン2では、空文字列の文字コード変換でMacのメモリ領域外へ書き込む問題に、上流6系と同じ修正を適用しています。
+Tc574-11では上流5系への不具合修正のバックポートを含みます。`STRDIGEST`の出力値が変わるため、ハッシュを保存・比較する辞書は更新時に確認してください。

@@ -17,20 +17,20 @@
   },
   "delivery": "binary",
   "license": "BSD-3-Clause",
-  "licenseURL": "https://github.com/opera7133/yaya-shiori/blob/822e0d09ac52e65afbfdf1ce9800caf29b319d39/LICENSE",
+  "licenseURL": "https://github.com/opera7133/yaya-shiori/blob/bde38a186a12418cce0ad6f4f03730137311e298/LICENSE",
   "instructions": "docs/yaya.md",
   "limitations": [
     "Windows用SAORIは実行できません。同梱または共通導入したmacOS用SAORIを使用してください。",
     "同じプロセス内では1セッション。複数ゴーストは別プロセスで実行してください。"
   ],
-  "version": "Tc574-9",
-  "revision": 2,
+  "version": "Tc574-11",
+  "revision": 1,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {
     "url": "https://github.com/opera7133/yaya-shiori.git",
     "path": "sources/yaya",
-    "commit": "822e0d09ac52e65afbfdf1ce9800caf29b319d39"
+    "commit": "bde38a186a12418cce0ad6f4f03730137311e298"
   },
   "recipe": "recipes/yaya/build.sh",
   "requiredFiles": [

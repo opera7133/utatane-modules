@@ -68,6 +68,25 @@ uv run --locked python scripts/test_saori_host.py \
             /path/to/textcopy2.zip /path/to/mciaudior.zip /path/to/wmove.zip
 ```
 
+## 上流更新の一括確認
+
+Python 3.12以降と[GitHub CLI](https://cli.github.com/)を使います。初回は `gh auth login` でGitHubへログインしてください。Pythonの追加依存やsubmoduleの初期化は不要です。
+
+```sh
+python3 scripts/check_upstream.py
+python3 scripts/check_upstream.py --module yaya-6 --module satori
+python3 scripts/check_upstream.py --json > /tmp/utatane-upstream.json
+python3 scripts/check_upstream.py --fail-on-update
+```
+
+カタログの固定版・配布リビジョンと、上流の正式版・試験版・未取り込みコミットを一覧にします。現在の対象はYAYA 5/6、里々、minato、pasta、kagariです。Nativeのlocal実装、SAORI、ソースを固定していない案内のみの項目は除外します。カタログやsubmoduleを書き換えず、fetch・ビルド・インストール・公開も行いません。
+
+正式版と試験版は分けて表示します。ブランチ更新には資料・CIなどの変更も含まれるので、表示は更新候補であり、互換性を確認した更新推奨ではありません。タグは数値順で比較し、公開日の並び順には依存しません。
+
+通常は更新候補があっても終了コード0です。`--fail-on-update` を付けると更新候補（試験版・ブランチ更新を含む）がある場合は1、確認失敗がある場合は2を返します。1件の取得に失敗しても残りを確認します。GitHubの認証・通信・API利用制限のエラーも確認失敗として表示します。
+
+追跡設定は `catalog/upstream-watch.json` にあります。YAYAは500/600、里々はunicodeを指定し、タグも系列別に絞ります。その他は上流の既定ブランチを参照します。里々のvendorはsubtreeで履歴が異なるため、取り込み済みの本流コミットを `baseline`、対応するカタログの固定コミットを `baseline_for_source` に記録します。里々を更新したらこの2項目も合わせて更新してください。対応が古い場合は、誤って「更新なし」とせず確認失敗にします。
+
 ## ソースと依存の更新
 
 移植元は `sources/` のsubmodule、独自実装は `native/`、ビルド手順は `recipes/` に置きます。submoduleを更新したら `catalog/modules/` の固定コミットも更新してください。

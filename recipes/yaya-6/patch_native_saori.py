@@ -22,7 +22,7 @@ def patch(tree: Path) -> None:
 extern "C" int utatane_yaya_native_saori_load(const char *path);
 extern "C" int utatane_yaya_native_saori_unload(const char *path);
 extern "C" char *utatane_yaya_native_saori_request(const char *path, char *request, long *length);''')
-    data = replace_once(data, b"    fix_filepath(libfile);", b'''    fix_filepath(libfile);
+    data = replace_once(data, b"\tstd::string libfile = posix_path(name);", b'''\tstd::string libfile = posix_path(name);
     if (utatane_yaya_native_saori_load(libfile.c_str())) {
         nativeSaori = true;
         hDLL = reinterpret_cast<void *>(1);
@@ -42,7 +42,7 @@ extern "C" char *utatane_yaya_native_saori_request(const char *path, char *reque
     anchor = b"\treturn 2;\n    }"
     section = replace_once(section, anchor, anchor + b'''
     if (nativeSaori) {
-        const std::string path = narrow(name);
+        const std::string path = posix_path(name);
         const int result = utatane_yaya_native_saori_unload(path.c_str());
         nativeSaori = false;
         hDLL = NULL;
@@ -59,7 +59,7 @@ extern "C" char *utatane_yaya_native_saori_request(const char *path, char *reque
         char *input = Ccct::Ucs2ToMbcs(istr, charset);
         if (!input) return 0;
         long length = static_cast<long>(strlen(input));
-        const std::string path = narrow(name);
+        const std::string path = posix_path(name);
         char *output = utatane_yaya_native_saori_request(path.c_str(), input, &length);
         free(input);
         if (!output) return 0;

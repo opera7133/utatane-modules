@@ -115,7 +115,7 @@ def main():
         assert output and 0 < length.value <= 8 * 1024 * 1024 and length.guard == 0x12345678
         try: return C.string_at(output, length.value).decode("utf-8")
         finally: libc.free(output)
-    with tempfile.TemporaryDirectory(prefix=f"{identity} 日本語 ") as temporary:
+    with tempfile.TemporaryDirectory(prefix=f"{identity} 日本語 😀𠮷 ") as temporary:
         root = Path(temporary)
         os.environ["UTATANE_SAORI_ROOT"] = str(root / "shared")
         saori = root / "libsaori_cpuid.dylib"

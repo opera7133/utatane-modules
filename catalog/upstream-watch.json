@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "modules": {
+    "yaya": {
+      "branch": "500",
+      "tags": "Tc5\\d{2}-\\d+"
+    },
+    "yaya-6": {
+      "branch": "600",
+      "tags": "Tc6\\d{2}-\\d+"
+    },
+    "satori": {
+      "branch": "unicode",
+      "tags": "Mc2\\d{2}-\\d+",
+      "baseline": "c46b9380f71fb5059bbaeb3968b642eb4a7d6595",
+      "baseline_for_source": "4856ec735c145cb78ed0e730b9a336fd79fbe431"
+    }
+  }
+}
