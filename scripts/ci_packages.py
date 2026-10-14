@@ -106,9 +106,7 @@ def main():
         archive = destination / package_name(entry)
         shutil.copyfile(archive, folder / archive.name)
         (folder / 'record.json').write_text(json.dumps({'key': keys[entry['id']], 'sha256': sha256(archive)}))
-    # ABI probes run again even when every package was reused.
-    subprocess.run([sys.executable, str(ROOT / 'scripts/smoke_packages.py'),
-                    *[str(destination / package_name(entry)) for entry in entries]], check=True, cwd=ROOT)
+
 
 
 if __name__ == '__main__':

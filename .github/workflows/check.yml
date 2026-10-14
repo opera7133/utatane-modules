@@ -94,12 +94,39 @@ jobs:
             build/cache/native-swift
           key: swift-v1-${{ steps.inputs.outputs.key }}
           restore-keys: swift-v1-
-      - name: Build changed packages and verify all arm64 ABIs
+      - name: Build changed packages or reuse verified ZIPs
         run: uv run --locked python scripts/ci_packages.py build ${{ matrix.group }}
       - uses: actions/upload-artifact@v7
         with:
           name: modules-universal-zips-${{ matrix.group }}
           path: dist/*.zip
+          if-no-files-found: error
+
+  verify-arm:
+    needs: packages
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4
+        with:
+          version: "0.6.14"
+          enable-cache: true
+      - run: uv sync --locked
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: modules-universal-zips-*
+          merge-multiple: true
+          path: dist
+      - name: Check the same universal ZIPs on arm64
+        run: uv run --locked python scripts/smoke_packages.py --report build/abi-arm64.json dist/*.zip
+      - uses: actions/upload-artifact@v7
+        with:
+          name: modules-abi-arm
+          path: build/abi-arm64.json
           if-no-files-found: error
 
   verify-intel:
@@ -130,7 +157,7 @@ jobs:
           if-no-files-found: error
 
   snapshot:
-    needs: [catalog, packages, verify-intel]
+    needs: [catalog, packages, verify-arm, verify-intel]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
@@ -151,8 +178,12 @@ jobs:
         with:
           name: modules-abi-intel
           path: build
+      - uses: actions/download-artifact@v8
+        with:
+          name: modules-abi-arm
+          path: build
       - name: Generate a self-contained development catalog
-        run: uv run --locked python scripts/catalog.py generate --output catalog/generated --package dist/*.zip --abi-report build/abi-x86_64.json
+        run: uv run --locked python scripts/catalog.py generate --output catalog/generated --package dist/*.zip --abi-report build/abi-x86_64.json --abi-report build/abi-arm64.json
       - name: Verify signing of the complete catalog
         run: |
           openssl genpkey -algorithm Ed25519 -out "$RUNNER_TEMP/catalog-private.pem"
