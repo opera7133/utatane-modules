@@ -68,13 +68,14 @@ jobs:
         id: inputs
         run: uv run --locked python scripts/ci_packages.py key ${{ matrix.group }}
       - name: Cache verified packages
+        id: packages
         uses: actions/cache@v5
         with:
           path: build/package-cache/${{ matrix.group }}
           key: packages-v1-${{ matrix.group }}-${{ steps.inputs.outputs.key }}
           restore-keys: packages-v1-${{ matrix.group }}-
       - name: Cache Rust dependencies and build outputs
-        if: matrix.group == 'minato' || matrix.group == 'pasta'
+        if: (matrix.group == 'minato' || matrix.group == 'pasta') && steps.packages.outputs.cache-hit != 'true'
         uses: actions/cache@v5
         with:
           path: |
@@ -85,7 +86,7 @@ jobs:
           key: rust-v2-${{ matrix.group }}-${{ steps.inputs.outputs.key }}
           restore-keys: rust-v2-${{ matrix.group }}-
       - name: Cache shared Swift build outputs
-        if: matrix.group == 'native'
+        if: matrix.group == 'native' && steps.packages.outputs.cache-hit != 'true'
         uses: actions/cache@v5
         with:
           path: |
