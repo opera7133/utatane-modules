@@ -22,6 +22,7 @@ for arch in $architectures; do
     set -- "$@" --target "$target"
 done
 [ "$#" -gt 0 ] || exit 65
+CARGO_PROFILE_RELEASE_LTO=thin CARGO_PROFILE_RELEASE_CODEGEN_UNITS=16 \
 MACOSX_DEPLOYMENT_TARGET=14.0 CARGO_TARGET_DIR="$work_dir" \
     "$cargo" "+$toolchain" build --locked --release --lib "$@"
 set --
