@@ -88,6 +88,7 @@ def main():
             subprocess.run(['cargo', '+1.93.0', 'test', '--locked', '--features', 'cli'],
                            check=True, cwd=ROOT / 'sources/minato',
                            env={**os.environ, 'CARGO_PROFILE_TEST_OPT_LEVEL': '0',
+                                'RUST_MIN_STACK': '33554432',
                                 'RUSTFLAGS': os.environ.get('RUSTFLAGS', '') + ' -C symbol-mangling-version=v0'})
         elif args.group == 'pasta':
             subprocess.run(['cargo', '+1.93.0', 'test', '--locked', '-p', 'pasta_shiori', '-p', 'pasta_lua',
