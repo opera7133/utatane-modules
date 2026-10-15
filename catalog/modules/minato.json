@@ -19,7 +19,7 @@
     "同じプロセス内では1セッション。Utataneはゴーストごとにプロセスを分離します。"
   ],
   "version": "0.1.6",
-  "revision": 1,
+  "revision": 2,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {

@@ -42,7 +42,11 @@ jobs:
   packages:
     needs: catalog
     runs-on: macos-15
-    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [native, cpp, minato, pasta]
+    timeout-minutes: 45
     env:
       DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
     steps:
@@ -55,58 +59,74 @@ jobs:
           version: "0.6.14"
           enable-cache: true
       - run: uv sync --locked
+      - name: Set up Rust for SHIORI ports
+        if: matrix.group == 'minato' || matrix.group == 'pasta'
+        run: |
+          rustup toolchain install 1.93.0 --profile minimal
+          rustup target add --toolchain 1.93.0 aarch64-apple-darwin x86_64-apple-darwin
+      - name: Fingerprint package inputs and toolchain
+        id: inputs
+        run: uv run --locked python scripts/ci_packages.py key ${{ matrix.group }}
+      - name: Cache verified packages
+        id: packages
+        uses: actions/cache@v5
+        with:
+          path: build/package-cache/${{ matrix.group }}
+          key: packages-v1-${{ matrix.group }}-${{ steps.inputs.outputs.key }}
+          restore-keys: packages-v1-${{ matrix.group }}-
       - name: Cache Rust dependencies and build outputs
+        if: (matrix.group == 'minato' || matrix.group == 'pasta') && steps.packages.outputs.cache-hit != 'true'
         uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            sources/minato/target
-            sources/pasta/target
-            build/cache/minato-rust
-            build/cache/pasta-rust
-          key: macos15-xcode26-rust193-${{ hashFiles('sources/minato/Cargo.lock', 'sources/minato/**/Cargo.toml', 'sources/minato/**/*.rs', 'sources/pasta/Cargo.lock', 'sources/pasta/**/Cargo.toml', 'sources/pasta/**/*.rs', 'recipes/minato/build.sh', 'recipes/pasta/build.sh') }}
-          restore-keys: |
-            macos15-xcode26-rust193-
-      - name: Test independent Swift engines
-        run: swift test --package-path native
-      - name: Check YAYA charset conversion with AddressSanitizer
-        run: uv run --locked python -m unittest discover -s tests -p test_yaya_charset.py -v
-      - name: Set up Rust for SHIORI ports
-        run: |
-          rustup toolchain install 1.93.0 --profile minimal
-          rustup target add --toolchain 1.93.0 aarch64-apple-darwin x86_64-apple-darwin
-      - name: Test minato
-        working-directory: sources/minato
-        run: cargo +1.93.0 test --locked --features cli
-      - name: Test pasta
-        working-directory: sources/pasta
-        run: cargo +1.93.0 test --locked -p pasta_shiori -p pasta_lua -p pasta_dsl -p pasta_core
-      - name: Build Universal ZIPs and execute native ABI tests
-        run: |
-          uv run --locked python scripts/build.py kagari --archs arm64 x86_64
-          uv run --locked python scripts/build.py misaka-native --archs arm64 x86_64
-          uv run --locked python scripts/build.py nise-shiori --archs arm64 x86_64
-          uv run --locked python scripts/build.py ese-shiori --archs arm64 x86_64
-          uv run --locked python scripts/build.py yuhna --archs arm64 x86_64
-          uv run --locked python scripts/build.py hisui --archs arm64 x86_64
-          uv run --locked python scripts/build.py shino --archs arm64 x86_64
-          uv run --locked python scripts/build.py akari --archs arm64 x86_64
-          uv run --locked python scripts/build.py kawari --archs arm64 x86_64
-          uv run --locked python scripts/build.py minato --archs arm64 x86_64
-          uv run --locked python scripts/build.py pasta --archs arm64 x86_64
-          uv run --locked python scripts/build.py yaya --archs arm64 x86_64
-          uv run --locked python scripts/build.py yaya-6 --archs arm64 x86_64
-          uv run --locked python scripts/build.py satori --archs arm64 x86_64
-          for module in saori-cpuid kenonoke textcopy2 mciaudior wmove; do
-            uv run --locked python scripts/build.py "$module" --archs arm64 x86_64
-          done
-      - name: Test all packaged SHIORI and SAORI on arm64
-        run: uv run --locked python scripts/smoke_packages.py dist/*.zip
+            sources/${{ matrix.group }}/target
+            build/cache/${{ matrix.group }}-rust
+          key: rust-v2-${{ matrix.group }}-${{ steps.inputs.outputs.key }}
+          restore-keys: rust-v2-${{ matrix.group }}-
+      - name: Cache shared Swift build outputs
+        if: matrix.group == 'native' && steps.packages.outputs.cache-hit != 'true'
+        uses: actions/cache@v5
+        with:
+          path: |
+            native/.build
+            build/cache/native-swift
+          key: swift-v1-${{ steps.inputs.outputs.key }}
+          restore-keys: swift-v1-
+      - name: Build changed packages or reuse verified ZIPs
+        run: uv run --locked python scripts/ci_packages.py build ${{ matrix.group }}
       - uses: actions/upload-artifact@v7
         with:
-          name: modules-universal-zips
+          name: modules-universal-zips-${{ matrix.group }}
           path: dist/*.zip
+          if-no-files-found: error
+
+  verify-arm:
+    needs: packages
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4
+        with:
+          version: "0.6.14"
+          enable-cache: true
+      - run: uv sync --locked
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: modules-universal-zips-*
+          merge-multiple: true
+          path: dist
+      - name: Check the same universal ZIPs on arm64
+        run: uv run --locked python scripts/smoke_packages.py --report build/abi-arm64.json dist/*.zip
+      - uses: actions/upload-artifact@v7
+        with:
+          name: modules-abi-arm
+          path: build/abi-arm64.json
           if-no-files-found: error
 
   verify-intel:
@@ -125,7 +145,8 @@ jobs:
       - run: uv sync --locked
       - uses: actions/download-artifact@v8
         with:
-          name: modules-universal-zips
+          pattern: modules-universal-zips-*
+          merge-multiple: true
           path: dist
       - name: Check the same universal ZIPs on Intel
         run: uv run --locked python scripts/smoke_packages.py --report build/abi-x86_64.json dist/*.zip
@@ -136,7 +157,7 @@ jobs:
           if-no-files-found: error
 
   snapshot:
-    needs: [catalog, packages, verify-intel]
+    needs: [catalog, packages, verify-arm, verify-intel]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
@@ -150,14 +171,19 @@ jobs:
       - run: uv sync --locked
       - uses: actions/download-artifact@v8
         with:
-          name: modules-universal-zips
+          pattern: modules-universal-zips-*
+          merge-multiple: true
           path: dist
       - uses: actions/download-artifact@v8
         with:
           name: modules-abi-intel
           path: build
+      - uses: actions/download-artifact@v8
+        with:
+          name: modules-abi-arm
+          path: build
       - name: Generate a self-contained development catalog
-        run: uv run --locked python scripts/catalog.py generate --output catalog/generated --package dist/*.zip --abi-report build/abi-x86_64.json
+        run: uv run --locked python scripts/catalog.py generate --output catalog/generated --package dist/*.zip --abi-report build/abi-x86_64.json --abi-report build/abi-arm64.json
       - name: Verify signing of the complete catalog
         run: |
           openssl genpkey -algorithm Ed25519 -out "$RUNNER_TEMP/catalog-private.pem"

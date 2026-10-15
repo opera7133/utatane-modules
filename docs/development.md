@@ -100,3 +100,12 @@ Python依存は `uv add` または `uv lock --upgrade-package 名前` で変更�
 `uv run --locked python scripts/bundle_kagari.py --output /path/to/app/Contents/Resources/NativeShiori/kagari --archs arm64 x86_64` で、同じ固定ソースからアプリ用の配置を作ります。キャッシュは `build/app-bundle/` です。
 
 検査は `sh scripts/verify-bundled-kagari.sh /path/to/Utatane.app arm64 x86_64`、Utatane側の実ロード試験は `sh scripts/test-bundled-kagari.sh /path/to/utatane /path/to/Utatane.app arm64 x86_64` で実行します。
+
+## CIのパッケージ再利用
+
+CIはNative・C++・minato・pastaの4グループを並列に処理します。
+`scripts/ci_packages.py` はモジュールごとにソース、カタログ、レシピ、ビルド・検証スクリプト、テスト、ツールチェーン、SDK、対象CPUの入力をハッシュ化します。一致した場合はキャッシュ内のZIPのSHA-256とパッケージ契約を確認し、元のZIPをそのまま再利用します。元のビルドコミットも保持します。
+
+変更があったモジュールだけをビルドし、再利用したZIPも含めてarm64・IntelのABI検証を実行します。キャッシュがない場合は通常どおりビルドします。破損したキャッシュは検証エラーになります。再ビルドを強制するときはGitHub Actionsの対応する `packages-v1-` キャッシュを削除してください。
+
+minatoのテストはCIで最適化を無効にし、v0形式のシンボル名を使います。旧形式で長くなりすぎたシンボル名によるAppleリンカーの失敗を避けます。最適化なしで増えるパーサーのスタック使用量に合わせ、テストスレッドのスタックを32 MiBに設定します。テスト用のデバッグ情報を省き、minatoのテストと配布ビルドは同時コンパイルを1つに抑えて、標準ランナーでのメモリ使用量を減らします。配布用レシピはThin LTOと16個のコード生成単位を使います。ソース側のパニック処理設定は維持します。バイナリのビルド設定を変えるときは、配布リビジョンも上げてください。
