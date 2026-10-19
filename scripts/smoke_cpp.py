@@ -59,11 +59,16 @@ if STRSTR(_argv[0], "ID: OnYaya6", 0) >= 0 {
     _file = FREADHTML("probe.html")
     _value = _html["name"] + "|" + _html["children"][1]["children"][0]["text"] + "|" + _file["children"][1]["children"][0]["text"]
 } elseif STRSTR(_argv[0], "ID: OnKeyword", 0) >= 0 {''')
+        if identity == "yaya-6":
+            dictionary = dictionary.replace('} elseif STRSTR(_argv[0], "ID: OnKeyword", 0) >= 0 {', ''' } elseif STRSTR(_argv[0], "ID: OnDigest", 0) >= 0 {
+    _value = STRDIGEST("", "sha256")
+} elseif STRSTR(_argv[0], "ID: OnKeyword", 0) >= 0 {''')
         (root / "probe.dic").write_text(dictionary)
     else:
         (root / "dic00.txt").write_bytes("＊OnBoot\r\n：こんにちは。\r\n＊OnSet\r\n＄確認\t保存できた\r\n：設定。\r\n＊OnRead\r\n：値は（確認）。\r\n＊OnSaori\r\n：OSは（os_name）。\r\n＊OnKeyword\r\n：分類は（分類、酒場で日本酒を飲む）。\r\n".encode("cp932"))
         (root / "satori_conf.txt").write_bytes("＠SAORI\r\nos_name,saori_cpuid.dll,os.name\r\n分類,kenonoke.dll,GETKEYWORD\r\n".encode("cp932"))
         (root / "dic01.txt").write_text("＊OnUnicode\n：😀𠮷（length、😀𠮷）。\n＊OnUnicodeSet\n＄Unicode確認\t😀𠮷\n：設定。\n＊OnUnicodeRead\n：（Unicode確認）。\n", encoding="utf-8")
+        (root / "dic03.txt").write_text("＊OnRegex\n：（regex_replace、abc123def、[0-9]+、-）。\n", encoding="utf-8")
         images = root / "images"
         images.mkdir()
         for name in ("one.PNG", "two.jpeg", "ignored.txt"):
@@ -146,12 +151,14 @@ void *request(void *p, int32_t *n) {
             assert "macOS" in response, response
             if identity == "yaya-6":
                 assert "nested" in send("OnYaya6")
+                assert "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855" in send("OnDigest")
                 assert "html|😀𠮷|😀𠮷" in send("OnHtml")
             if identity == "satori":
                 assert "設定" in send("OnSet")
                 assert "😀𠮷2" in send("OnUnicode")
                 assert "設定" in send("OnUnicodeSet")
                 assert "images=2" in send("OnImages")
+                assert "abc-def" in send("OnRegex")
                 for status in ("talking", "induction", "passive", "timecritical"):
                     for _ in range(60):
                         assert "stroke" not in send("OnMouseMove", f"Status: {status}\r\nReference3: 0\r\nReference4: head\r\n", sender="SSP")

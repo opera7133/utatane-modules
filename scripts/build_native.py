@@ -73,6 +73,8 @@ def build_native(entry, architectures, cache, destination):
                                 package / "LICENSES/KAWARI.txt")
                 random_source = (ROOT / "native/Sources/CKawariModule/Vendor/KAWARI/build/src/misc/mt19937ar.cpp").read_text()
                 (package / "LICENSES/Mersenne-Twister.txt").write_text(random_source.split("*/", 1)[0] + "*/\n")
+            if identity == "kawari":
+                shutil.copyfile(ROOT / "native/Sources/CKawariModule/Vendor/KAWARI/build/src/uka_regexp/LICENSE", package / "LICENSES/uka_regexp-Unlicense.txt")
             shutil.copyfile(ROOT / entry["instructions"], package / "README.md")
             try:
                 commit = subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "--verify", "HEAD"],

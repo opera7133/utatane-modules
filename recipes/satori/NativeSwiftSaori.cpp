@@ -11,6 +11,8 @@ bool NativeSwiftSaori::load(const wstring&, const wstring& charset, const wstrin
         unload();
         return false;
     }
+    const auto replyEncoding = CharsetFromName(versionReplyCharset);
+    if (hasCharset && replyEncoding != CS_NULL) set_charset(CharsetName(replyEncoding));
     // Match Mc203-2: legacy SAORI without Charset keep receiving CP932.
     if (!hasCharset) {
         set_charset(L"Shift_JIS");
@@ -41,8 +43,12 @@ wstring NativeSwiftSaori::get_version(const wstring &security) {
     strpairvec reply;
     SakuraClient::request(L"SAORI", L"1.0", L"GET Version", headers, protocol, version, reply);
     hasCharset = false;
+    versionReplyCharset.clear();
     for (const auto &header : reply) {
-        if (_wcsicmp(header.first.c_str(), L"Charset") == 0 && !header.second.empty()) hasCharset = true;
+        if (_wcsicmp(header.first.c_str(), L"Charset") == 0 && !header.second.empty()) {
+            hasCharset = true;
+            versionReplyCharset = header.second;
+        }
     }
     return protocol + L"/" + version;
 }

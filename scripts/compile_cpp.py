@@ -24,7 +24,7 @@ def main():
         # Unicode upstream retains CP932 source for VC6. Convert a build copy,
         # including wide literals; never discard undecodable source bytes.
         for path in (tree / "Vendor").rglob("*"):
-            if path.suffix in (".cpp", ".h"):
+            if path.suffix in (".cpp", ".h") and "uka_regexp" not in path.parts:
                 path.write_bytes(path.read_bytes().decode("cp932").encode("utf-8"))
     if identity == "yaya-6":
         # The upstream POSIX makefile converts these CP932 translation units too.
@@ -92,11 +92,10 @@ def main():
                                          ("sqlite/LICENSE", "sqlite-amalgamation-BSD-3-Clause.txt"),
                                          ("gumbo/doc/COPYING", "gumbo-Apache-2.0.txt")):
             shutil.copyfile(source / source_name, licenses / notice_name)
-        shutil.copyfile(source / "deelx/deelx.h", licenses / "deelx.h")
         shutil.copyfile(source / "gumbo/src/gumbo.h", licenses / "gumbo.h")
     extra_licenses = recipe / "licenses"
-    if identity == "satori":
-        shutil.copyfile(source / "deelx/deelx.h", licenses / "deelx.h")
+    if identity in ("satori", "yaya-6"):
+        shutil.copyfile(source / "uka_regexp/LICENSE", licenses / "uka_regexp-Unlicense.txt")
     if extra_licenses.is_dir():
         for path in extra_licenses.iterdir():
             if path.is_file(): shutil.copyfile(path, licenses / path.name)

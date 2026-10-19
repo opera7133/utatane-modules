@@ -18,3 +18,6 @@ YAYA 6 でハッシュや入れ子の変数を保存すると、YAYA 5 へ戻し
 ライセンスは BSD 3-Clause。接続部分は MIT です。出典と固定コミットは ZIP 内の `module.json` に記録しています。
 
 YAYA 6は本流の`600`ブランチを固定コミットで直接参照し、Utatane用の接続・SAORI対応をビルド時に追加します。HTML解析のGumbo（Apache-2.0）と正規表現のDEELXの通知もZIPへ同梱します。
+
+
+Tc607-2では正規表現エンジンをuka_regexpへ更新しています。パターンの互換差やバックトラック抑制の変更は上流のリリース情報を確認してください。uka_regexpのUnlicenseは配布ZIPに同梱します。

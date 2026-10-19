@@ -21,7 +21,7 @@
 [submodule "native/Sources/CKawariModule/Vendor/KAWARI"]
 	path = native/Sources/CKawariModule/Vendor/KAWARI
 	url = https://github.com/opera7133/kawari.git
-	branch = utatane-macos
+	branch = utatane-unicode
 [submodule "sources/yaya-6"]
 	path = sources/yaya-6
 	url = https://github.com/YAYA-shiori/yaya-shiori.git

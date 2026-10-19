@@ -18,12 +18,14 @@ GROUPS = ('native', 'cpp', 'minato', 'pasta')
 def group_for(entry):
     if entry['id'] in ('minato', 'pasta'):
         return entry['id']
-    return 'native' if entry['source']['path'] == 'native' else 'cpp'
+    return 'native' if entry['source']['path'] == 'native' or entry['source']['path'].startswith('native/') else 'cpp'
 
 
 def input_key(entry, tracked, toolchain, root=ROOT):
     prefixes = (entry['source']['path'] + '/', str(Path(entry['recipe']).parent) + '/',
                 'scripts/', 'schemas/', 'tests/')
+    if group_for(entry) == 'native':
+        prefixes += ('native/',)
     if group_for(entry) == 'cpp':
         prefixes += ('recipes/cpp/',)
     names = {entry['recipe'], entry['instructions'], f"catalog/modules/{entry['id']}.json",

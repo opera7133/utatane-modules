@@ -58,7 +58,6 @@ let package = Package(
             "Vendor/KAWARI/build/src/libkawari/kawari_rc.cpp",
             "Vendor/KAWARI/build/src/misc/misc.cpp",
             "Vendor/KAWARI/build/src/misc/mt19937ar.cpp",
-            "Vendor/KAWARI/build/src/misc/l10n.cpp",
             "Vendor/KAWARI/build/src/misc/phttp.cpp",
             "Vendor/KAWARI/build/src/saori/saori.cpp",
             "Vendor/KAWARI/build/src/saori/saori_module.cpp",
@@ -79,11 +78,19 @@ let package = Package(
             "Vendor/KAWARI/build/src/kis/kis_saori.cpp",
             "Vendor/KAWARI/build/src/kis/kis_system.cpp",
             "Vendor/KAWARI/build/src/libkawari/kawari_crypt.cpp",
-            "Vendor/KAWARI/build/src/misc/base64.cpp"
+            "Vendor/KAWARI/build/src/misc/base64.cpp",
+            "Vendor/KAWARI/build/src/misc/charset.cpp",
+            "Vendor/KAWARI/build/src/misc/wfile.cpp",
+            "Vendor/KAWARI/build/src/misc/dsstp.cpp",
+            "Vendor/KAWARI/build/src/saori/saori_dsstp.cpp",
+            "Vendor/KAWARI/build/src/kis/kis_sstp.cpp",
+            "Vendor/KAWARI/build/src/kis/kis_regex.cpp",
+            "Vendor/KAWARI/build/src/uka_regexp/uka_regexp.cpp",
+            "Vendor/KAWARI/build/src/shiori/shiori_object.cpp"
         ], publicHeadersPath: "Include", cxxSettings: [
             .headerSearchPath("Vendor/KAWARI/build/src"),
             .unsafeFlags(["-Wno-writable-strings", "-Wno-reserved-user-defined-literal"])
-        ]),
+        ], linkerSettings: [.linkedLibrary("iconv")]),
         .target(name: "KawariCore", dependencies: ["CKawariNative", "ModuleProtocol", "SaoriClient"]),
         .target(name: "KawariModule", dependencies: ["KawariCore", "ModuleProtocol", "LegacyText"]),
         .testTarget(name: "KawariCoreTests", dependencies: ["KawariCore", "ModuleProtocol"]),
