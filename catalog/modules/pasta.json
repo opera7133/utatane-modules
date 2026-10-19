@@ -12,20 +12,20 @@
   },
   "delivery": "binary",
   "license": "MIT",
-  "licenseURL": "https://github.com/opera7133/pasta/blob/e76db3c76ef106995a39ebb08eb694beabfc6849/LICENSE",
+  "licenseURL": "https://github.com/opera7133/pasta/blob/5d0872e431a1a84d59d72a3af80d454a5ba82014/LICENSE",
   "instructions": "docs/pasta.md",
   "limitations": [
     "Windows専用のLua FFI呼び出しやDLLは実行できません。",
     "同じプロセス内では1セッション。Utataneはゴーストごとにプロセスを分離します。"
   ],
-  "version": "0.3.8",
+  "version": "0.4.1",
   "revision": 1,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {
     "url": "https://github.com/opera7133/pasta.git",
     "path": "sources/pasta",
-    "commit": "e76db3c76ef106995a39ebb08eb694beabfc6849"
+    "commit": "5d0872e431a1a84d59d72a3af80d454a5ba82014"
   },
   "recipe": "recipes/pasta/build.sh",
   "requiredFiles": [

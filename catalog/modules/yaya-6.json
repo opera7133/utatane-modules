@@ -24,14 +24,14 @@
     "Windows用SAORIは実行できません。同梱または共通導入したmacOS用SAORIを使用してください。",
     "同じプロセス内では1セッション。複数ゴーストは別プロセスで実行してください。"
   ],
-  "version": "Tc606-5",
+  "version": "Tc607-2",
   "revision": 1,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {
     "url": "https://github.com/YAYA-shiori/yaya-shiori.git",
     "path": "sources/yaya-6",
-    "commit": "bbea7d958141df3ea4dcdd85b39c011318667fd1"
+    "commit": "21b6c8317bd68561286c2109673f178f1d12173b"
   },
   "recipe": "recipes/yaya-6/build.sh",
   "requiredFiles": [
@@ -43,7 +43,7 @@
     "LICENSES/sqlite-amalgamation-BSD-3-Clause.txt",
     "README.md",
     "LICENSES/gumbo-Apache-2.0.txt",
-    "LICENSES/deelx.h",
-    "LICENSES/gumbo.h"
+    "LICENSES/gumbo.h",
+    "LICENSES/uka_regexp-Unlicense.txt"
   ]
 }

@@ -25,3 +25,6 @@ SAORIへの電文は基本UTF-8です。`GET Version`の応答に`Charset`がな
 配布カタログは本流の版名`Mc205-1`を表示します。更新判定にはUtatane 0.2.14以降を使用してください。旧表記`2.3.2`からの更新も判定できます。
 
 Mc205-1のSAORI over DirectSSTPはWindows・SSP向け機能です。macOSでは同梱または共通導入したmacOS用SAORIを引き続き使います。
+
+
+Mc205-4では正規表現エンジンをuka_regexpへ更新しています。パターンの互換差やバックトラック抑制の変更は上流のリリース情報を確認してください。uka_regexpのUnlicenseは配布ZIPに同梱します。

@@ -35,13 +35,17 @@ int main(int argc, char **argv) {
     assert(result && n > 0);
     char *text = calloc((size_t)n + 1, 1);
     assert(text); memcpy(text, result, (size_t)n); free(result);
-    assert(strstr(text, "Value: \\0起動\\e")); free(text);
+    assert(strstr(text, "Value: \\0起動\\e"));
+    if (getenv("KAWARI_EXPECT_NATIVE_SAORI")) assert(strstr(text, "native-ok"));
+    free(text);
     const char *foreign_name = "NOTIFY SHIORI/3.0\r\nCharset: UTF-8\r\nID: installedkeroname\r\nReference0: 우뉴\r\n\r\n";
     result = send_request(request, foreign_name, strlen(foreign_name), &n);
     assert(result && n > 0);
     text = calloc((size_t)n + 1, 1);
     assert(text); memcpy(text, result, (size_t)n); free(result);
-    assert(strstr(text, "SHIORI/3.0 200 OK\r\n")); free(text);
+    /* Native 9.x dictionaries may acknowledge NOTIFY with 204. */
+    assert(strstr(text, "SHIORI/3.0 200 OK\r\n") ||
+           (getenv("KAWARI_EXPECT_NATIVE_SAORI") && strstr(text, "SHIORI/3.0 204 "))); free(text);
     result = send_request(request, shift_jis, strlen(shift_jis), &n);
     assert(result && n > 0);
     text = calloc((size_t)n + 1, 1);

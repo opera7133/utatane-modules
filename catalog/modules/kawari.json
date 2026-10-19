@@ -2,29 +2,38 @@
   "schemaVersion": 1,
   "id": "kawari",
   "displayName": "華和梨",
-  "kinds": ["shiori"],
+  "kinds": [
+    "shiori"
+  ],
   "origin": "upstream-port",
   "upstream": {
-    "url": "https://github.com/opera7133/kawari",
+    "url": "https://github.com/ukatech/kawari",
     "author": "KAWARI Development Team"
   },
   "originalURL": "https://sourceforge.net/projects/kawari/",
   "delivery": "binary",
   "license": "Modified BSD",
-  "licenseURL": "https://github.com/opera7133/kawari/blob/utatane-macos/LICENSE",
+  "licenseURL": "https://github.com/opera7133/kawari/blob/5778bafb72f344e405192d91f372e4d3d063656b/LICENSE",
   "instructions": "docs/kawari.md",
-  "limitations": ["華和梨 8.2.8のmacOS移植版です。Windows固有操作や元の全機能との互換性は保証しません。"],
-  "version": "8.2.8",
-  "revision": 3,
+  "limitations": [
+    "華和梨9.1.0のmacOS移植版です。Windows固有操作は利用できません。旧kawari.ini辞書の互換変換も維持しています。"
+  ],
+  "version": "9.1.0",
+  "revision": 1,
   "abi": "shiori-load-request-unload",
   "minimumOS": "14.0",
-  "source": {"kind": "local", "path": "native"},
+  "source": {
+    "url": "https://github.com/opera7133/kawari.git",
+    "path": "native/Sources/CKawariModule/Vendor/KAWARI",
+    "commit": "5778bafb72f344e405192d91f372e4d3d063656b"
+  },
   "recipe": "recipes/kawari/build.sh",
   "requiredFiles": [
     "lib/libkawari.dylib",
     "LICENSES/utatane-MIT.txt",
     "LICENSES/KAWARI.txt",
     "LICENSES/Mersenne-Twister.txt",
-    "README.md"
+    "README.md",
+    "LICENSES/uka_regexp-Unlicense.txt"
   ]
 }

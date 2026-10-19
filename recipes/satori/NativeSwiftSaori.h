@@ -14,4 +14,5 @@ public:
 protected:
     std::string path;
     bool hasCharset = true;
+    wstring versionReplyCharset;
 };

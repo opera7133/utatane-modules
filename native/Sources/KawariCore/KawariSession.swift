@@ -22,7 +22,7 @@ public enum KawariError: LocalizedError, Equatable, Sendable {
         case .requestFailed:
             "KAWARIへのリクエストに失敗した。"
         case .undecodableResponse:
-            "KAWARIの応答をShift_JISとして読み取れなかった。"
+            "KAWARIの応答をUTF-8として読み取れなかった。"
         }
     }
 }
@@ -48,7 +48,7 @@ public final class KawariSession: @unchecked Sendable {
         legacyDoubleClickEntries = preparation.doubleClickEntries
         legacySurfaceRestoreScript = preparation.surfaceRestoreScript
         let path = preparedDirectory.standardizedFileURL.path + "/"
-        guard let data = path.data(using: .shiftJIS) else {
+        guard let data = path.data(using: .utf8) else {
             throw KawariError.loadFailed
         }
         handle = data.withUnsafeBytes { bytes in
@@ -516,7 +516,7 @@ public final class KawariSession: @unchecked Sendable {
 
     private func legacyEchoRequest(expression: String, originalRequest request: ShioriRequest) -> ShioriRequest {
         var headers = ShioriHeaders([
-            ShioriHeader(name: "Charset", value: "Shift_JIS"),
+            ShioriHeader(name: "Charset", value: "UTF-8"),
             ShioriHeader(name: "Sender", value: request.headers["Sender"] ?? "Utatane"),
             ShioriHeader(name: "SecurityLevel", value: request.headers["SecurityLevel"] ?? "local"),
             ShioriHeader(name: "ID", value: "ShioriEcho"),
@@ -535,9 +535,7 @@ public final class KawariSession: @unchecked Sendable {
         defer { kawariSaoriLock.unlock() }
         activeKawariSaori.registry = saoriRegistry
         defer { activeKawariSaori.registry = nil }
-        // KAWARI's native boundary only accepts Shift_JIS. Notifications can
-        // list other installed ghosts whose names use characters outside it.
-        guard let data = request.data(using: .shiftJIS, allowLossyConversion: true) else {
+        guard let data = kawariUTF8Wire(request).data(using: .utf8) else {
             throw KawariError.undecodableResponse
         }
         var responseLength = Int64(data.count)
@@ -553,7 +551,7 @@ public final class KawariSession: @unchecked Sendable {
         }
         defer { utatane_kawari_free(responsePointer) }
         let responseData = Data(bytes: responsePointer, count: Int(responseLength))
-        guard let response = String(data: responseData, encoding: .shiftJIS) else {
+        guard let response = String(data: responseData, encoding: .utf8) else {
             throw KawariError.undecodableResponse
         }
         return response
@@ -567,16 +565,26 @@ private func utataneKawariSaoriRequest(
 ) -> UnsafeMutablePointer<CChar>? {
     guard let path, let request, let length, length.pointee >= 0 else { return nil }
     let data = Data(bytes: request, count: Int(length.pointee))
-    guard let message = String(data: data, encoding: .shiftJIS) else { return nil }
+    guard let message = String(data: data, encoding: .utf8) else { return nil }
 
     let modulePath = String(cString: path)
     activeKawariSaori.registry?.load(modulePath)
     let response = activeKawariSaori.registry?.response(path: modulePath, request: message)
         ?? "SAORI/1.0 500 Internal Server Error\r\n\r\n"
-    guard let responseData = response.data(using: .shiftJIS),
+    guard let responseData = kawariUTF8Wire(response).data(using: .utf8),
           let allocation = malloc(max(responseData.count, 1))
     else { return nil }
     responseData.copyBytes(to: allocation.assumingMemoryBound(to: UInt8.self), count: responseData.count)
     length.pointee = Int64(responseData.count)
     return allocation.assumingMemoryBound(to: CChar.self)
+}
+
+// The Unicode engine and native SAORI callback exchange UTF-8 regardless of
+// the external caller's charset; Module.swift converts the final response.
+private func kawariUTF8Wire(_ wire: String) -> String {
+    guard let separator = wire.range(of: "\r\n\r\n") else { return wire }
+    var headers = String(wire[..<separator.lowerBound]).components(separatedBy: "\r\n")
+    headers.removeAll { $0.lowercased().hasPrefix("charset:") }
+    headers.insert("Charset: UTF-8", at: min(1, headers.count))
+    return headers.joined(separator: "\r\n") + "\r\n\r\n" + wire[separator.upperBound...]
 }

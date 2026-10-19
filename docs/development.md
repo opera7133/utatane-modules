@@ -79,7 +79,7 @@ python3 scripts/check_upstream.py --json > /tmp/utatane-upstream.json
 python3 scripts/check_upstream.py --fail-on-update
 ```
 
-カタログの固定版・配布リビジョンと、上流の正式版・試験版・未取り込みコミットを一覧にします。現在の対象はYAYA 5/6、里々、minato、pasta、kagariです。Nativeのlocal実装、SAORI、ソースを固定していない案内のみの項目は除外します。カタログやsubmoduleを書き換えず、fetch・ビルド・インストール・公開も行いません。
+カタログの固定版・配布リビジョンと、上流の正式版・試験版・未取り込みコミットを一覧にします。現在の対象はYAYA 5/6、里々、minato、pasta、kagari、華和梨です。Nativeのlocal実装、SAORI、ソースを固定していない案内のみの項目は除外します。カタログやsubmoduleを書き換えず、fetch・ビルド・インストール・公開も行いません。
 
 正式版と試験版は分けて表示します。ブランチ更新には資料・CIなどの変更も含まれるので、表示は更新候補であり、互換性を確認した更新推奨ではありません。タグは数値順で比較し、公開日の並び順には依存しません。
 

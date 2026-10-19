@@ -88,7 +88,7 @@ def build(identity, architectures, cache, destination):
     entry = next((item for item in modules() if item["id"] == identity), None)
     if entry is None or entry["delivery"] != "binary":
         raise ValueError(f"No binary recipe for {identity}")
-    if entry["source"].get("kind") == "local":
+    if entry["source"].get("kind") == "local" or identity == "kawari":
         from build_native import build_native
         return build_native(entry, architectures, cache, destination)
     if identity in ("minato", "pasta", "yaya", "yaya-6", "satori"):

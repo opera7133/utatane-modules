@@ -24,5 +24,6 @@
   "satori/satori_sentence.cpp",
   "satori/satori_tool.cpp",
   "satori/shiori_plugin.cpp",
-  "satori/ssu.cpp"
+  "satori/ssu.cpp",
+  "uka_regexp/uka_regexp.cpp"
 ]

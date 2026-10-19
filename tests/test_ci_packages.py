@@ -15,6 +15,7 @@ class PackageCacheTests(unittest.TestCase):
     def test_all_binary_modules_have_one_group(self):
         entries = [entry for entry in modules() if entry['delivery'] == 'binary']
         self.assertEqual(len(entries), 19)
+        self.assertEqual(group_for(next(e for e in entries if e['id'] == 'kawari')), 'native')
         self.assertEqual({group_for(entry) for entry in entries}, set(GROUPS))
         self.assertTrue(all(group_for(entry) == 'native' for entry in entries if entry['origin'] == 'native'))
 
@@ -37,6 +38,14 @@ class PackageCacheTests(unittest.TestCase):
             self.assertNotEqual(initial, input_key(changed, tracked, {'rust': '1.93'}))
             hashes[str(Path('scripts/ci_packages.py').resolve())] = 'changed'
             self.assertNotEqual(initial, input_key(entry, tracked, {'rust': '1.93'}))
+
+    def test_vendor_package_tracks_its_swift_adapter(self):
+        entry = next(entry for entry in modules() if entry['id'] == 'kawari')
+        tracked = ['native/Sources/KawariCore/KawariSession.swift', 'native/Package.swift']
+        with patch('ci_packages.sha256', return_value='before'):
+            first = input_key(entry, tracked, {})
+        with patch('ci_packages.sha256', side_effect=lambda p: 'after' if p.name == 'KawariSession.swift' else 'before'):
+            self.assertNotEqual(first, input_key(entry, tracked, {}))
 
     def test_reuse_preserves_bytes_checks_catalog_and_rejects_corruption(self):
         entry = next(entry for entry in modules() if entry['id'] == 'minato')

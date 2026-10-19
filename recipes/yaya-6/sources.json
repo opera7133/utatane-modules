@@ -4,7 +4,6 @@
   "basis.cpp",
   "ccct.cpp",
   "comment.cpp",
-  "crc32.c",
   "dir_enum.cpp",
   "duplevinfo.cpp",
   "file.cpp",
@@ -19,7 +18,6 @@
   "log.cpp",
   "logexcode.cpp",
   "manifest.cpp",
-  "md5c.c",
   "messages.cpp",
   "misc.cpp",
   "mt19937ar.cpp",
@@ -28,7 +26,6 @@
   "parser1.cpp",
   "posix_utils.cpp",
   "selecter.cpp",
-  "sha1.c",
   "sqlite3_yaya.c",
   "sqlitedb.cpp",
   "sysfunc.cpp",
@@ -48,5 +45,7 @@
   "gumbo/src/tokenizer.c",
   "gumbo/src/utf8.c",
   "gumbo/src/util.c",
-  "gumbo/src/vector.c"
+  "gumbo/src/vector.c",
+  "uka_regexp/uka_regexp.cpp",
+  "digest.cpp"
 ]

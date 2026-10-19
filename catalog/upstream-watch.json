@@ -12,8 +12,13 @@
     "satori": {
       "branch": "unicode",
       "tags": "Mc2\\d{2}-\\d+",
-      "baseline": "c46b9380f71fb5059bbaeb3968b642eb4a7d6595",
-      "baseline_for_source": "4856ec735c145cb78ed0e730b9a336fd79fbe431"
+      "baseline": "6e57cd1342be4cc75cc659aefcdaf8e4736a5679",
+      "baseline_for_source": "97675886da3e61c45684a94056aa41e5b5b6359e"
+    },
+    "kawari": {
+      "branch": "master",
+      "baseline": "543ee104878d97c1244c3ddeb6f5b87485c11df8",
+      "baseline_for_source": "5778bafb72f344e405192d91f372e4d3d063656b"
     }
   }
 }
