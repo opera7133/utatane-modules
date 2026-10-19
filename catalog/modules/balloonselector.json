@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "balloonselector",
+  "displayName": "BalloonSelector (Utatane port)",
+  "kinds": ["plugin"],
+  "origin": "upstream-port",
+  "upstream": {"url": "https://github.com/nikolat/balloonselector", "author": "Don"},
+  "delivery": "instructions-only",
+  "license": "Unlicense AND BSD-3-Clause",
+  "licenseURL": "https://github.com/nikolat/balloonselector/blob/04ac6c086a03f1394c572d0748e4bdd190046c77/LICENSE",
+  "instructions": "docs/balloonselector.md",
+  "limitations": [
+    "未リリースのUtatane本体対応と、導入済みのmacOS版YAYAが必要です。",
+    "カタログからの自動導入には未対応です。固定した上流ソースから移植NARを生成する手順を案内します。",
+    "Windowsでは原版を使用してください。原版へのネットワーク更新は無効にしています。"
+  ]
+}

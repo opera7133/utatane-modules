@@ -28,6 +28,17 @@ def main():
             root = Path(temporary)
             safe_extract(args.library, root)
             library = root / identity / "lib" / f"lib{identity.replace('-', '_')}.dylib"
+            if identity == "proxy-ex":
+                helper = root / identity / "bin/mp3tag"
+                import wave
+                audio = root / "無音.wav"
+                with wave.open(str(audio), "wb") as sound:
+                    sound.setnchannels(1); sound.setsampwidth(2); sound.setframerate(8000)
+                    sound.writeframes(bytes(1600))
+                result = subprocess.check_output([str(helper), str(audio)], text=True)
+                assert "Milliseconds:100|" in result, result
+                # Exercise the complete package layout so the dylib locates bin/.
+                subprocess.run([sys.executable, __file__, str(library)], check=True, timeout=30)
             # The same bytes must work beside a Windows DLL, outside the ZIP's layout.
             master = root / "ghost/master/saori"
             master.mkdir(parents=True)
@@ -94,6 +105,22 @@ def main():
             elif name == "textcopy2":
                 # Do not overwrite the developer's clipboard during a package build.
                 assert send([], charset).startswith("SAORI/1.0 204")
+            elif name == "proxy_ex":
+                helper = root / "echoarg"
+                helper.write_text("#!/bin/sh\nprintf '%s\\r\\n' \"$@\"\n")
+                helper.chmod(0o755)
+                assert send(["/delim", "|"], charset).startswith("SAORI/1.0 204")
+                response = send([str(helper), "日本語 [2017]", "$(literal)"], charset)
+                assert "Result: 日本語 [2017]|$(literal)|\r\n" in response, response
+                packaged = args.library.resolve().parent.parent / "bin/mp3tag"
+                if charset == "UTF-8" and packaged.is_file():
+                    import wave
+                    audio = root / "無音.wav"
+                    with wave.open(str(audio), "wb") as sound:
+                        sound.setnchannels(1); sound.setsampwidth(2); sound.setframerate(8000)
+                        sound.writeframes(bytes(1600))
+                    response = send(["mp3tag.exe", str(audio)], charset)
+                    assert "Milliseconds:100|" in response, response
             elif name == "mciaudior":
                 assert send(["load", "missing.wav"], charset).startswith("SAORI/1.0 204")
                 assert send(["stop"], charset).startswith("SAORI/1.0 204")

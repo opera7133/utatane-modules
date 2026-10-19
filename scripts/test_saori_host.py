@@ -16,7 +16,7 @@ def main():
     parser.add_argument("--host", type=Path, required=True)
     parser.add_argument("--package", type=Path, nargs="+", action="append", required=True)
     args = parser.parse_args()
-    expected = {"saori-cpuid", "kenonoke", "textcopy2", "mciaudior", "wmove"}
+    expected = {"saori-cpuid", "kenonoke", "textcopy2", "mciaudior", "wmove", "proxy-ex"}
     packages = {}
     for archive in (item for group in args.package for item in group):
         with zipfile.ZipFile(archive) as package:
@@ -28,7 +28,7 @@ def main():
         verify_package(archive, read_json(ROOT / f"catalog/modules/{identity}.json"))
         packages[identity] = archive
     if set(packages) != expected:
-        raise ValueError(f"Expected all five SAORI packages; missing {sorted(expected - set(packages))}")
+        raise ValueError(f"Expected all SAORI packages; missing {sorted(expected - set(packages))}")
 
     with tempfile.TemporaryDirectory(prefix="Utatane SAORI host 日本語 ") as temporary:
         root = Path(temporary)
@@ -61,6 +61,9 @@ def main():
                     assert "Result: 場所\r\nValue0: 飲み物\r\n" in execute("GETKEYWORD", "酒場で日本酒を飲む")
                 elif identity == "textcopy2":
                     assert execute().startswith("SAORI/1.0 204")
+                elif identity == "proxy-ex":
+                    assert execute("/delim", "|").startswith("SAORI/1.0 204")
+                    assert execute("missing.exe").startswith("SAORI/1.0 204")
                 elif identity == "mciaudior":
                     assert execute("stop").startswith("SAORI/1.0 204")
                 else:

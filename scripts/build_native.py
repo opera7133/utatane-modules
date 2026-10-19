@@ -11,7 +11,7 @@ import tempfile
 from catalog import ROOT, git, sha256, verify_package, write_json
 
 
-def verify_library(library, architectures, *, misaka=False):
+def verify_library(library, architectures, *, misaka=False, executable=False):
     from build import output
     if set(output("xcrun", "lipo", "-archs", str(library)).split()) != set(architectures):
         raise ValueError("Swift module architectures differ from the requested target")
@@ -29,6 +29,8 @@ def verify_library(library, architectures, *, misaka=False):
         commands = output("otool", "-arch", arch, "-l", str(library))
         if "minos 14.0" not in commands or "path /usr/lib/swift " not in commands:
             raise ValueError("Expected macOS 14 deployment and system Swift runtime lookup")
+        if executable:
+            continue
         symbols = {line.split()[-1] for line in output("nm", "-arch", arch, "-gU", str(library)).splitlines() if line.split()}
         required = {"_load", "_loadu", "_request", "_unload"}
         if misaka:
@@ -66,11 +68,15 @@ def build_native(entry, architectures, cache, destination):
             subprocess.run(["sh", str(ROOT / entry["recipe"]), str(ROOT / "native"),
                             str(package / "lib"), str(scratch), " ".join(architectures)], check=True)
             verify_library(package / f"lib/lib{product}.dylib", architectures, misaka=misaka)
+            for helper in (package / "bin").glob("*"):
+                verify_library(helper, architectures, executable=True)
             (package / "LICENSES").mkdir()
             shutil.copyfile(ROOT / "LICENSE", package / "LICENSES/utatane-MIT.txt")
             if identity == "kawari":
                 shutil.copyfile(ROOT / "native/Sources/CKawariModule/Vendor/KAWARI/LICENSE",
                                 package / "LICENSES/KAWARI.txt")
+                shutil.copyfile(ROOT / "native/Sources/CKawariModule/Vendor/KAWARI/build/src/uka_regexp/LICENSE",
+                                package / "LICENSES/uka_regexp-Unlicense.txt")
                 random_source = (ROOT / "native/Sources/CKawariModule/Vendor/KAWARI/build/src/misc/mt19937ar.cpp").read_text()
                 (package / "LICENSES/Mersenne-Twister.txt").write_text(random_source.split("*/", 1)[0] + "*/\n")
             shutil.copyfile(ROOT / entry["instructions"], package / "README.md")

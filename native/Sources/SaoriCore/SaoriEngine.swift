@@ -5,6 +5,7 @@ public enum SaoriKind: String, CaseIterable, Sendable {
     case kenonoke
     case textcopy2
     case mciaudior
+    case proxyEx = "proxy_ex"
     case wmove
 }
 
@@ -21,6 +22,7 @@ public final class SaoriEngine {
         case .kenonoke: module = NativeKeyword(moduleURL: directoryURL.appending(path: "libkenonoke.dylib"))
         case .textcopy2: module = NativeTextCopy(pasteboardName: nil, handler: textCopyHandler)
         case .mciaudior: module = NativeMciAudioR(baseDirectoryURL: directoryURL)
+        case .proxyEx: module = NativeProxyEx(baseDirectoryURL: directoryURL)
         case .wmove: module = NativeWmove(windowController: windowController)
         }
     }

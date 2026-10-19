@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "proxy-ex",
+  "displayName": "proxy_ex (Native)",
+  "kinds": [
+    "saori"
+  ],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane",
+    "author": "opera7133"
+  },
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/proxy-ex.md",
+  "limitations": [
+    "macOS用の実行ファイルのみ呼び出します。Windows EXEは実行しません。",
+    "同梱mp3tagはAVFoundation/AudioToolboxが読み取れる音声形式に対応します。",
+    "補助プログラムの実行は10秒、標準出力は1MiBまでです。"
+  ],
+  "version": "0.1.0",
+  "revision": 1,
+  "abi": "saori-utf8-v1",
+  "minimumOS": "14.0",
+  "source": {
+    "kind": "local",
+    "path": "native"
+  },
+  "recipe": "recipes/proxy-ex/build.sh",
+  "requiredFiles": [
+    "lib/libproxy_ex.dylib",
+    "bin/mp3tag",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ],
+  "windowsFilenames": [
+    "proxy_ex.dll"
+  ]
+}

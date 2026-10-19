@@ -2,6 +2,7 @@
 
 #include "shiori/kawari_shiori.h"
 #include "saori/saori_module.h"
+#include "misc/charset.h"
 
 #include <algorithm>
 #include <cctype>
@@ -16,7 +17,7 @@ utatane_kawari_saori_request_callback saoriRequestCallback = nullptr;
 
 class UtataneSaoriModule final : public saori::TModule {
 public:
-    UtataneSaoriModule(saori::IModuleFactory &factory, const std::string &path)
+    UtataneSaoriModule(saori::IModuleFactory &factory, const std::wstring &path)
         : TModule(factory, path, 0) {}
 
     bool Initialize() override { return true; }
@@ -26,7 +27,7 @@ public:
     std::string Request(const std::string &request) override {
         if (saoriRequestCallback == nullptr) return "";
         int64_t length = static_cast<int64_t>(request.size());
-        char *response = saoriRequestCallback(path.c_str(), request.data(), &length);
+        char *response = saoriRequestCallback(WtoUTF8(path).c_str(), request.data(), &length);
         if (response == nullptr || length < 0) return "";
         const std::string result(response, static_cast<std::size_t>(length));
         std::free(response);
@@ -38,8 +39,8 @@ class UtataneSaoriFactory final : public saori::IModuleFactory {
 public:
     explicit UtataneSaoriFactory(TKawariLogger &logger) : IModuleFactory(logger) {}
 
-    saori::TModule *CreateModule(const std::string &path) override {
-        std::string filename = path;
+    saori::TModule *CreateModule(const std::wstring &path) override {
+        std::string filename = WtoUTF8(path);
         std::replace(filename.begin(), filename.end(), '\\', '/');
         const std::size_t slash = filename.find_last_of('/');
         if (slash != std::string::npos) filename.erase(0, slash + 1);
@@ -73,7 +74,7 @@ uint32_t utatane_kawari_create(const char *path, int64_t length) {
     try {
         std::lock_guard<std::mutex> lock(kawariMutex);
         return TKawariShioriFactory::GetFactory().CreateInstance(
-            std::string(path, static_cast<std::size_t>(length))
+            UTF8toW(std::string(path, static_cast<std::size_t>(length)))
         );
     } catch (...) {
         return 0;
