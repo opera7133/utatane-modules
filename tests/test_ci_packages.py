@@ -14,7 +14,7 @@ from ci_packages import GROUPS, group_for, input_key, package_name, reuse
 class PackageCacheTests(unittest.TestCase):
     def test_all_binary_modules_have_one_group(self):
         entries = [entry for entry in modules() if entry['delivery'] == 'binary']
-        self.assertEqual(len(entries), 19)
+        self.assertEqual(len(entries), 20)
         self.assertEqual(group_for(next(e for e in entries if e['id'] == 'kawari')), 'native')
         self.assertEqual({group_for(entry) for entry in entries}, set(GROUPS))
         self.assertTrue(all(group_for(entry) == 'native' for entry in entries if entry['origin'] == 'native'))

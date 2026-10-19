@@ -116,7 +116,7 @@ public final class DynamicSaoriRegistry: SaoriCalling, @unchecked Sendable {
         let stem = String(name.dropLast(4)).lowercased()
         guard modules[stem] == nil else { return }
         let filenames = ["\(stem).dylib", "lib\(stem).dylib"]
-        let directories = [baseDirectoryURL] + (catalogRootURL.map { [$0.appending(path: stem).appending(path: "lib"), $0] } ?? [])
+        let directories = [baseDirectoryURL] + (catalogRootURL.map { [$0.appending(path: stem.replacingOccurrences(of: "_", with: "-")).appending(path: "lib"), $0.appending(path: stem).appending(path: "lib"), $0] } ?? [])
         for directory in directories {
             for filename in filenames {
                 let candidate = directory.appending(path: filename)

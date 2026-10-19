@@ -16,7 +16,7 @@ uv run --locked python scripts/build.py kagari --archs arm64 x86_64
 uv run --locked python scripts/build.py misaka-native --archs arm64 x86_64
 uv run --locked python scripts/build.py nise-shiori --archs arm64 x86_64
 uv run --locked python scripts/build.py ese-shiori --archs arm64 x86_64
-for module in saori-cpuid kenonoke textcopy2 mciaudior wmove; do
+for module in saori-cpuid kenonoke textcopy2 mciaudior wmove proxy-ex; do
   uv run --locked python scripts/build.py "$module" --archs arm64 x86_64
 done
 rustup toolchain install 1.93.0 --profile minimal
@@ -65,7 +65,7 @@ uv run --locked python scripts/test_cpp_host.py \
 uv run --locked python scripts/test_saori_host.py \
   --host /path/to/Utatane.app/Contents/Helpers/utatane-shiori-host \
   --package /path/to/saori-cpuid.zip /path/to/kenonoke.zip \
-            /path/to/textcopy2.zip /path/to/mciaudior.zip /path/to/wmove.zip
+            /path/to/textcopy2.zip /path/to/mciaudior.zip /path/to/wmove.zip /path/to/proxy-ex.zip
 ```
 
 ## 上流更新の一括確認

@@ -1,5 +1,6 @@
 import CKawariNative
 import Foundation
+import LegacyText
 import ModuleProtocol
 import SaoriClient
 
@@ -22,7 +23,7 @@ public enum KawariError: LocalizedError, Equatable, Sendable {
         case .requestFailed:
             "KAWARIへのリクエストに失敗した。"
         case .undecodableResponse:
-            "KAWARIの応答をUTF-8として読み取れなかった。"
+            "KAWARIの応答の文字コードを読み取れなかった。"
         }
     }
 }
@@ -37,10 +38,11 @@ public final class KawariSession: @unchecked Sendable {
 
     public init(masterDirectoryURL: URL, saoriRegistry: DynamicSaoriRegistry? = nil) throws {
         Self.installNativeSaoriCallback()
-        self.saoriRegistry = saoriRegistry ?? DynamicSaoriRegistry(
+        let registry = saoriRegistry ?? DynamicSaoriRegistry(
             baseDirectoryURL: masterDirectoryURL,
             catalogRootURL: (ProcessInfo.processInfo.environment["UTATANE_SAORI_ROOT"] ?? ProcessInfo.processInfo.environment["KAWARI_SAORI_ROOT"]).map(URL.init(fileURLWithPath:))
         )
+        self.saoriRegistry = registry
         let preparation = try Self.prepareDirectoryIfNeeded(masterDirectoryURL)
         let preparedDirectory = preparation.directory
         compatibilityDirectoryURL = preparation.isLegacy ? preparedDirectory : nil
@@ -51,12 +53,20 @@ public final class KawariSession: @unchecked Sendable {
         guard let data = path.data(using: .utf8) else {
             throw KawariError.loadFailed
         }
-        handle = data.withUnsafeBytes { bytes in
-            utatane_kawari_create(
-                bytes.bindMemory(to: CChar.self).baseAddress,
-                Int64(data.count)
-            )
-        }
+        handle = {
+            // A preload SAORI negotiates its charset while the dictionary loads.
+            // Bind its owning registry during create as well as normal requests.
+            kawariSaoriLock.lock()
+            defer { kawariSaoriLock.unlock() }
+            activeKawariSaori.registry = registry
+            defer { activeKawariSaori.registry = nil }
+            return data.withUnsafeBytes { bytes in
+                utatane_kawari_create(
+                    bytes.bindMemory(to: CChar.self).baseAddress,
+                    Int64(data.count)
+                )
+            }
+        }()
         guard handle != 0 else {
             throw KawariError.loadFailed
         }
@@ -485,6 +495,7 @@ public final class KawariSession: @unchecked Sendable {
     }
 
     public func request(_ request: ShioriRequest) throws -> ShioriResponse {
+        let request = Self.filePathCompatibleRequest(request)
         guard usesLegacyCompatibility, let id = request.id else {
             return try ShioriMessageParser.parseResponse(self.request(request.serialized()))
         }
@@ -512,6 +523,27 @@ public final class KawariSession: @unchecked Sendable {
             })
         }
         return response
+    }
+
+    static func filePathCompatibleRequest(_ request: ShioriRequest) -> ShioriRequest {
+        let pathReference: String
+        if ["OnFileDropping", "OnFileDrop2", "OnFileDropEx", "OnFileDrop", "OnDirectoryDrop"].contains(request.id ?? "") {
+            pathReference = "Reference0"
+        } else if ["open", "save", "folder"].contains(request.reference(0) ?? ""),
+                  request.id == "OnSystemDialog" || request.id == request.reference(1) {
+            pathReference = "Reference2"
+        } else {
+            return request
+        }
+        var result = request
+        result.headers = ShioriHeaders(request.headers.entries.map { header in
+            guard header.name.caseInsensitiveCompare(pathReference) == .orderedSame else { return header }
+            let paths = header.value.components(separatedBy: "\u{1}").map { path in
+                path.hasPrefix("/") ? path.replacingOccurrences(of: "/", with: "\\") : path
+            }
+            return ShioriHeader(name: header.name, value: paths.joined(separator: "\u{1}"))
+        })
+        return result
     }
 
     private func legacyEchoRequest(expression: String, originalRequest request: ShioriRequest) -> ShioriRequest {
@@ -551,7 +583,7 @@ public final class KawariSession: @unchecked Sendable {
         }
         defer { utatane_kawari_free(responsePointer) }
         let responseData = Data(bytes: responsePointer, count: Int(responseLength))
-        guard let response = String(data: responseData, encoding: .utf8) else {
+        guard let response = LegacyTextDecoder.decode(responseData, preferredCharset: "UTF-8") else {
             throw KawariError.undecodableResponse
         }
         return response
@@ -565,13 +597,13 @@ private func utataneKawariSaoriRequest(
 ) -> UnsafeMutablePointer<CChar>? {
     guard let path, let request, let length, length.pointee >= 0 else { return nil }
     let data = Data(bytes: request, count: Int(length.pointee))
-    guard let message = String(data: data, encoding: .utf8) else { return nil }
+    guard let message = LegacyTextDecoder.decode(data, preferredCharset: "UTF-8") else { return nil }
 
     let modulePath = String(cString: path)
     activeKawariSaori.registry?.load(modulePath)
     let response = activeKawariSaori.registry?.response(path: modulePath, request: message)
         ?? "SAORI/1.0 500 Internal Server Error\r\n\r\n"
-    guard let responseData = kawariUTF8Wire(response).data(using: .utf8),
+    guard let responseData = LegacyTextDecoder.encode(response, charset: response.lowercased().contains("charset: shift_jis") ? "Shift_JIS" : "UTF-8"),
           let allocation = malloc(max(responseData.count, 1))
     else { return nil }
     responseData.copyBytes(to: allocation.assumingMemoryBound(to: UInt8.self), count: responseData.count)

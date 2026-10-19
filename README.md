@@ -24,7 +24,12 @@ Utataneで使うmacOS向けSHIORIなどのビルド・配布用リポジトリ�
 
 ## SAORI
 
+- [proxy_exと音声タグ](docs/proxy-ex.md) — SAORI BASIC呼び出しと、読み取り専用のmp3tag互換ヘルパー
 - [ネイティブSAORI](docs/saori.md) — システム情報、キーワード、コピー、音声、ウィンドウ操作
+
+## プラグイン
+
+- [BalloonSelector](docs/balloonselector.md) — バルーン選択支援。未リリースの本体対応向け移植NARの生成手順
 
 ## 上流更新の確認
 

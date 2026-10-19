@@ -111,6 +111,9 @@ def safe_extract(archive, destination):
             seen.add(name)
             within(destination, name)
         source.extractall(destination)
+        for item in source.infolist():
+            if not item.is_dir() and (item.external_attr >> 16) & 0o111:
+                within(destination, item.filename).chmod(0o755)
 
 
 def verify_package(archive, module, root=ROOT):

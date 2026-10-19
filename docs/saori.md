@@ -1,6 +1,6 @@
 # ネイティブSAORI
 
-Utataneの内蔵SAORIを独立したmacOS用ライブラリにしたものです。macOS 14以降で使えます。
+macOS用の独立したSAORIライブラリです。macOS 14以降で使えます。
 
 | ライブラリ | 対応内容 |
 | --- | --- |
@@ -8,6 +8,7 @@ Utataneの内蔵SAORIを独立したmacOS用ライブラリにしたものです
 | `libkenonoke.dylib` | `GETKEYWORD`。同じフォルダの`keyword.txt`で語句を分類します |
 | `libtextcopy2.dylib` | Argument0をクリップボードへコピー。Argument1が`1`ならコピーした文字列を返します |
 | `libmciaudior.dylib` | `load`、`play`、`loop`、`stop`による音声再生 |
+| `libproxy_ex.dylib` | SAORI BASICの実行と標準出力の取得。[音声メタデータヘルパーを同梱](proxy-ex.md) |
 | `libwmove.dylib` | `GET_POSITION`、`GET_DESKTOP_SIZE`、`MOVETO`、`MOVETO_INSIDE`。ホストとのウィンドウ接続が必要です |
 
 CPUクロックなど取得しない項目は`0`、メモリ値は搭載容量です。Windows版とすべての値・機能が一致するわけではありません。`wmove`は接続がない場合、実行要求に`501 Not Implemented`を返します。
