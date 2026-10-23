@@ -20,6 +20,7 @@ def patch(tree: Path) -> None:
     data = source.read_bytes().replace(b"\r\n", b"\n")
     data = replace_once(data, b'#include "globaldef.h"', b'''#include "globaldef.h"
 extern "C" int utatane_yaya_native_saori_load(const char *path);
+extern "C" int utatane_yaya_is_internal_saori(const char *path);
 extern "C" int utatane_yaya_native_saori_unload(const char *path);
 extern "C" char *utatane_yaya_native_saori_request(const char *path, char *request, long *length);''')
     data = replace_once(data, b"\tstd::string libfile = posix_path(name);", b'''\tstd::string libfile = posix_path(name);
@@ -72,4 +73,14 @@ extern "C" char *utatane_yaya_native_saori_request(const char *path, char *reque
         return 1;
     }''')
     data = data[:start] + section + data[end:]
+    # Upstream now classifies extensionless names as executable SAORI-basic.
+    # Built-in names must reach our DLL-style parent callback instead.
+    data = replace_once(data, b"bool\tCLib1::IsBasicName(const yaya::string_t &n)\n{", b'''bool\tCLib1::IsBasicName(const yaya::string_t &n)
+{
+#if defined(POSIX)
+    char *path = Ccct::Ucs2ToMbcs(n, CHARSET_UTF8);
+    const bool internal = path && utatane_yaya_is_internal_saori(path);
+    free(path);
+    if (internal) return false;
+#endif''')
     source.write_bytes(data)

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- YAYA 6で拡張子のない`internal_*`を実行ファイル扱いしないよう修正し、実ゴーストのFUNCTIONEXから内蔵SAORIを呼べるようにしました。
+
 - YAYA 5/6・里々・華和梨に、対応するUtatane開発版の内蔵SAORIへの専用ホスト接続を追加しました。実辞書からの同期呼び出しと非同期完了通知をarm64・Intelで検証しています。公開済みZIPへの反映は別途リリースが必要です。
 
 - 華和梨をukatech/kawari 9.1.0ベースへ更新しました。Unicode・正規表現・lambdaに対応し、旧Shift_JIS辞書とNative SAORI接続を維持しました。macOSのiconv互換修正も含みます。

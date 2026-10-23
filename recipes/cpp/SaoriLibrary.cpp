@@ -123,6 +123,7 @@ extern "C" __attribute__((visibility("default"))) int32_t utatane_internal_saori
     return 1;
 }
 
+extern "C" int utatane_yaya_is_internal_saori(const char *path) { return path && !saori::internalName(path).empty(); }
 extern "C" int utatane_yaya_native_saori_load(const char *path) { return path && saori::load(path); }
 extern "C" int utatane_yaya_native_saori_unload(const char *path) { return path && saori::unload(path); }
 extern "C" char *utatane_yaya_native_saori_request(const char *path, char *input, long *length) {
