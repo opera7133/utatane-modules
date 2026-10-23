@@ -35,6 +35,8 @@ def main():
                                        input=path.read_bytes(), stdout=subprocess.PIPE, check=True)
             path.write_bytes(converted.stdout)
     recipe = ROOT / f"recipes/{identity}"
+    if identity == "satori":
+        runpy.run_path(str(recipe / "patch_internal_saori.py"))["patch"](tree)
     for file in recipe.glob("*.h"):
         shutil.copyfile(file, tree / file.name)
     # Rename only the legacy long-width entry points in a disposable build copy.

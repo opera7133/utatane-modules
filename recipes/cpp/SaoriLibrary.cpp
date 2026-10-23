@@ -11,6 +11,19 @@
 
 namespace saori {
 namespace {
+using InternalCallback = void *(*)(const void *, int32_t, int32_t *);
+InternalCallback internalCallback = nullptr;
+std::string normalized(std::string path);
+
+std::string internalName(const std::string &path) {
+    auto name = std::filesystem::path(normalized(path)).filename().string();
+    std::transform(name.begin(), name.end(), name.begin(), [](unsigned char c) { return std::tolower(c); });
+    if (name.size() > 4 && name.substr(name.size() - 4) == ".dll") name.resize(name.size() - 4);
+    if (name.compare(0, 9, "internal_") != 0 || !std::all_of(name.begin(), name.end(), [](unsigned char c) {
+        return (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_';
+    })) return "";
+    return name;
+}
 constexpr int32_t limit = 8 * 1024 * 1024;
 struct Library {
     using Load = int32_t (*)(void *, int32_t);
@@ -44,6 +57,7 @@ std::vector<std::filesystem::path> candidates(const std::filesystem::path &origi
 }
 }
 bool load(const std::string &path) {
+    if (!internalName(path).empty()) return internalCallback != nullptr;
     const auto key = normalized(path);
     if (sessions.count(key)) return true;
     for (const auto &candidate : candidates(key)) {
@@ -73,10 +87,25 @@ bool load(const std::string &path) {
     return false;
 }
 bool unload(const std::string &path) {
+    if (!internalName(path).empty()) return internalCallback != nullptr;
     return sessions.erase(normalized(path)) != 0;
 }
 char *request(const std::string &path, const char *input, long *length) {
     if (!input || !length || *length < 0 || *length > limit) return nullptr;
+    const auto module = internalName(path);
+    if (!module.empty()) {
+        if (!internalCallback) { *length = 0; return nullptr; }
+        std::string wire(input, static_cast<size_t>(*length));
+        const auto end = wire.find("\r\n");
+        if (end == std::string::npos) { *length = 0; return nullptr; }
+        wire.insert(end + 2, "Module: " + module + "\r\n");
+        if (wire.size() > static_cast<size_t>(limit)) { *length = 0; return nullptr; }
+        int32_t size = 0;
+        auto *response = static_cast<char *>(internalCallback(wire.data(), static_cast<int32_t>(wire.size()), &size));
+        if (!response || size < 0 || size > limit) { free(response); *length = 0; return nullptr; }
+        *length = size;
+        return response;
+    }
     if (!load(path)) { *length = 0; return nullptr; }
     int32_t size = static_cast<int32_t>(*length);
     char *buffer = static_cast<char *>(malloc(static_cast<size_t>(size) + 1));
@@ -87,6 +116,11 @@ char *request(const std::string &path, const char *input, long *length) {
     *length = size;
     return output;
 }
+}
+
+extern "C" __attribute__((visibility("default"))) int32_t utatane_internal_saori_set_callback(saori::InternalCallback callback) {
+    saori::internalCallback = callback;
+    return 1;
 }
 
 extern "C" int utatane_yaya_native_saori_load(const char *path) { return path && saori::load(path); }

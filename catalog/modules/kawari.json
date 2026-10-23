@@ -19,7 +19,7 @@
     "華和梨9.1.0のmacOS移植版です。Windows固有操作は利用できません。旧kawari.ini辞書の互換変換も維持しています。"
   ],
   "version": "9.1.0",
-  "revision": 3,
+  "revision": 4,
   "abi": "shiori-load-request-unload",
   "minimumOS": "14.0",
   "source": {

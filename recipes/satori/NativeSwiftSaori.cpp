@@ -41,7 +41,8 @@ wstring NativeSwiftSaori::get_version(const wstring &security) {
     headers.push_back(strpair(L"SecurityLevel", security));
     wstring protocol, version;
     strpairvec reply;
-    SakuraClient::request(L"SAORI", L"1.0", L"GET Version", headers, protocol, version, reply);
+    const auto status = SakuraClient::request(L"SAORI", L"1.0", L"GET Version", headers, protocol, version, reply);
+    if (status != 200) return L"";
     hasCharset = false;
     versionReplyCharset.clear();
     for (const auto &header : reply) {

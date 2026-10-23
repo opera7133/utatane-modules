@@ -19,3 +19,9 @@ SAORIのWindows DLL指定に対して、同じフォルダの`lib名前.dylib`�
 ライセンスはBSD 3-Clause。接続部分はMITです。出典と固定コミットはZIP内の`module.json`に記録しています。
 
 Tc574-11では上流5系への不具合修正のバックポートを含みます。`STRDIGEST`の出力値が変わるため、ハッシュを保存・比較する辞書は更新時に確認してください。
+
+## 内蔵SAORI接続（開発版）
+
+今回のソースから再ビルドしたモジュールと、対応するUtatane開発版を組み合わせると、DLLを配置せずに`internal_system`・`internal_text`・`internal_random`・`internal_data`・`internal_crypto`の対応関数を呼べます。対応関数と非同期通知の仕様は[Utataneの案内](https://github.com/opera7133/Utatane/blob/main/Docs/Support/Native-SHIORI.md)を確認してください。
+
+接続はSHIORIホストと親アプリの専用IPCです。WindowsのWM_COPYDATAによるDirectSSTP、TCP/HTTP経由のSAORI実行には対応していません。既存の公開済みZIPだけでは利用できません。合成した実辞書で同期呼び出し・非同期完了通知をarm64とx86_64で確認しています。実ゴーストの画面操作は未確認です。

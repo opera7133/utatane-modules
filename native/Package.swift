@@ -83,7 +83,7 @@ let package = Package(
             "Vendor/KAWARI/build/src/misc/base64.cpp",
             "Vendor/KAWARI/build/src/misc/charset.cpp",
             "Vendor/KAWARI/build/src/misc/wfile.cpp",
-            "Vendor/KAWARI/build/src/misc/dsstp.cpp",
+            "KawariDirectSSTP.cpp",
             "Vendor/KAWARI/build/src/saori/saori_dsstp.cpp",
             "Vendor/KAWARI/build/src/kis/kis_sstp.cpp",
             "Vendor/KAWARI/build/src/kis/kis_regex.cpp",

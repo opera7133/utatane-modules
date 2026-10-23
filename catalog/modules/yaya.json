@@ -24,7 +24,7 @@
     "同じプロセス内では1セッション。複数ゴーストは別プロセスで実行してください。"
   ],
   "version": "Tc574-11",
-  "revision": 1,
+  "revision": 2,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {
