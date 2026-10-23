@@ -21,7 +21,8 @@
   "instructions": "docs/yaya.md",
   "limitations": [
     "Windows用SAORIは実行できません。同梱または共通導入したmacOS用SAORIを使用してください。",
-    "同じプロセス内では1セッション。複数ゴーストは別プロセスで実行してください。"
+    "同じプロセス内では1セッション。複数ゴーストは別プロセスで実行してください。",
+    "内蔵SAORIの呼び出しにはUtatane 0.2.17以降が必要です。"
   ],
   "version": "Tc574-11",
   "revision": 2,
