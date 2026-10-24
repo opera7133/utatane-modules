@@ -9,9 +9,6 @@ final class NativeHttpc: NativeSaoriModule {
     private let connected: () -> Bool
     private let fetch: (URL) -> (data: Data, charset: String?)?
     private var hasBackgroundRequests = false
-    private var cursorKey: [String] = []
-    private var cursor = 0
-    private var cachedText = ""
 
     init(directory: URL, connected: @escaping () -> Bool = NativeHttpc.isConnected,
          fetch: @escaping (URL) -> (data: Data, charset: String?)? = HttpcTransfer.fetch) {
@@ -20,54 +17,52 @@ final class NativeHttpc: NativeSaoriModule {
         self.connected = connected
     }
 
-    func call(_ arguments: [String]) -> String {
-        if arguments.isEmpty { return connected() ? "1" : "0" }
+    func call(_ arguments: [String]) -> String { callValues(arguments).first ?? "" }
+
+    /// Each request returns its first match and all subsequent matches together.
+    /// Do not use the generic U+0001 separator: it can occur in an HTTP body.
+    func callValues(_ arguments: [String]) -> [String] {
+        if arguments.isEmpty { return [connected() ? "1" : "0"] }
         if arguments[0].caseInsensitiveCompare("bg") == .orderedSame {
-            guard arguments.count >= 3, !arguments[1].isEmpty else { return "" }
+            guard arguments.count >= 3, !arguments[1].isEmpty else { return [""] }
             if HttpcHostBridge.submit(directory: directory, arguments: ["bg"] + arguments.dropFirst()) {
                 hasBackgroundRequests = true
             }
-            return ""
+            return [""]
         }
         var args = arguments
         var charset: String?
-        if let first = args.first?.lowercased(), ["euc", "jis", "sjis", "utf-8", "utf-16be", "utf-16le"].contains(first) {
-            charset = ["euc": "EUC-JP", "jis": "ISO-2022-JP", "sjis": "CP932"][first] ?? first
+        if let first = args.first?.lowercased(), ["euc", "jis", "sjis", "utf8", "utf-8", "utf-16be", "utf-16le"].contains(first) {
+            charset = ["euc": "EUC-JP", "jis": "ISO-2022-JP", "sjis": "CP932", "utf8": "UTF-8"][first] ?? first
             args.removeFirst()
         }
         guard (1 ... 3).contains(args.count), let url = URL(string: args[0]),
-              ["http", "https"].contains(url.scheme?.lowercased() ?? ""), url.host != nil else { return "" }
-        let key = arguments
-        if args.count != 3 || key != cursorKey {
-            guard let response = fetch(url) else { return args.count == 2 ? "0" : "" }
-            if args.count == 2 {
-                let path = args[1].replacingOccurrences(of: "\\", with: "/")
-                guard !path.isEmpty, !path.contains("\0") else { return "0" }
-                let output = path.hasPrefix("/") ? URL(fileURLWithPath: path) : directory.appending(path: path)
-                do { try response.data.write(to: output, options: .atomic); return "1" } catch { return "0" }
-            }
-            let body = response.data
-            let text: String?
-            if let charset, let encoding = LegacyTextDecoder.encoding(named: charset) { text = String(data: body, encoding: encoding) }
-            else { text = LegacyTextDecoder.decode(body, preferredCharset: response.charset) }
-            guard let text else { return "" }
-            cachedText = text.replacingOccurrences(of: "\r", with: "").replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: "\0", with: "")
-            cursorKey = key
-            cursor = 0
+              ["http", "https"].contains(url.scheme?.lowercased() ?? ""), url.host != nil else { return [""] }
+        guard let response = fetch(url) else { return [args.count == 2 ? "0" : ""] }
+        if args.count == 2 {
+            let path = args[1].replacingOccurrences(of: "\\", with: "/")
+            guard !path.isEmpty, !path.utf8.contains(0) else { return ["0"] }
+            let output = path.hasPrefix("/") ? URL(fileURLWithPath: path) : directory.appending(path: path)
+            do { try response.data.write(to: output, options: .atomic); return ["1"] } catch { return ["0"] }
         }
-        guard args.count == 3 else { return cachedText }
-        guard !args[1].isEmpty, !args[2].isEmpty, cursor <= cachedText.count else { return "" }
-        let start = cachedText.index(cachedText.startIndex, offsetBy: cursor)
-        guard let left = cachedText.range(of: args[1], range: start ..< cachedText.endIndex),
-              let right = cachedText.range(of: args[2], range: left.upperBound ..< cachedText.endIndex) else { return "" }
-        cursor = cachedText.distance(from: cachedText.startIndex, to: right.upperBound)
-        return String(cachedText[left.upperBound ..< right.lowerBound])
+        let text: String?
+        if let charset, let encoding = LegacyTextDecoder.encoding(named: charset) { text = String(data: response.data, encoding: encoding) }
+        else { text = LegacyTextDecoder.decode(response.data, preferredCharset: response.charset) }
+        guard let text else { return [""] }
+        let clean = text.replacingOccurrences(of: "\r", with: "").replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: "\0", with: "")
+        guard args.count == 3 else { return [clean] }
+        guard !args[1].isEmpty, !args[2].isEmpty else { return [""] }
+        var values: [String] = [], start = clean.startIndex
+        while values.count < 254, let left = clean.range(of: args[1], range: start ..< clean.endIndex),
+              let right = clean.range(of: args[2], range: left.upperBound ..< clean.endIndex) {
+            values.append(String(clean[left.upperBound ..< right.lowerBound])); start = right.upperBound
+        }
+        return values.isEmpty ? [""] : values
     }
 
     func unload() {
         if hasBackgroundRequests { _ = HttpcHostBridge.submit(directory: directory, arguments: ["cancel"]) }
         hasBackgroundRequests = false
-        cachedText = ""; cursorKey = []; cursor = 0
     }
 
     private static func isConnected() -> Bool {

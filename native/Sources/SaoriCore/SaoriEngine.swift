@@ -30,7 +30,8 @@ public final class SaoriEngine {
     }
 
     public func call(_ arguments: [String]) -> [String] {
-        module.call(arguments).components(separatedBy: "\u{1}")
+        if let httpc = module as? NativeHttpc { return httpc.callValues(arguments) }
+        return module.call(arguments).components(separatedBy: "\u{1}")
     }
 
     public func unload() {

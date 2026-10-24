@@ -35,9 +35,11 @@ def smoke_httpc(send, root):
             print("httpc: HTTP failure preserves file", flush=True)
             assert "Result: 0\r\n" in send([url.replace("/data", "/missing"), "保存.bin"])
             assert (root / "保存.bin").read_bytes() == body
-            print("httpc: sequential extraction", flush=True)
-            assert "Result: 日本語\r\n" in send([url, "<a>", "</a>"])
-            assert "Result: 次\r\n" in send([url, "<a>", "</a>"])
+            print("httpc: extraction returns all matches per request", flush=True)
+            for _ in range(2):
+                response = send([url, "<a>", "</a>"])
+                assert "Result: 日本語\r\n" in response
+                assert "Value0: 次\r\n" in response
         finally:
             server.shutdown()
             thread.join(timeout=5)

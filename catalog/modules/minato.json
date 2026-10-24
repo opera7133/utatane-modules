@@ -12,20 +12,20 @@
   },
   "delivery": "binary",
   "license": "MIT",
-  "licenseURL": "https://github.com/opera7133/minato/blob/968e2c40954c917dbeafa6db8e3e1ff49ea33fb7/LICENSE",
+  "licenseURL": "https://github.com/opera7133/minato/blob/fb61176ae8243a5f94fa3020d756ed41f18aa1de/LICENSE",
   "instructions": "docs/minato.md",
   "limitations": [
     "Windows用SAORI/DLLは実行できません。macOS用SAORIを使用してください。",
     "同じプロセス内では1セッション。Utataneはゴーストごとにプロセスを分離します。"
   ],
-  "version": "0.2.0",
+  "version": "0.2.2",
   "revision": 1,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {
     "url": "https://github.com/opera7133/minato.git",
     "path": "sources/minato",
-    "commit": "968e2c40954c917dbeafa6db8e3e1ff49ea33fb7"
+    "commit": "fb61176ae8243a5f94fa3020d756ed41f18aa1de"
   },
   "recipe": "recipes/minato/build.sh",
   "requiredFiles": [

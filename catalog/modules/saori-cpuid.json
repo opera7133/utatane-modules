@@ -22,7 +22,7 @@
     "Windows版のすべての機能を再現するものではありません。対応コマンドは導入手順を参照してください。"
   ],
   "version": "0.1.0",
-  "revision": 3,
+  "revision": 4,
   "abi": "saori-utf8-v1",
   "minimumOS": "14.0",
   "source": {

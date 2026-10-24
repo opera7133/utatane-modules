@@ -14,4 +14,4 @@ ZIP内の `LICENSES/` も含めて同梱してください。同梱せず共通�
 
 通常のSHIORI入口を使い、文字列はUTF-8です。Utataneではゴーストごとにプロセスを分けて実行します。
 
-今回の配布元は[上流0.2.0（pre-release）](https://github.com/mizuki-yura/minato/releases/tag/v0.2.0)です。macOS版の応答も上流の文字コード付与処理へ統一し、UTF-8の本文とCharsetヘッダが一致するようにしています。
+今回の配布元は[上流0.2.2（pre-release）](https://github.com/mizuki-yura/minato/releases/tag/v0.2.2)です。macOS版の応答も上流の文字コード付与処理へ統一し、UTF-8の本文とCharsetヘッダが一致するようにしています。

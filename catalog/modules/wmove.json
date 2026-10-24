@@ -19,7 +19,7 @@
     "ウィンドウ操作にはホストからの接続が必要です。接続がない場合は501を返します。"
   ],
   "version": "0.1.0",
-  "revision": 3,
+  "revision": 4,
   "abi": "saori-utf8-v1",
   "minimumOS": "14.0",
   "source": {

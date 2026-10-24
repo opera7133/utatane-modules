@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import SaoriCore
 
-@Test func httpcSynchronousCompatibilityKeepsStateAndSavesExactBytes() throws {
+@Test func httpcSynchronousCompatibilityReturnsAllMatchesAndSavesExactBytes() throws {
     let root = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
     try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: root) }
@@ -13,9 +13,8 @@ import Testing
     #expect(module.call([]) == "1")
     #expect(module.call(["http://localhost/data"]) == "<a>日本語</a><a>次</a>")
     let args = ["http://localhost/data", "<a>", "</a>"]
-    #expect(module.call(args) == "日本語")
-    #expect(module.call(args) == "次")
-    #expect(module.call(args) == "")
+    #expect(module.callValues(args) == ["日本語", "次"])
+    #expect(module.callValues(args) == ["日本語", "次"])
     module.unload()
     #expect(module.call(args) == "日本語")
     #expect(module.call(["http://localhost/data", "保存.bin"]) == "1")
