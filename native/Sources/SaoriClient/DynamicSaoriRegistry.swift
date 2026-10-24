@@ -15,6 +15,7 @@ public final class DynamicSaoriRegistry: SaoriCalling, @unchecked Sendable {
     private typealias Unload = @convention(c) () -> Int32
 
     private final class Module {
+        let path: URL
         let handle: UnsafeMutableRawPointer
         let request: Request
         let unload: Unload
@@ -38,17 +39,21 @@ public final class DynamicSaoriRegistry: SaoriCalling, @unchecked Sendable {
                 dlclose(handle)
                 return nil
             }
+            self.path = url
             self.handle = handle
             request = unsafeBitCast(requestSymbol, to: Request.self)
             unload = unsafeBitCast(unloadSymbol, to: Unload.self)
         }
 
         deinit {
-            _ = unload()
+            let started = DispatchTime.now().uptimeNanoseconds
+            let status = unload()
+            SaoriDiagnosticHook.report(3, status: status, started: started, path: path)
             dlclose(handle)
         }
 
         func call(_ arguments: [String]) -> String {
+            let started = DispatchTime.now().uptimeNanoseconds
             let lines = ["EXECUTE SAORI/1.0", "Charset: UTF-8"]
                 + arguments.enumerated().map { "Argument\($0.offset): \($0.element.replacingOccurrences(of: "\r", with: " ").replacingOccurrences(of: "\n", with: " "))" }
             let wire = lines.joined(separator: "\r\n") + "\r\n\r\n"
@@ -58,10 +63,15 @@ public final class DynamicSaoriRegistry: SaoriCalling, @unchecked Sendable {
                 if let base = bytes.baseAddress { buffer.copyMemory(from: base, byteCount: bytes.count) }
             }
             var length = Int32(input.count)
-            guard let output = request(buffer, &length) else { return "" }
+            guard let output = request(buffer, &length) else {
+                SaoriDiagnosticHook.report(2, status: 0, started: started, path: path); return ""
+            }
             defer { free(output) }
-            guard length > 0, length <= 8 * 1024 * 1024 else { return "" }
+            guard length > 0, length <= 8 * 1024 * 1024 else {
+                SaoriDiagnosticHook.report(2, status: 0, started: started, path: path); return ""
+            }
             let data = Data(bytes: output, count: Int(length))
+            SaoriDiagnosticHook.report(2, status: SaoriDiagnosticHook.status(data), started: started, bytes: data.count, path: path)
             guard let response = LegacyTextDecoder.decode(data, preferredCharset: "UTF-8"),
                   response.hasPrefix("SAORI/1.0 200") else { return "" }
             var result = ""
@@ -80,6 +90,7 @@ public final class DynamicSaoriRegistry: SaoriCalling, @unchecked Sendable {
         }
 
         func response(_ wire: String, charset: String) -> String? {
+            let started = DispatchTime.now().uptimeNanoseconds
             guard let data = LegacyTextDecoder.encode(wire, charset: charset),
                   data.count <= Int32.max,
                   let buffer = malloc(max(data.count, 1)) else { return nil }
@@ -87,10 +98,16 @@ public final class DynamicSaoriRegistry: SaoriCalling, @unchecked Sendable {
                 if let base = bytes.baseAddress { buffer.copyMemory(from: base, byteCount: bytes.count) }
             }
             var length = Int32(data.count)
-            guard let output = request(buffer, &length) else { return nil }
+            guard let output = request(buffer, &length) else {
+                SaoriDiagnosticHook.report(2, status: 0, started: started, path: path); return nil
+            }
             defer { free(output) }
-            guard length > 0, length <= 8 * 1024 * 1024 else { return nil }
-            return LegacyTextDecoder.decode(Data(bytes: output, count: Int(length)), preferredCharset: charset)
+            guard length > 0, length <= 8 * 1024 * 1024 else {
+                SaoriDiagnosticHook.report(2, status: 0, started: started, path: path); return nil
+            }
+            let bytes = Data(bytes: output, count: Int(length))
+            SaoriDiagnosticHook.report(2, status: SaoriDiagnosticHook.status(bytes), started: started, bytes: bytes.count, path: path)
+            return LegacyTextDecoder.decode(bytes, preferredCharset: charset)
         }
     }
 
@@ -109,6 +126,7 @@ public final class DynamicSaoriRegistry: SaoriCalling, @unchecked Sendable {
     }
 
     private func loadUnlocked(_ path: String) {
+        let started = DispatchTime.now().uptimeNanoseconds
         let name = path.replacingOccurrences(of: "\\", with: "/").split(separator: "/").last.map(String.init) ?? ""
         guard name.lowercased().hasSuffix(".dll"), name.count > 4,
               name.dropLast(4).allSatisfy({ $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "_" || $0 == "-") })
@@ -122,10 +140,12 @@ public final class DynamicSaoriRegistry: SaoriCalling, @unchecked Sendable {
                 let candidate = directory.appending(path: filename)
                 if let module = Module(url: candidate, directory: baseDirectoryURL) {
                     modules[stem] = module
+                    SaoriDiagnosticHook.report(1, status: 1, started: started, path: candidate)
                     return
                 }
             }
         }
+        SaoriDiagnosticHook.report(1, status: 0, started: started, path: baseDirectoryURL.appending(path: path))
     }
 
     public func unload(_ path: String) {

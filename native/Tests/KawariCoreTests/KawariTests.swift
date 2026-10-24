@@ -169,3 +169,15 @@ func nativeSaoriTakesPrecedenceOverCompatibilityNameFallback(_ name: String) thr
     let response = try session.request(ShioriRequest(method: "GET", headers: .init([.init(name: "ID", value: "OnBoot")])))
     #expect(response.value == "native-ok")
 }
+
+@Test func datesAfter2038RoundTripWithout32BitTruncation() throws {
+    let root = FileManager.default.temporaryDirectory.appending(path: "kawari-2040-\(UUID())")
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: root) }
+    try #"""
+    System.Callback.OnGET : $(entry ${System.Request.ID};)
+    OnBoot : $(date "%Y-%m-%d %H:%M:%S" $(mktime 2040 6 15 12 34 56))
+    """#.write(to: root.appending(path: "kawarirc.kis"), atomically: true, encoding: .utf8)
+    let session = try KawariSession(masterDirectoryURL: root)
+    #expect(try session.request(ShioriRequest(method: "GET", headers: .init([.init(name: "ID", value: "OnBoot")]))).value == "2040-06-15 12:34:56")
+}

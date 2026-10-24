@@ -49,7 +49,7 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(entries["ese-shiori"]["version"], "3.03")
         self.assertEqual(entries["yaya"]["version"], "Tc574-11")
         self.assertEqual(entries["yaya-6"]["version"], "Tc607-2")
-        self.assertEqual(entries["satori"]["version"], "Mc205-4")
+        self.assertEqual(entries["satori"]["version"], "Mc205-5")
         self.assertEqual(entries["mciaudior"]["originalURL"], "http://umeici.onjn.jp")
         self.edit("ese-shiori", lambda value: value.update(version="3.03-beta"))
         with self.assertRaises(ValidationError):

@@ -31,11 +31,8 @@ final class NativeHttpc: NativeSaoriModule {
             return [""]
         }
         var args = arguments
-        var charset: String?
-        if let first = args.first?.lowercased(), ["euc", "jis", "sjis", "utf8", "utf-8", "utf-16be", "utf-16le"].contains(first) {
-            charset = ["euc": "EUC-JP", "jis": "ISO-2022-JP", "sjis": "CP932", "utf8": "UTF-8"][first] ?? first
-            args.removeFirst()
-        }
+        let options = HttpcTextOptions(arguments: &args)
+        let charset = options.charset
         guard (1 ... 3).contains(args.count), let url = URL(string: args[0]),
               ["http", "https"].contains(url.scheme?.lowercased() ?? ""), url.host != nil else { return [""] }
         guard let response = fetch(url) else { return [args.count == 2 ? "0" : ""] }
@@ -49,7 +46,7 @@ final class NativeHttpc: NativeSaoriModule {
         if let charset, let encoding = LegacyTextDecoder.encoding(named: charset) { text = String(data: response.data, encoding: encoding) }
         else { text = LegacyTextDecoder.decode(response.data, preferredCharset: response.charset) }
         guard let text else { return [""] }
-        let clean = text.replacingOccurrences(of: "\r", with: "").replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: "\0", with: "")
+        let clean = options.process(text)
         guard args.count == 3 else { return [clean] }
         guard !args[1].isEmpty, !args[2].isEmpty else { return [""] }
         var values: [String] = [], start = clean.startIndex

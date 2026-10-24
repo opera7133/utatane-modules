@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
+#include <chrono>
 
 namespace saori {
 namespace {
@@ -25,13 +26,21 @@ std::string internalName(const std::string &path) {
     return name;
 }
 constexpr int32_t limit = 8 * 1024 * 1024;
+using Clock = std::chrono::steady_clock;
+void trace(int32_t phase, int32_t status, Clock::time_point started, uint64_t bytes, const std::string &path) {
+    using Reporter = void (*)(int32_t, int32_t, uint64_t, uint64_t, const char *);
+    static auto reporter = reinterpret_cast<Reporter>(dlsym(RTLD_DEFAULT, "utatane_host_saori_diagnostic"));
+    if (reporter) reporter(phase, status, static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::microseconds>(Clock::now() - started).count()), bytes, path.c_str());
+}
+
 struct Library {
     using Load = int32_t (*)(void *, int32_t);
     using Request = void *(*)(void *, int32_t *);
     using Unload = int32_t (*)();
     Request request;
     Unload unload;
-    ~Library() { unload(); }
+    std::string selectedPath;
+    ~Library() { if (unload) unload(); }
 };
 // Swift images must stay mapped after unload; their runtime metadata outlives a session.
 std::map<std::string, void *> images;
@@ -58,6 +67,7 @@ std::vector<std::filesystem::path> candidates(const std::filesystem::path &origi
 }
 bool load(const std::string &path) {
     if (!internalName(path).empty()) return internalCallback != nullptr;
+    const auto started = Clock::now();
     const auto key = normalized(path);
     if (sessions.count(key)) return true;
     for (const auto &candidate : candidates(key)) {
@@ -80,15 +90,23 @@ bool load(const std::string &path) {
         if (!buffer) return false;
         memcpy(buffer, directory.c_str(), directory.size() + 1);
         // Initialization failure must not try a different version against the same data.
-        if (!start(buffer, static_cast<int32_t>(directory.size()))) return false;
-        sessions[key] = std::unique_ptr<Library>(new Library{request, stop});
+        if (!start(buffer, static_cast<int32_t>(directory.size()))) { trace(1, 0, started, 0, candidate.string()); return false; }
+        sessions[key] = std::unique_ptr<Library>(new Library{request, stop, candidate.string()});
+        trace(1, 1, started, 0, candidate.string());
         return true;
     }
+    trace(1, 0, started, 0, key);
     return false;
 }
 bool unload(const std::string &path) {
     if (!internalName(path).empty()) return internalCallback != nullptr;
-    return sessions.erase(normalized(path)) != 0;
+    const auto started = Clock::now();
+    auto found = sessions.find(normalized(path));
+    const auto selected = found == sessions.end() ? normalized(path) : found->second->selectedPath;
+    const int32_t status = found == sessions.end() ? 0 : found->second->unload();
+    if (found != sessions.end()) { found->second->unload = nullptr; sessions.erase(found); }
+    trace(3, status, started, 0, selected);
+    return status != 0;
 }
 char *request(const std::string &path, const char *input, long *length) {
     if (!input || !length || *length < 0 || *length > limit) return nullptr;
@@ -106,13 +124,19 @@ char *request(const std::string &path, const char *input, long *length) {
         *length = size;
         return response;
     }
-    if (!load(path)) { *length = 0; return nullptr; }
+    const auto started = Clock::now();
+    if (!load(path)) { *length = 0; trace(2, 0, started, 0, normalized(path)); return nullptr; }
     int32_t size = static_cast<int32_t>(*length);
     char *buffer = static_cast<char *>(malloc(static_cast<size_t>(size) + 1));
     if (!buffer) { *length = 0; return nullptr; }
     memcpy(buffer, input, size); buffer[size] = 0;
     auto *output = static_cast<char *>(sessions.at(normalized(path))->request(buffer, &size));
-    if (!output || size < 0 || size > limit) { free(output); *length = 0; return nullptr; }
+    if (!output || size < 0 || size > limit) { free(output); *length = 0; trace(2, 0, started, 0, sessions.at(normalized(path))->selectedPath); return nullptr; }
+    int status = 0;
+    if (size >= 13 && memcmp(output, "SAORI/1.0 ", 10) == 0) {
+        for (int i = 10; i < 13 && output[i] >= '0' && output[i] <= '9'; ++i) status = status * 10 + output[i] - '0';
+    }
+    trace(2, status, started, static_cast<uint64_t>(size), sessions.at(normalized(path))->selectedPath);
     *length = size;
     return output;
 }

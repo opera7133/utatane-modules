@@ -15,6 +15,8 @@ import Testing
     let args = ["http://localhost/data", "<a>", "</a>"]
     #expect(module.callValues(args) == ["日本語", "次"])
     #expect(module.callValues(args) == ["日本語", "次"])
+    #expect(module.call(["erase_tag", "utf8", "http://localhost/data"]) == "日本語次")
+    #expect(module.call(["translate_tag", "http://localhost/data"]) == #"日本語\_a次\_a"#)
     module.unload()
     #expect(module.call(args) == "日本語")
     #expect(module.call(["http://localhost/data", "保存.bin"]) == "1")

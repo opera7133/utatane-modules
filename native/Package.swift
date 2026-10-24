@@ -58,6 +58,8 @@ let package = Package(
             "Vendor/KAWARI/build/src/libkawari/kawari_lexer.cpp",
             "Vendor/KAWARI/build/src/libkawari/kawari_compiler.cpp",
             "Vendor/KAWARI/build/src/libkawari/kawari_log.cpp",
+            "Vendor/KAWARI/build/src/libkawari/kawari_diag.cpp",
+            "Vendor/KAWARI/build/src/libkawari/kawari_lint.cpp",
             "Vendor/KAWARI/build/src/libkawari/kawari_rc.cpp",
             "KawariPath.cpp",
             "Vendor/KAWARI/build/src/misc/mt19937ar.cpp",
