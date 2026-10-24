@@ -71,6 +71,18 @@ void *request(void *input, int32_t *length) {
             self.assertEqual(selected(), "prefixed")
             prefixed.unlink()
             self.assertEqual(selected(), "managed")
+            # Catalog IDs normalize underscores, including proxy_ex and the
+            # original saori_ip distribution's ip.dll filename.
+            for dll, identity, filename in [("proxy_ex.dll", "proxy-ex", "libproxy_ex.dylib"),
+                                             ("saori_ip.dll", "saori-ip", "libsaori_ip.dylib"),
+                                             ("ip.dll", "saori-ip", "libsaori_ip.dylib")]:
+                directory = root / "managed" / identity / "lib"
+                directory.mkdir(parents=True, exist_ok=True)
+                import shutil
+                shutil.copyfile(shared, directory / filename)
+                declared = ghost / dll
+                self.assertEqual(selected(), "managed")
+
 
 
 if __name__ == "__main__":

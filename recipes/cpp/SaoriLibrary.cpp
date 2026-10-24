@@ -54,14 +54,17 @@ std::vector<std::filesystem::path> candidates(const std::filesystem::path &origi
     if (ext != ".dll" && ext != ".DLL") return {original};
     auto stem = original.stem().string();
     std::transform(stem.begin(), stem.end(), stem.begin(), [](unsigned char c) { return std::tolower(c); });
-    const auto filename = "lib" + stem + ".dylib";
+    const auto canonical = stem == "ip" ? "saori_ip" : stem;
+    const auto filename = "lib" + canonical + ".dylib";
     std::vector<std::filesystem::path> result = {original.parent_path() / (stem + ".dylib"), original.parent_path() / filename};
-    auto id = stem == "saori_cpuid" ? "saori-cpuid" : stem;
+    auto id = canonical;
+    std::replace(id.begin(), id.end(), '_', '-');
     if (const char *root = std::getenv("UTATANE_SAORI_ROOT")) {
         if (std::filesystem::path(root).is_absolute()) result.push_back(std::filesystem::path(root) / id / "lib" / filename);
     } else if (const char *home = std::getenv("HOME")) {
         result.push_back(std::filesystem::path(home) / "Library/Application Support/Utatane/NativeSaori" / id / "lib" / filename);
     }
+    if (canonical != stem) result.insert(result.begin(), original.parent_path() / ("lib" + stem + ".dylib"));
     return result;
 }
 }

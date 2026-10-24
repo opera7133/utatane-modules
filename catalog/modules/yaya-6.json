@@ -26,7 +26,7 @@
     "内蔵SAORIの呼び出しにはUtatane 0.2.17以降が必要です。"
   ],
   "version": "Tc607-2",
-  "revision": 3,
+  "revision": 4,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {

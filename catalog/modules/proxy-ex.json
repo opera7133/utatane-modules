@@ -20,7 +20,7 @@
     "補助プログラムの実行は10秒、標準出力は1MiBまでです。"
   ],
   "version": "0.1.0",
-  "revision": 5,
+  "revision": 6,
   "abi": "saori-utf8-v1",
   "minimumOS": "14.0",
   "source": {

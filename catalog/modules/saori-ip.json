@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "saori-ip",
+  "displayName": "saori_ip (Native)",
+  "kinds": [
+    "saori"
+  ],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane",
+    "author": "opera7133"
+  },
+  "originalURL": "https://github.com/ukatech/csaori/tree/1ddb8c9024bb4716fa3ac25d05c819fad224e459/impl_saori/saori_ip",
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/saori.md",
+  "limitations": [
+    "GetLocalIP（有効な非ループバックIPv4の先頭）・GetLocalHostnameに対応。複数NICの選択はWindowsと一致しない場合がある。GetInternetIPは未対応（501）。"
+  ],
+  "version": "0.1.0",
+  "revision": 1,
+  "abi": "saori-utf8-v1",
+  "minimumOS": "14.0",
+  "source": {
+    "kind": "local",
+    "path": "native"
+  },
+  "recipe": "recipes/saori-ip/build.sh",
+  "requiredFiles": [
+    "lib/libsaori_ip.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ],
+  "windowsFilenames": [
+    "saori_ip.dll",
+    "ip.dll"
+  ]
+}

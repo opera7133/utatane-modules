@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "clipcopy",
+  "displayName": "clipcopy (Native)",
+  "kinds": [
+    "saori"
+  ],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane",
+    "author": "opera7133"
+  },
+  "originalURL": "https://github.com/ukatech/csaori/tree/1ddb8c9024bb4716fa3ac25d05c819fad224e459/impl_saori/clipcopy",
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/saori.md",
+  "limitations": [
+    "全引数を改行で結合し、文字列中の\\nを改行へ変換してコピー。macOSのUnicodeクリップボードを使用する。"
+  ],
+  "version": "0.1.0",
+  "revision": 1,
+  "abi": "saori-utf8-v1",
+  "minimumOS": "14.0",
+  "source": {
+    "kind": "local",
+    "path": "native"
+  },
+  "recipe": "recipes/clipcopy/build.sh",
+  "requiredFiles": [
+    "lib/libclipcopy.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ],
+  "windowsFilenames": [
+    "clipcopy.dll"
+  ]
+}

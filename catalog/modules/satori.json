@@ -21,7 +21,7 @@
     "内蔵SAORIの呼び出しにはUtatane 0.2.17以降が必要です。"
   ],
   "version": "Mc205-5",
-  "revision": 1,
+  "revision": 2,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {

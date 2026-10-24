@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- 定番の互換候補としてclipcopy・textcopy・saori-ipを追加。独立したmacOS用dylibとして配布する。saori-ipのGetInternetIPは非対応（501）
+- textcopy2 0.1.0-r6で第3引数による改行置換と返却指定、無効入力の状態コードを原作に合わせた。共通SAORIはr6へ更新
+- YAYA 5/6 r4、里々Mc205-5-r2、華和梨9.2.0-r2、忍・灯r4で、共有SAORIのカタログIDの下線正規化とip.dll別名を修正
+
 - 華和梨を9.2.0-r1、里々をMc205-5-r1へ更新。macOS向けのUnicode変換・SAORI接続を維持し、華和梨の2038年以降の日時処理を回帰テストした
 - 通常SAORIの診断に対応。対応する次回Utatane本体で、選択したdylib、状態、所要時間を記録できる。YAYA 5/6・忍・灯はr3以降。引数と結果本文は記録しない
 - httpc 0.1.0-r5で、`erase_tag`・`translate_tag`と複数の先頭オプションに対応。同期処理と対応する次回本体の非同期処理で同じ変換を行う。共通コードを使う7 SAORIをr5へ更新

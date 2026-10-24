@@ -19,7 +19,7 @@
     "接続確認、HTTP/HTTPS取得・保存、文字列抽出、erase_tag・translate_tagに対応。bg通知には対応する次回Utatane本体が必要。プロキシ個別設定は未対応。ダウンロード上限32MB。"
   ],
   "version": "0.1.0",
-  "revision": 5,
+  "revision": 6,
   "abi": "saori-utf8-v1",
   "minimumOS": "14.0",
   "source": {

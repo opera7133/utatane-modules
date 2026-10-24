@@ -138,9 +138,13 @@ def main():
                 assert send(["GET_POSITION", "sakura"], charset).startswith("SAORI/1.0 501")
             elif name == "httpc":
                 smoke_httpc(lambda arguments: send(arguments, charset), root)
-            elif name == "textcopy2":
+            elif name in ("textcopy2", "textcopy", "clipcopy"):
                 # Do not overwrite the developer's clipboard during a package build.
-                assert send([], charset).startswith("SAORI/1.0 204")
+                assert send([], charset).startswith("SAORI/1.0 400")
+            elif name == "saori_ip":
+                assert "Result: " in send(["GetLocalHostname"], charset)
+                assert send(["GetInternetIP"], charset).startswith("SAORI/1.0 501")
+                assert send(["unknown"], charset).startswith("SAORI/1.0 400")
             elif name == "proxy_ex":
                 helper = root / "echoarg"
                 helper.write_text("#!/bin/sh\nprintf '%s\\r\\n' \"$@\"\n")

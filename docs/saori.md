@@ -6,7 +6,9 @@ macOS用の独立したSAORIライブラリです。macOS 14以降で使えま�
 | --- | --- |
 | `libsaori_cpuid.dylib` | `os.*`、`cpu.*`、`mem.*`の一部。macOSの情報を返します |
 | `libkenonoke.dylib` | `GETKEYWORD`。同じフォルダの`keyword.txt`で語句を分類します |
-| `libtextcopy2.dylib` | Argument0をクリップボードへコピー。Argument1が`1`ならコピーした文字列を返します |
+| `libtextcopy.dylib` / `libtextcopy2.dylib` | Argument0をコピー。Argument1が数値で非ゼロなら元の文字列を返す。Argument2の区切りはコピー先で改行へ置換 |
+| `libclipcopy.dylib` | 全引数を改行で結合し、文字列中の`\n`も改行へ変換してコピー |
+| `libsaori_ip.dylib` | `GetLocalIP`・`GetLocalHostname`。`GetInternetIP`は非対応（501） |
 | `libmciaudior.dylib` | `load`、`play`、`loop`、`stop`による音声再生 |
 | `libproxy_ex.dylib` | SAORI BASICの実行と標準出力の取得。[音声メタデータヘルパーを同梱](proxy-ex.md) |
 | `libwmove.dylib` | `GET_POSITION`、`GET_DESKTOP_SIZE`、`MOVETO`、`MOVETO_INSIDE`。ホストとのウィンドウ接続が必要です |
@@ -70,3 +72,14 @@ Windowsのプロキシ設定継承は未対応です。
 
 対応する次回Utataneの開発用パレットで「通常SAORIの呼び出しを記録」をオンにすると、選択したdylib、呼び出し元、ロード・呼び出し・アンロードの状態、所要時間、応答バイト数を確認できます。引数・本文は記録せず、初期状態はオフです。
 SHIORI内部からの呼び出しには、YAYA 5/6 r3、里々Mc205-5-r1、華和梨9.2.0-r1、忍・灯r3以降が必要です。通常のSHIORI/SAORI ABIは変わらず、他のホストで診断接続がなければ何も送信しません。Wine内のWindows SHIORIが直接読み込むDLLの内部呼び出しは対象外です。
+
+## 追加の互換SAORI
+
+`clipcopy`・`textcopy`・`saori-ip`は、SSPが互換機能を持つ従来SAORIを起点にした追加です。利用率の順位を表すものではありません。
+引数は[CSAORIの公開ソース](https://github.com/ukatech/csaori/tree/1ddb8c9024bb4716fa3ac25d05c819fad224e459/impl_saori)のclipcopy・textcopy2・saori_ip実装を確認し、macOSの機能で独立実装しています。原作のソース・Windowsバイナリは同梱しません。これらの独立実装のライセンスはMITです。
+
+`clipcopy`は引数がなければ400、成功は200（結果なし）。`textcopy`とtextcopy2 r6は空の第1引数を400にし、返却指定なしの成功は204、返却指定ありは200で元の第1引数を返します。コピー先の改行はCRLFで、macOSのUnicodeクリップボードへ書き込みます。第3引数が空なら置換しません。
+
+`saori-ip`のカタログIDはハイフン、dylib名は`libsaori_ip.dylib`です。`saori_ip.dll`と原作の配布名`ip.dll`に対応します。`GetLocalIP`は有効な非ループバックIPv4の先頭、`GetLocalHostname`はOSのホスト名です。取得できない場合は500。複数NICの選択はWindowsと一致するとは限りません。原作の`GetInternetIP`は外部HTTPサービスを利用しますが、この互換実装では501を返します。外部へのIP照会は行いません。
+
+共有配置の名前解決にはYAYA 5/6 r4、里々Mc205-5-r2、華和梨9.2.0-r2、忍・灯r4以降を使ってください。原版Windows DLLを使う場合はWineの設定が必要です。

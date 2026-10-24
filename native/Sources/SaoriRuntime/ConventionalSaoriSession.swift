@@ -132,15 +132,15 @@ public final class ConventionalSaoriSession: @unchecked Sendable {
         if kind == .wmove, windows == nil {
             return response(501, charset: charsetName, encoding: encoding, length: length)
         }
-        let values = engine!.call((0 ..< arguments.count).map { arguments[$0]! })
-        return response(values.allSatisfy(\.isEmpty) ? 204 : 200, values: values,
+        let result = engine!.execute((0 ..< arguments.count).map { arguments[$0]! })
+        return response(result.status, values: result.values,
                         charset: charsetName, encoding: encoding, length: length)
     }
 
     private func response(_ status: Int, values: [String] = [], charset: String, encoding: String.Encoding,
                           length: UnsafeMutablePointer<Int32>) -> UnsafeMutableRawPointer?
     {
-        let reasons = [200: "OK", 204: "No Content", 400: "Bad Request", 501: "Not Implemented", 503: "Service Unavailable"]
+        let reasons = [200: "OK", 204: "No Content", 400: "Bad Request", 500: "Internal Server Error", 501: "Not Implemented", 503: "Service Unavailable"]
         var text = "SAORI/1.0 \(status) \(reasons[status]!)\r\nCharset: \(charset)\r\n"
         if status == 200, let first = values.first {
             func escaped(_ value: String) -> String {
