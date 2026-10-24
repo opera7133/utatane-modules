@@ -83,11 +83,24 @@ final class HttpcTransfer: NSObject, URLSessionDataDelegate, @unchecked Sendable
         let session = URLSession(configuration: configuration, delegate: transfer, delegateQueue: nil)
         defer { session.invalidateAndCancel() }
         session.dataTask(with: url).resume()
-        guard transfer.ready.wait(timeout: .now() + 35) == .success else { return nil }
+        guard transfer.waitForCompletion(timeout: 35) else { return nil }
         return transfer.lock.withLock {
             guard transfer.succeeded else { return nil }
             return (transfer.data, transfer.response?.textEncodingName)
         }
+    }
+
+    /// Conventional DLL hosts can call us on their main thread without a
+    /// running application loop. Older CFNetwork versions need main-run-loop
+    /// callbacks during setup; blocking that thread on a semaphore stalls them.
+    private func waitForCompletion(timeout: TimeInterval) -> Bool {
+        guard Thread.isMainThread else { return ready.wait(timeout: .now() + timeout) == .success }
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if ready.wait(timeout: .now()) == .success { return true }
+            _ = RunLoop.current.run(mode: .default, before: min(deadline, Date().addingTimeInterval(0.02)))
+        }
+        return ready.wait(timeout: .now()) == .success
     }
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse,

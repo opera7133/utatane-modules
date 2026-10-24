@@ -27,11 +27,15 @@ def smoke_httpc(send, root):
         thread.start()
         try:
             url = f"http://127.0.0.1:{server.server_port}/data"
+            print("httpc: local text response", flush=True)
             assert "Result: <a>日本語</a><a>次</a>\r\n" in send([url])
+            print("httpc: local binary save", flush=True)
             assert "Result: 1\r\n" in send([url, "保存.bin"])
             assert (root / "保存.bin").read_bytes() == body
+            print("httpc: HTTP failure preserves file", flush=True)
             assert "Result: 0\r\n" in send([url.replace("/data", "/missing"), "保存.bin"])
             assert (root / "保存.bin").read_bytes() == body
+            print("httpc: sequential extraction", flush=True)
             assert "Result: 日本語\r\n" in send([url, "<a>", "</a>"])
             assert "Result: 次\r\n" in send([url, "<a>", "</a>"])
         finally:
@@ -72,7 +76,7 @@ def main():
             master.mkdir(parents=True)
             relocated = master / library.name
             shutil.copyfile(library, relocated)
-            subprocess.run([sys.executable, __file__, str(relocated)], check=True, timeout=30)
+            subprocess.run([sys.executable, __file__, str(relocated)], check=True, timeout=45 if identity == "httpc" else 30)
         return
     library = C.CDLL(str(args.library.resolve()))
     name = args.library.stem.removeprefix("lib")

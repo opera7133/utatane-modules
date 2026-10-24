@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- httpcを従来のDLLホストのメインスレッドから呼んだ場合も、通信の初期化が進むようにした
+
 - httpc互換の共通SAORIを追加。接続状態の確認、HTTP/HTTPSの同期取得・保存に対応した。bg通知とHTMLタグ変換は未対応
 
 - YAYA 6で拡張子のない`internal_*`を実行ファイル扱いしないよう修正し、実ゴーストのFUNCTIONEXから内蔵SAORIを呼べるようにしました。
