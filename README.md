@@ -29,7 +29,7 @@ Utataneで使うmacOS向けSHIORIなどのビルド・配布用リポジトリ�
 
 ## プラグイン
 
-- [BalloonSelector](docs/balloonselector.md) — バルーン選択支援。未リリースの本体対応向け移植NARの生成手順
+- [BalloonSelector](docs/balloonselector.md) — バルーン選択支援。移植NARの生成手順（本体0.2.16以降）
 
 ## 上流更新の確認
 
