@@ -63,7 +63,7 @@ let package = Package(
             "Vendor/KAWARI/build/src/misc/mt19937ar.cpp",
             "Vendor/KAWARI/build/src/misc/phttp.cpp",
             "Vendor/KAWARI/build/src/saori/saori.cpp",
-            "Vendor/KAWARI/build/src/saori/saori_module.cpp",
+            "KawariSaori.cpp",
             "Vendor/KAWARI/build/src/saori/saori_unique.cpp",
             "Vendor/KAWARI/build/src/kis/kis_echo.cpp",
             "Vendor/KAWARI/build/src/kis/kis_dict.cpp",

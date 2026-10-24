@@ -138,3 +138,34 @@ func installedGhostDictionaryLoads() throws {
         #expect(response.value?.contains(expected) == true, Comment(rawValue: response.serialized()))
     }
 }
+
+@Test(arguments: ["httpc", "saori_cpuid"])
+func nativeSaoriTakesPrecedenceOverCompatibilityNameFallback(_ name: String) throws {
+    let root = FileManager.default.temporaryDirectory.appending(path: "kawari-saori-\(UUID())")
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let fixture = root.appending(path: "echo.c")
+    try #"""
+    #include <stdint.h>
+    #include <stdlib.h>
+    #include <string.h>
+    int32_t loadu(void *p, int32_t n) { free(p); return n > 0; }
+    int32_t unload(void) { return 1; }
+    void *request(void *p, int32_t *n) {
+        int execute = *n >= 8 && memcmp(p, "EXECUTE ", 8) == 0;
+        free(p);
+        const char *reply = execute ? "SAORI/1.0 200 OK\r\nCharset: UTF-8\r\nResult: native-ok\r\n\r\n"
+                                    : "SAORI/1.0 200 OK\r\nCharset: UTF-8\r\n\r\n";
+        *n = (int32_t)strlen(reply); void *out = malloc(*n); memcpy(out, reply, *n); return out;
+    }
+    """#.write(to: fixture, atomically: true, encoding: .utf8)
+    let compiler = Process()
+    compiler.executableURL = URL(filePath: "/usr/bin/xcrun")
+    compiler.arguments = ["clang", "-dynamiclib", fixture.path, "-o", root.appending(path: "lib\(name).dylib").path]
+    try compiler.run(); compiler.waitUntilExit()
+    try #require(compiler.terminationStatus == 0)
+    try "System.Callback.OnGET: ${event.${System.Request.ID}}\nevent.OnBoot: $(saoriregist \(name).dll native)$(callsaori native)\n".write(to: root.appending(path: "kawarirc.kis"), atomically: true, encoding: .utf8)
+    let session = try KawariSession(masterDirectoryURL: root)
+    let response = try session.request(ShioriRequest(method: "GET", headers: .init([.init(name: "ID", value: "OnBoot")])))
+    #expect(response.value == "native-ok")
+}

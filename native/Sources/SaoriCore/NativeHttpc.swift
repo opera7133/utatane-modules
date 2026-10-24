@@ -2,13 +2,13 @@ import Foundation
 import LegacyText
 import SystemConfiguration
 
-/// Synchronous httpc compatibility used by existing plugins. The original
-/// module's bg/DirectSSTP notifications and HTML transformation options are not
-/// provided by this dylib.
+/// Conventional httpc compatibility. Background requests use the private owning
+/// host bridge; no external DirectSSTP endpoint is opened by this library.
 final class NativeHttpc: NativeSaoriModule {
     private let directory: URL
     private let connected: () -> Bool
     private let fetch: (URL) -> (data: Data, charset: String?)?
+    private var hasBackgroundRequests = false
     private var cursorKey: [String] = []
     private var cursor = 0
     private var cachedText = ""
@@ -22,6 +22,13 @@ final class NativeHttpc: NativeSaoriModule {
 
     func call(_ arguments: [String]) -> String {
         if arguments.isEmpty { return connected() ? "1" : "0" }
+        if arguments[0].caseInsensitiveCompare("bg") == .orderedSame {
+            guard arguments.count >= 3, !arguments[1].isEmpty else { return "" }
+            if HttpcHostBridge.submit(directory: directory, arguments: ["bg"] + arguments.dropFirst()) {
+                hasBackgroundRequests = true
+            }
+            return ""
+        }
         var args = arguments
         var charset: String?
         if let first = args.first?.lowercased(), ["euc", "jis", "sjis", "utf-8", "utf-16be", "utf-16le"].contains(first) {
@@ -57,7 +64,11 @@ final class NativeHttpc: NativeSaoriModule {
         return String(cachedText[left.upperBound ..< right.lowerBound])
     }
 
-    func unload() { cachedText = ""; cursorKey = []; cursor = 0 }
+    func unload() {
+        if hasBackgroundRequests { _ = HttpcHostBridge.submit(directory: directory, arguments: ["cancel"]) }
+        hasBackgroundRequests = false
+        cachedText = ""; cursorKey = []; cursor = 0
+    }
 
     private static func isConnected() -> Bool {
         guard let reachability = SCNetworkReachabilityCreateWithName(nil, "example.com") else { return false }

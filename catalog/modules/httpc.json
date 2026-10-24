@@ -16,10 +16,10 @@
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
   "limitations": [
-    "接続状態の確認、HTTP/HTTPSの同期取得・保存に対応。bg通知、HTMLタグ変換、プロキシ個別設定は未対応。ダウンロード上限は32MB。"
+    "接続確認、HTTP/HTTPS取得・保存、文字列抽出に対応。bg通知には対応する次回Utatane本体が必要。HTMLタグ変換とプロキシ個別設定は未対応。ダウンロード上限32MB。"
   ],
   "version": "0.1.0",
-  "revision": 2,
+  "revision": 3,
   "abi": "saori-utf8-v1",
   "minimumOS": "14.0",
   "source": {

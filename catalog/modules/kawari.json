@@ -20,7 +20,7 @@
     "内蔵SAORIの呼び出しにはUtatane 0.2.17以降が必要です。"
   ],
   "version": "9.1.0",
-  "revision": 4,
+  "revision": 5,
   "abi": "shiori-load-request-unload",
   "minimumOS": "14.0",
   "source": {
