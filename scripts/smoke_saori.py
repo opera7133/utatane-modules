@@ -11,6 +11,34 @@ import tempfile
 import zipfile
 
 
+def smoke_httpc(send, root):
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+    import threading
+    body = "<a>日本語</a>\r\n<a>次</a>".encode()
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(404 if self.path == "/missing" else 200)
+            self.send_header("Content-Type", "text/plain; charset=UTF-8")
+            self.end_headers()
+            self.wfile.write(body)
+        def log_message(self, *args): pass
+    with ThreadingHTTPServer(("127.0.0.1", 0), Handler) as server:
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            url = f"http://127.0.0.1:{server.server_port}/data"
+            assert "Result: <a>日本語</a><a>次</a>\r\n" in send([url])
+            assert "Result: 1\r\n" in send([url, "保存.bin"])
+            assert (root / "保存.bin").read_bytes() == body
+            assert "Result: 0\r\n" in send([url.replace("/data", "/missing"), "保存.bin"])
+            assert (root / "保存.bin").read_bytes() == body
+            assert "Result: 日本語\r\n" in send([url, "<a>", "</a>"])
+            assert "Result: 次\r\n" in send([url, "<a>", "</a>"])
+        finally:
+            server.shutdown()
+            thread.join(timeout=5)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("library", type=Path)
@@ -102,6 +130,8 @@ def main():
                 assert "Result: 場所\r\nValue0: 飲み物\r\n" in response, response
             elif name == "wmove":
                 assert send(["GET_POSITION", "sakura"], charset).startswith("SAORI/1.0 501")
+            elif name == "httpc":
+                smoke_httpc(lambda arguments: send(arguments, charset), root)
             elif name == "textcopy2":
                 # Do not overwrite the developer's clipboard during a package build.
                 assert send([], charset).startswith("SAORI/1.0 204")

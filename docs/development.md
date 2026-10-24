@@ -16,7 +16,7 @@ uv run --locked python scripts/build.py kagari --archs arm64 x86_64
 uv run --locked python scripts/build.py misaka-native --archs arm64 x86_64
 uv run --locked python scripts/build.py nise-shiori --archs arm64 x86_64
 uv run --locked python scripts/build.py ese-shiori --archs arm64 x86_64
-for module in saori-cpuid kenonoke textcopy2 mciaudior wmove proxy-ex; do
+for module in saori-cpuid kenonoke textcopy2 mciaudior wmove proxy-ex httpc; do
   uv run --locked python scripts/build.py "$module" --archs arm64 x86_64
 done
 rustup toolchain install 1.93.0 --profile minimal

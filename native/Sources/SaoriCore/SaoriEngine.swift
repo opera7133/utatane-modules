@@ -3,6 +3,7 @@ import Foundation
 public enum SaoriKind: String, CaseIterable, Sendable {
     case cpuid = "saori-cpuid"
     case kenonoke
+    case httpc
     case textcopy2
     case mciaudior
     case proxyEx = "proxy_ex"
@@ -20,6 +21,7 @@ public final class SaoriEngine {
         switch kind {
         case .cpuid: module = NativeSystemInfo()
         case .kenonoke: module = NativeKeyword(moduleURL: directoryURL.appending(path: "libkenonoke.dylib"))
+        case .httpc: module = NativeHttpc(directory: directoryURL)
         case .textcopy2: module = NativeTextCopy(pasteboardName: nil, handler: textCopyHandler)
         case .mciaudior: module = NativeMciAudioR(baseDirectoryURL: directoryURL)
         case .proxyEx: module = NativeProxyEx(baseDirectoryURL: directoryURL)

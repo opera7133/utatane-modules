@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "httpc",
+  "displayName": "httpc (Native)",
+  "kinds": [
+    "saori"
+  ],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane",
+    "author": "opera7133"
+  },
+  "originalURL": "http://ssp.shillest.net/ukadoc/manual/spec_saori_ex.html",
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/saori.md",
+  "limitations": [
+    "接続状態の確認、HTTP/HTTPSの同期取得・保存に対応。bg通知、HTMLタグ変換、プロキシ個別設定は未対応。ダウンロード上限は32MB。"
+  ],
+  "version": "0.1.0",
+  "revision": 1,
+  "abi": "saori-utf8-v1",
+  "minimumOS": "14.0",
+  "source": {
+    "kind": "local",
+    "path": "native"
+  },
+  "recipe": "recipes/httpc/build.sh",
+  "requiredFiles": [
+    "lib/libhttpc.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ]
+}

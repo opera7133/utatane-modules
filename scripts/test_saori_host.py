@@ -16,7 +16,7 @@ def main():
     parser.add_argument("--host", type=Path, required=True)
     parser.add_argument("--package", type=Path, nargs="+", action="append", required=True)
     args = parser.parse_args()
-    expected = {"saori-cpuid", "kenonoke", "textcopy2", "mciaudior", "wmove", "proxy-ex"}
+    expected = {"saori-cpuid", "kenonoke", "textcopy2", "mciaudior", "wmove", "proxy-ex", "httpc"}
     packages = {}
     for archive in (item for group in args.package for item in group):
         with zipfile.ZipFile(archive) as package:
@@ -59,6 +59,9 @@ def main():
                     assert "Result: macOS\r\n" in execute("os.name")
                 elif identity == "kenonoke":
                     assert "Result: 場所\r\nValue0: 飲み物\r\n" in execute("GETKEYWORD", "酒場で日本酒を飲む")
+                elif identity == "httpc":
+                    from smoke_saori import smoke_httpc
+                    smoke_httpc(lambda arguments: execute(*arguments), master)
                 elif identity == "textcopy2":
                     assert execute().startswith("SAORI/1.0 204")
                 elif identity == "proxy-ex":

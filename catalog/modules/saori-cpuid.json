@@ -5,7 +5,9 @@
   "kinds": [
     "saori"
   ],
-  "windowsFilenames": ["saori_cpuid.dll"],
+  "windowsFilenames": [
+    "saori_cpuid.dll"
+  ],
   "origin": "independent",
   "upstream": {
     "url": "https://github.com/opera7133/utatane",
@@ -20,7 +22,7 @@
     "Windows版のすべての機能を再現するものではありません。対応コマンドは導入手順を参照してください。"
   ],
   "version": "0.1.0",
-  "revision": 1,
+  "revision": 2,
   "abi": "saori-utf8-v1",
   "minimumOS": "14.0",
   "source": {
