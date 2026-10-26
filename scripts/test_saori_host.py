@@ -63,7 +63,7 @@ def main():
                     from smoke_saori import smoke_httpc
                     smoke_httpc(lambda arguments: execute(*arguments), master)
                 elif identity == "textcopy2":
-                    assert execute().startswith("SAORI/1.0 204")
+                    assert execute().startswith("SAORI/1.0 400")
                 elif identity == "proxy-ex":
                     assert execute("/delim", "|").startswith("SAORI/1.0 204")
                     assert execute("missing.exe").startswith("SAORI/1.0 204")
