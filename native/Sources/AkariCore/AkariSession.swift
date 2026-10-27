@@ -134,6 +134,13 @@ public actor AkariSession {
     }
 
     public func shutdown() throws {
+        if loadedPluginLifecycle, persistsVariables {
+            loadedPluginLifecycle = false
+            let request = ShioriRequest(method: "NOTIFY", version: "PLUGIN/2.0")
+            if executeAZR(function: "unload", arguments: [], request: request, depth: 0) == nil {
+                _ = executeAZR(function: "unloadPlugin", arguments: [], request: request, depth: 0)
+            }
+        }
         try save()
     }
 
@@ -158,7 +165,7 @@ public actor AkariSession {
             depth: 0
         ), case let .array(lines) = result
         else {
-            return ShioriResponse(statusCode: 204, reasonPhrase: "No Content")
+            return ShioriResponse(version: request.version, statusCode: 204, reasonPhrase: "No Content")
         }
         let responseLines = lines.map(\.stringValue)
         guard responseLines.contains(where: { !$0.isEmpty }) else {

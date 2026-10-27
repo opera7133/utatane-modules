@@ -94,13 +94,16 @@ public func akariRequest(_ input: UnsafeMutableRawPointer?,
     guard let wire = LegacyTextDecoder.decode(data, preferredCharset: charset),
           !wire.contains("\0"),
           let request = try? ShioriMessageParser.parseRequest(wire),
-          request.version == "SHIORI/3.0", ["GET", "NOTIFY"].contains(request.method)
+          ["SHIORI/3.0", "PLUGIN/2.0"].contains(request.version), ["GET", "NOTIFY"].contains(request.method)
     else { return nil }
     let session = Session.shared
     guard session.lock.try() else { return nil }
     defer { session.lock.unlock() }
     guard let engine = session.engine,
-          let response = waitFor({ try await engine.request(request, charset: charset) }),
+          let response = waitFor({
+              if request.version == "PLUGIN/2.0" { return try await engine.pluginResponse(for: request) }
+              return try await engine.request(request, charset: charset)
+          }),
           let encoded = LegacyTextDecoder.encode(response.serialized(), charset: charset),
           encoded.count <= 8 * 1024 * 1024,
           let pointer = malloc(max(encoded.count, 1))

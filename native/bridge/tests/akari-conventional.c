@@ -42,6 +42,12 @@ int main(int argc, char **argv) {
     assert(text); memcpy(text, result, (size_t)n); free(result);
     assert(strstr(text, "Charset: Shift_JIS\r\n"));
     assert(strstr(text, "Value: \\0\\s[0]")); free(text);
+    const char *plugin = "GET PLUGIN/2.0\r\nCharset: UTF-8\r\nID: version\r\n\r\n";
+    result = send_request(request, plugin, strlen(plugin), &n);
+    assert(result && n >= 14 && memcmp(result, "PLUGIN/2.0 204", 14) == 0); free(result);
+    const char *invalid = "GET PLUGIN/9.0\r\nCharset: UTF-8\r\nID: version\r\n\r\n";
+    result = send_request(request, invalid, strlen(invalid), &n);
+    assert(!result && n == 0);
     assert(unload() == 1);
     n = (int32_t)strlen(boot);
     assert(request(owned(boot, (size_t)n), &n) == NULL && n == 0);
@@ -55,5 +61,5 @@ int main(int argc, char **argv) {
     assert(unload() == 1);
     assert(load(owned("relative", 8), 8) == 0);
     assert(dlclose(library) == 0);
-    puts("PASS akari: conventional ABI, UTF-8/Shift_JIS, persisted state");
+    puts("PASS akari: conventional ABI, PLUGIN/2.0, UTF-8/Shift_JIS, persisted state");
 }
