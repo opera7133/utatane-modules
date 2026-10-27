@@ -15,7 +15,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--host", type=Path, required=True)
     parser.add_argument("--package", type=Path, nargs="+", action="append", required=True)
-    parser.add_argument("--module", action="append", choices=("playwavsound", "totp-saori"),
+    parser.add_argument("--module", action="append", choices=("playwavsound", "totp-saori", "xpath", "timebkn"),
                         help="Only check the explicitly selected additional SAORI packages")
     args = parser.parse_args()
     expected = set(args.module) if args.module else {"saori-cpuid", "kenonoke", "textcopy2", "mciaudior", "wmove", "proxy-ex", "httpc"}
@@ -76,6 +76,15 @@ def main():
                     assert "Result: 94287082\r\n" in execute("totp", key, "59", "8")
                     assert "Result: 65353130\r\n" in execute("totp", key, "20000000000", "8")
                     assert execute("totp", key, "59", "6", "0").startswith("SAORI/1.0 400")
+                elif identity == "timebkn":
+                    assert "Value7: " in execute("local", "1700000000")
+                    assert execute("qreki").startswith("SAORI/1.0 501")
+                elif identity == "xpath":
+                    (master / "試験.xml").write_text("<r><x>日本語</x></r>", encoding="utf-8")
+                    response = execute("open", "試験.xml")
+                    identifier = next(line[8:] for line in response.split("\r\n") if line.startswith("Result: "))
+                    assert "Result: 日本語\r\nValue0: 日本語\r\n" in execute("get", identifier, "/r/x")
+                    assert execute("close", identifier).startswith("SAORI/1.0 204")
                 elif identity == "playwavsound":
                     assert execute("hwnd", "0").startswith("SAORI/1.0 204")
                     assert "Result: 0\r\n" in execute("存在しない音.wav")

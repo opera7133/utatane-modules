@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "timebkn",
+  "displayName": "timebkn (Native)",
+  "kinds": [
+    "saori"
+  ],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane",
+    "author": "opera7133"
+  },
+  "originalURL": "https://github.com/ukatech/csaori/tree/1ddb8c9024bb4716fa3ac25d05c819fad224e459/impl_saori/timebkn",
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/saori.md",
+  "limitations": [
+    "time/system/tick/fromdate/local/strftime。qreki（旧暦・六曜）は非対応で501。macOSのローカル時刻とstrftimeを使用します。"
+  ],
+  "version": "0.1.0",
+  "revision": 1,
+  "abi": "saori-utf8-v1",
+  "minimumOS": "14.0",
+  "source": {
+    "kind": "local",
+    "path": "native"
+  },
+  "recipe": "recipes/timebkn/build.sh",
+  "requiredFiles": [
+    "lib/libtimebkn.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ],
+  "windowsFilenames": [
+    "timebkn.dll"
+  ]
+}

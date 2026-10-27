@@ -14,6 +14,8 @@ macOS用の独立したSAORIライブラリです。macOS 14以降で使えま�
 | `libwmove.dylib` | `GET_POSITION`、`GET_DESKTOP_SIZE`、`MOVETO`、`MOVETO_INSIDE`。ホストとのウィンドウ接続が必要です |
 | `libplaywavsound.dylib` | WAVEファイルの非同期再生、`hwnd`、システム音の対応付け |
 | `libtotp_saori.dylib` | `keygen`、HMAC-SHA1の`totp`。RFC 6238の既知値で検証 |
+| `libxpath.dylib` | `open`・`close`・`get`。文書ID、ノード集合・数値・真偽値・文字列 |
+| `libtimebkn.dylib` | `time`・`system`・`tick`・`fromdate`・`local`・`strftime`。`qreki`は非対応 |
 
 CPUクロックなど取得しない項目は`0`、メモリ値は搭載容量です。Windows版とすべての値・機能が一致するわけではありません。`wmove`は接続がない場合、実行要求に`501 Not Implemented`を返します。
 
@@ -107,17 +109,48 @@ SHIORI内部からの呼び出しには、YAYA 5/6 r3、里々Mc205-5-r1、華�
 
 原版のコマンドと引数順を維持した独立実装です。原版ソースには鍵生成・Base32・桁埋めの不具合があるため、その結果や未定義動作は再現しません。Base32は正しい末尾ビットとパディングを検査し、末尾ゼロの鍵バイトを保持します。指定した桁数へゼロ埋めし、2038年以降も扱います。[RFC 6238 Appendix B](https://www.rfc-editor.org/rfc/rfc6238#appendix-B)のSHA-1の6つの既知値を検証します。
 
+## XPath
+
+カタログIDは`xpath`、原版の呼び出し名は`XPath.dll`です。macOSのlibxml2による独立実装で、TinyXPathそのものは同梱しません。
+
+- `open, ファイル名`: XMLを開き、整数の文書IDをResultへ返します。同じパス文字列を再度開くと同じID・読み込み済み文書を再利用します。ファイルの変更を反映するには閉じてから開き直します。
+- `close, 文書ID`: 文書を閉じて204。アンロード時はすべての文書を解放します。
+- `get, 文書ID, XPath`: ノード集合は各テキストをValue0以降へ返し、ResultにはそれらをSOH（U+0001）で結合します。原版に合わせ、要素は単一のテキスト／CDATAの子を持つ場合のみ対象とし、子要素を含む要素や空要素は飛ばします。属性とテキストノードも扱います。数値・真偽値・文字列はResultとValue0へ同じ値を返し、真偽値は`1`／`0`です。空集合も200です。
+
+無効な引数・文書ID・読み込み失敗は400。式の評価失敗や資源上限は500です。相対ファイルはSAORIのロード先フォルダ基準で、Windows形式の区切りに対応します。環境変数展開は非対応。XML宣言にある文字コードを読み、XPathの文字列はSAORI要求の文字コードからUnicodeへ変換します。
+
+XMLは1文書8MiB・同時32文書・入力合計32MiBまで、式はUTF-8で4096バイトまで。評価は100万操作、選択ノードは8192個、値の合計はUTF-8で2MiBまでです。DTD付き文書、外部実体、XInclude、XQueryの`doc()`等による追加のファイル・ネットワーク取得は対応しません。XPath 1.0を使い、名前空間接頭辞の登録機能はありません。TinyXPathと数値表現・空白処理等の細部まで一致する保証はありません。
+
+## timebkn（通常日時のみ）
+
+カタログIDと呼び出し名は`timebkn`／`timebkn.dll`です。通常の日時処理を独立実装しています。
+
+| 引数 | 結果 |
+| --- | --- |
+| `time` | 現在のUnix秒 |
+| `tick` | OS起動からのミリ秒を32ビット符号なしで返す。約49.7日で折り返す |
+| `system` | 上記の折り返し後のミリ秒を1000で割った秒数 |
+| `fromdate, 年 [, 月 [, 日 [, 時 [, 分 [, 秒]]]]]` | ローカル日時からUnix秒。月は既定1、日・時・分・秒は0。原版同様に月日等の繰り上がり・繰り下がりと標準時指定を用いる |
+| `local [, Unix秒]` | Resultにasctime形式の日時、Value0〜7に年・月・日・時・分・秒・曜日（日曜0）・年内日数（元日0） |
+| `strftime, Unix秒, 書式` | macOSのstrftimeによる文字列。Unicodeのリテラルを含む。出力はUTF-8で8191バイトまで |
+
+成功は200。不正な引数・範囲外の日付は400、書式出力の上限超過等は500です。コマンド名は大小を区別しません。日時はmacOSのローカルタイムゾーンで解釈し、年は1〜9999、Unix秒は符号付き64ビットを使います。Windowsの32ビット時刻値・数値文字列の不正入力や書式指定の挙動までは再現しません。Resultの改行はSAORI電文では空白へ置換します。
+
+`qreki`（旧暦・六曜）は501で、**未対応**です。原版のqreki.cppが要求する別の原典QRSAMPの再配布条件を確認できていないため、そのコードを取り込みません。
+
 ## 掲載元と次の調査候補
 
 2026-10-27に、[ukatech/csaori](https://github.com/ukatech/csaori/tree/1ddb8c9024bb4716fa3ac25d05c819fad224e459/impl_saori)、[SSPの互換SAORI一覧](https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/)、[SSPの開発リンク集](https://ukatech.shillest.net/ukadoc-ssp/dev/links/)と[伺かwikiのSAORI分類](https://w.atwiki.jp/ua-ks/pages/31.html)を起点に調査しました。掲載実績を候補選定の基準とし、利用率の実測順位ではありません。
 
 今回の原版ソースはCSAORI commit `1ddb8c9024bb4716fa3ac25d05c819fad224e459`へ固定して取得しました。`impl_saori/PlayWavSound/PlayWavSound.cpp`・`readme.txt`・`license.txt`、`impl_saori/totp_saori/totp_saori.cpp`・`totp.cpp`・`LICENSE`を確認しています。前者はCSAORIのゴースト用／修正BSD条件、後者はWTFPL v2を掲示しています。この配布物へ原版コード・Windows DLLは含めず、独立実装をMITで提供します。
 
+同じ固定コミットの`impl_saori/XPath/XPath.cpp`・`license.txt`、`impl_saori/timebkn/timebkn.cpp`・`qreki.cpp`・`license.txt`も確認しました。両ディレクトリの基本条件はCSAORIのゴースト用／修正BSD条件ですが、旧暦計算には追加の原典条件があります。今回の独立実装へ原版ソースは含めません。`timebkn/readme.txt`は別機能の説明が残っているため、コマンドと返却値は実際のソースを根拠にしています。
+
 | 候補 | 掲載・根拠 | 次に確認すること |
 | --- | --- | --- |
 | `string`・`cpuusage`・`houchi`・`hanayu` | SSPの互換SAORI一覧。`cpuusage`等は[中文偽春菜Wikiの一覧](https://sikan.moe/ukagaka/%E9%96%8B%E7%99%BC%E6%96%87%E4%BB%B6_SAORI_%E4%BA%BA%E6%A0%BC%E5%A5%97%E4%BB%B6%E5%88%97%E8%A1%A8%20-%20%E4%B8%AD%E6%96%87%E5%81%BD%E6%98%A5%E8%8F%9C%E5%BE%8C%E6%8F%B4%E6%9C%83%20Wiki)にも記載 | 原配布先が到達不能。原版の資料・再配布条件・イベント契約を確定する |
-| `timebkn` | CSAORIにソースあり | 通常日時だけでなく旧暦・六曜も含む。全コマンドとタイムゾーンの確認が必要 |
-| `XPath` | CSAORIにソースあり | 状態付き文書ID、ノード集合とスカラーの返却契約、XMLの外部参照と資源制限 |
+| `timebkn`の`qreki` | CSAORIから別の原典QRSAMPを参照 | 原典の利用条件。2026-10-27時点でVectorの旧配布URLは企業ページへ転送され、条件未確認 |
+| `XPath`の追加互換 | 今回は通常のXPath 1.0を対応 | TinyXPathとの細部・配布作品の確認は継続する |
 | `KeywordReg` | CSAORIにソースあり | `kenonoke`とは別物。Windows IME依存の読み・漢字変換をどう扱うか |
 | `HandUtil` | 中文偽春菜Wikiに記載 | FMO・HWND・SAKURA API等のWindows依存とmacOSへの対応範囲 |
 

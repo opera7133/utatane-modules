@@ -77,7 +77,9 @@ void *request(void *input, int32_t *length) {
                                              ("saori_ip.dll", "saori-ip", "libsaori_ip.dylib"),
                                              ("ip.dll", "saori-ip", "libsaori_ip.dylib"),
                                              ("PlayWavSound.dll", "playwavsound", "libplaywavsound.dylib"),
-                                             ("totp_saori.dll", "totp-saori", "libtotp_saori.dylib")]:
+                                             ("totp_saori.dll", "totp-saori", "libtotp_saori.dylib"),
+                                             ("XPath.dll", "xpath", "libxpath.dylib"),
+                                             ("timebkn.dll", "timebkn", "libtimebkn.dylib")]:
                 directory = root / "managed" / identity / "lib"
                 directory.mkdir(parents=True, exist_ok=True)
                 import shutil

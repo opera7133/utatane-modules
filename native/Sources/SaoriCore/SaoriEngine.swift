@@ -13,6 +13,8 @@ public enum SaoriKind: String, CaseIterable, Sendable {
     case wmove
     case playwavsound
     case totpSaori = "totp-saori"
+    case xpath
+    case timebkn
 }
 
 /// One loaded SAORI. The caller serializes requests and unload.
@@ -35,6 +37,8 @@ public final class SaoriEngine {
         case .wmove: module = NativeWmove(windowController: windowController)
         case .playwavsound: module = NativePlayWavSound(directory: directoryURL)
         case .totpSaori: module = NativeTOTP()
+        case .xpath: module = NativeXPath(directory: directoryURL)
+        case .timebkn: module = NativeTimeBkn()
         }
     }
 
@@ -48,6 +52,8 @@ public final class SaoriEngine {
         if let ip = module as? NativeIPCompatibility { return ip.execute(arguments) }
         if let wave = module as? NativePlayWavSound { return wave.execute(arguments) }
         if let totp = module as? NativeTOTP { return totp.execute(arguments) }
+        if let xpath = module as? NativeXPath { return xpath.execute(arguments) }
+        if let time = module as? NativeTimeBkn { return time.execute(arguments) }
         let values = call(arguments)
         return .init(values.allSatisfy(\.isEmpty) ? 204 : 200, values)
     }

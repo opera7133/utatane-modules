@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `XPath`の文書管理とノード・スカラー取得、`timebkn`の通常日時処理を追加した。DTD・外部実体と、`timebkn`の旧暦・六曜は非対応
 - `PlayWavSound`と`totp_saori`のmacOS用互換モジュールを追加した。効果音の非同期再生、Base32鍵生成とHMAC-SHA1のTOTPに対応する
 - SAORIの掲載元・確認した原版・対応範囲と、調査中の候補を導入資料へ追記した
 

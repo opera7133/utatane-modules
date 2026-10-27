@@ -141,6 +141,22 @@ def main():
                     assert f"Result: {expected}\r\n" in send(["totp", key, time, "8"], charset)
                 assert send(["totp", key, "59", "6", "0"], charset).startswith("SAORI/1.0 400")
                 assert send(["keygen", "30"], charset).startswith("SAORI/1.0 200")
+            elif name == "timebkn":
+                assert "Result: " in send(["time"], charset)
+                assert "Value7: " in send(["local", "1700000000"], charset)
+                assert "Result: literal\r\n" in send(["strftime", "1700000000", "literal"], charset)
+                assert send(["qreki"], charset).startswith("SAORI/1.0 501")
+                assert send(["fromdate", "bad"], charset).startswith("SAORI/1.0 400")
+            elif name == "xpath":
+                (root / "試験.xml").write_text("<r><x>日本語</x><x>次</x></r>", encoding="utf-8")
+                response = send(["open", "試験.xml"], charset)
+                identifier = next(line[8:] for line in response.split("\r\n") if line.startswith("Result: "))
+                assert identifier.isdigit()
+                response = send(["get", identifier, "/r/x"], charset)
+                assert "Result: 日本語\x01次\r\nValue0: 日本語\r\nValue1: 次\r\n" in response
+                assert "Result: 2\r\nValue0: 2\r\n" in send(["get", identifier, "count(/r/x)"], charset)
+                assert send(["close", identifier], charset).startswith("SAORI/1.0 204")
+                assert send(["get", identifier, "/r/x"], charset).startswith("SAORI/1.0 400")
             elif name == "playwavsound":
                 # Do not produce sound on a build machine. Exercise parsing and errors.
                 assert send([], charset).startswith("SAORI/1.0 400")
