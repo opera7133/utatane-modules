@@ -15,8 +15,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--host", type=Path, required=True)
     parser.add_argument("--package", type=Path, nargs="+", action="append", required=True)
+    parser.add_argument("--module", action="append", choices=("playwavsound", "totp-saori"),
+                        help="Only check the explicitly selected additional SAORI packages")
     args = parser.parse_args()
-    expected = {"saori-cpuid", "kenonoke", "textcopy2", "mciaudior", "wmove", "proxy-ex", "httpc"}
+    expected = set(args.module) if args.module else {"saori-cpuid", "kenonoke", "textcopy2", "mciaudior", "wmove", "proxy-ex", "httpc"}
     packages = {}
     for archive in (item for group in args.package for item in group):
         with zipfile.ZipFile(archive) as package:
@@ -69,6 +71,14 @@ def main():
                     assert execute("missing.exe").startswith("SAORI/1.0 204")
                 elif identity == "mciaudior":
                     assert execute("stop").startswith("SAORI/1.0 204")
+                elif identity == "totp-saori":
+                    key = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"
+                    assert "Result: 94287082\r\n" in execute("totp", key, "59", "8")
+                    assert "Result: 65353130\r\n" in execute("totp", key, "20000000000", "8")
+                    assert execute("totp", key, "59", "6", "0").startswith("SAORI/1.0 400")
+                elif identity == "playwavsound":
+                    assert execute("hwnd", "0").startswith("SAORI/1.0 204")
+                    assert "Result: 0\r\n" in execute("存在しない音.wav")
                 else:
                     assert "Result: 100\r\nValue0: 125\r\nValue1: 150\r\n" in execute("GET_POSITION", "kero")
                     assert "Result: 1440\r\nValue0: 900\r\n" in execute("GET_DESKTOP_SIZE")

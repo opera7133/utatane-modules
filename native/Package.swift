@@ -22,6 +22,8 @@ let package = Package(
         .library(name: "mciaudior", type: .dynamic, targets: ["MciAudioModule"]),
         .library(name: "wmove", type: .dynamic, targets: ["WmoveModule"]),
         .library(name: "proxy_ex", type: .dynamic, targets: ["ProxyExModule"]),
+        .library(name: "playwavsound", type: .dynamic, targets: ["PlayWavSoundModule"]),
+        .library(name: "totp_saori", type: .dynamic, targets: ["TOTPSaoriModule"]),
         .executable(name: "mp3tag", targets: ["Mp3TagTool"])],
     targets: [
         .target(name: "CMisakaHostBridge", path: "bridge", exclude: ["tests"], sources: ["anchor.c"], publicHeadersPath: "include"),
@@ -114,6 +116,8 @@ let package = Package(
         .target(name: "MciAudioModule", dependencies: ["SaoriRuntime"]),
         .target(name: "WmoveModule", dependencies: ["SaoriRuntime"]),
         .target(name: "ProxyExModule", dependencies: ["SaoriRuntime"]),
+        .target(name: "PlayWavSoundModule", dependencies: ["SaoriRuntime"]),
+        .target(name: "TOTPSaoriModule", dependencies: ["SaoriRuntime"]),
         .executableTarget(name: "Mp3TagTool"),
         .testTarget(name: "SaoriTests", dependencies: ["SaoriCore", "SaoriRuntime"]),
         .target(name: "MisakaCore", dependencies: ["ModuleProtocol"]),

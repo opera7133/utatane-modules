@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "totp-saori",
+  "displayName": "totp_saori (Native)",
+  "kinds": [
+    "saori"
+  ],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane",
+    "author": "opera7133"
+  },
+  "originalURL": "https://github.com/ukatech/csaori/tree/1ddb8c9024bb4716fa3ac25d05c819fad224e459/impl_saori/totp_saori",
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/saori.md",
+  "limitations": [
+    "keygenとHMAC-SHA1のtotp。RFC 6238に従い桁数・Base32処理を修正。不正な引数は400。原版の未定義動作は再現しません。"
+  ],
+  "version": "0.1.0",
+  "revision": 1,
+  "abi": "saori-utf8-v1",
+  "minimumOS": "14.0",
+  "source": {
+    "kind": "local",
+    "path": "native"
+  },
+  "recipe": "recipes/totp-saori/build.sh",
+  "requiredFiles": [
+    "lib/libtotp_saori.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ],
+  "windowsFilenames": [
+    "totp_saori.dll"
+  ]
+}

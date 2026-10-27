@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "playwavsound",
+  "displayName": "PlayWavSound (Native)",
+  "kinds": [
+    "saori"
+  ],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane",
+    "author": "opera7133"
+  },
+  "originalURL": "https://github.com/ukatech/csaori/tree/1ddb8c9024bb4716fa3ac25d05c819fad224e459/impl_saori/PlayWavSound",
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/saori.md",
+  "limitations": [
+    "WAVEの非同期再生。Windowsシステム音はmacOSの音へ対応付け。WAVEは64MiBまで。実際の音声出力は手動確認が必要です。"
+  ],
+  "version": "0.1.0",
+  "revision": 1,
+  "abi": "saori-utf8-v1",
+  "minimumOS": "14.0",
+  "source": {
+    "kind": "local",
+    "path": "native"
+  },
+  "recipe": "recipes/playwavsound/build.sh",
+  "requiredFiles": [
+    "lib/libplaywavsound.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ],
+  "windowsFilenames": [
+    "PlayWavSound.dll"
+  ]
+}

@@ -36,6 +36,24 @@ private func load(_ session: ConventionalSaoriSession, _ directory: URL) -> Int3
     #expect(session.unload() == 1)
 }
 
+@Test func additionalSaoriWireResponsesAndReload() throws {
+    for kind in [SaoriKind.playwavsound, .totpSaori] {
+        let session = ConventionalSaoriSession(kind: kind)
+        for _ in 0 ..< 2 {
+            #expect(load(session, FileManager.default.temporaryDirectory) == 1)
+            for (charset, encoding) in [("UTF-8", String.Encoding.utf8), ("Shift_JIS", .shiftJIS)] {
+                let headers = kind == .totpSaori
+                    ? "Argument0: totp\r\nArgument1: GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ\r\nArgument2: 59\r\nArgument3: 8\r\n"
+                    : "Argument0: ない音.wav\r\n"
+                let result = try send(session, "EXECUTE SAORI/1.0\r\nCharset: \(charset)\r\n\(headers)\r\n", encoding: encoding)
+                #expect(result.contains("Result: \(kind == .totpSaori ? "94287082" : "0")\r\n"))
+            }
+            #expect(session.unload() == 1)
+            #expect(try send(session, "EXECUTE SAORI/1.0\r\nCharset: UTF-8\r\n\r\n").hasPrefix("SAORI/1.0 503"))
+        }
+    }
+}
+
 @Test func keywordUTF8AndShiftJISHaveOrderedResults() throws {
     let root = FileManager.default.temporaryDirectory.appending(path: "SAORI 日本語 \(UUID())")
     try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)

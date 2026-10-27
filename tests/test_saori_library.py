@@ -75,7 +75,9 @@ void *request(void *input, int32_t *length) {
             # original saori_ip distribution's ip.dll filename.
             for dll, identity, filename in [("proxy_ex.dll", "proxy-ex", "libproxy_ex.dylib"),
                                              ("saori_ip.dll", "saori-ip", "libsaori_ip.dylib"),
-                                             ("ip.dll", "saori-ip", "libsaori_ip.dylib")]:
+                                             ("ip.dll", "saori-ip", "libsaori_ip.dylib"),
+                                             ("PlayWavSound.dll", "playwavsound", "libplaywavsound.dylib"),
+                                             ("totp_saori.dll", "totp-saori", "libtotp_saori.dylib")]:
                 directory = root / "managed" / identity / "lib"
                 directory.mkdir(parents=True, exist_ok=True)
                 import shutil

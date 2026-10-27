@@ -134,6 +134,19 @@ def main():
             elif name == "kenonoke":
                 response = send(["GETKEYWORD", "酒場で日本酒を飲む"], charset)
                 assert "Result: 場所\r\nValue0: 飲み物\r\n" in response, response
+            elif name == "totp_saori":
+                # Public RFC 6238 key and vectors; never log generated secrets.
+                key = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"
+                for time, expected in [("59", "94287082"), ("1111111109", "07081804"), ("20000000000", "65353130")]:
+                    assert f"Result: {expected}\r\n" in send(["totp", key, time, "8"], charset)
+                assert send(["totp", key, "59", "6", "0"], charset).startswith("SAORI/1.0 400")
+                assert send(["keygen", "30"], charset).startswith("SAORI/1.0 200")
+            elif name == "playwavsound":
+                # Do not produce sound on a build machine. Exercise parsing and errors.
+                assert send([], charset).startswith("SAORI/1.0 400")
+                assert send(["hwnd", "0"], charset).startswith("SAORI/1.0 204")
+                assert "Result: 0\r\n" in send(["存在しない音.wav"], charset)
+                assert "Result: 0\r\n" in send(["system:unknown"], charset)
             elif name == "wmove":
                 assert send(["GET_POSITION", "sakura"], charset).startswith("SAORI/1.0 501")
             elif name == "httpc":

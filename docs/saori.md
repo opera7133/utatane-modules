@@ -12,6 +12,8 @@ macOS用の独立したSAORIライブラリです。macOS 14以降で使えま�
 | `libmciaudior.dylib` | `load`、`play`、`loop`、`stop`による音声再生 |
 | `libproxy_ex.dylib` | SAORI BASICの実行と標準出力の取得。[音声メタデータヘルパーを同梱](proxy-ex.md) |
 | `libwmove.dylib` | `GET_POSITION`、`GET_DESKTOP_SIZE`、`MOVETO`、`MOVETO_INSIDE`。ホストとのウィンドウ接続が必要です |
+| `libplaywavsound.dylib` | WAVEファイルの非同期再生、`hwnd`、システム音の対応付け |
+| `libtotp_saori.dylib` | `keygen`、HMAC-SHA1の`totp`。RFC 6238の既知値で検証 |
 
 CPUクロックなど取得しない項目は`0`、メモリ値は搭載容量です。Windows版とすべての値・機能が一致するわけではありません。`wmove`は接続がない場合、実行要求に`501 Not Implemented`を返します。
 
@@ -83,3 +85,40 @@ SHIORI内部からの呼び出しには、YAYA 5/6 r3、里々Mc205-5-r1、華�
 `saori-ip`のカタログIDはハイフン、dylib名は`libsaori_ip.dylib`です。`saori_ip.dll`と原作の配布名`ip.dll`に対応します。`GetLocalIP`は有効な非ループバックIPv4の先頭、`GetLocalHostname`はOSのホスト名です。取得できない場合は500。複数NICの選択はWindowsと一致するとは限りません。原作の`GetInternetIP`は外部HTTPサービスを利用しますが、この互換実装では501を返します。外部へのIP照会は行いません。
 
 共有配置の名前解決にはYAYA 5/6 r4、里々Mc205-5-r2、華和梨9.2.0-r2、忍・灯r4以降を使ってください。原版Windows DLLを使う場合はWineの設定が必要です。
+
+## PlayWavSound
+
+カタログIDは`playwavsound`、原版の呼び出し名は`PlayWavSound.dll`です。引数なしは400、`hwnd`は204、その他の呼び出しは200でResultに再生受付の成功`1`／失敗`0`を返します。音声の再生終了通知はありません。
+
+第1引数にWAVEファイルのパスを渡します。相対パスはSAORIのロード先フォルダ基準で、Windows形式の区切りと`%変数名%`によるmacOS環境変数の展開に対応します。Windows固有の`%SystemRoot%`などをmacOSへ置き換える機能はありません。通常ファイルかつ64MiB以下のRIFF/WAVEをAVFoundationで再生し、同じモジュールの次の再生で前の音を止めます。アンロード時も停止します。元のWindowsデコーダーと対応コーデックが一致するとは限りません。
+
+`system:SystemAsterisk`→Glass、`SystemDefault`→Funk、`SystemExclamation`・`SystemHand`→Basso、`SystemQuestion`→PopとしてmacOSのシステム音へ対応付けます。大文字小文字は区別しません。その他のWindowsシステム音は`0`です。
+
+パス・成功／失敗・終了処理・UTF-8/Shift_JISの電文と両CPUのABIを自動検証します。ビルド時の検査では音を鳴らさず、実際の音声出力は利用環境で確認してください。
+
+## totp_saori
+
+カタログIDは`totp-saori`、呼び出し名は`totp_saori.dll`です。
+
+- `keygen [, バイト数]`: OSの乱数で鍵を生成し、パディングなしのBase32で返します。既定30バイト、1〜1024バイト。
+- `totp, Base32鍵 [, Unix秒 [, 桁数 [, 更新間隔秒]]]`: HMAC-SHA1でコードを生成します。既定は現在時刻・6桁・30秒間隔。桁数は1〜9、間隔は1〜4294967295秒、Unix秒は非負64ビット整数です。
+
+成功は200。不正な引数・Base32・ゼロの間隔は400、乱数生成失敗は500です。コマンド名は原版と同じく小文字。鍵は英字の大小と正しい末尾`=`パディングの有無に対応し、最大8192文字です。秘密鍵を保存・ログ出力しません。引数の省略と空文字は異なり、空の数値引数は400です。
+
+原版のコマンドと引数順を維持した独立実装です。原版ソースには鍵生成・Base32・桁埋めの不具合があるため、その結果や未定義動作は再現しません。Base32は正しい末尾ビットとパディングを検査し、末尾ゼロの鍵バイトを保持します。指定した桁数へゼロ埋めし、2038年以降も扱います。[RFC 6238 Appendix B](https://www.rfc-editor.org/rfc/rfc6238#appendix-B)のSHA-1の6つの既知値を検証します。
+
+## 掲載元と次の調査候補
+
+2026-10-27に、[ukatech/csaori](https://github.com/ukatech/csaori/tree/1ddb8c9024bb4716fa3ac25d05c819fad224e459/impl_saori)、[SSPの互換SAORI一覧](https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/)、[SSPの開発リンク集](https://ukatech.shillest.net/ukadoc-ssp/dev/links/)と[伺かwikiのSAORI分類](https://w.atwiki.jp/ua-ks/pages/31.html)を起点に調査しました。掲載実績を候補選定の基準とし、利用率の実測順位ではありません。
+
+今回の原版ソースはCSAORI commit `1ddb8c9024bb4716fa3ac25d05c819fad224e459`へ固定して取得しました。`impl_saori/PlayWavSound/PlayWavSound.cpp`・`readme.txt`・`license.txt`、`impl_saori/totp_saori/totp_saori.cpp`・`totp.cpp`・`LICENSE`を確認しています。前者はCSAORIのゴースト用／修正BSD条件、後者はWTFPL v2を掲示しています。この配布物へ原版コード・Windows DLLは含めず、独立実装をMITで提供します。
+
+| 候補 | 掲載・根拠 | 次に確認すること |
+| --- | --- | --- |
+| `string`・`cpuusage`・`houchi`・`hanayu` | SSPの互換SAORI一覧。`cpuusage`等は[中文偽春菜Wikiの一覧](https://sikan.moe/ukagaka/%E9%96%8B%E7%99%BC%E6%96%87%E4%BB%B6_SAORI_%E4%BA%BA%E6%A0%BC%E5%A5%97%E4%BB%B6%E5%88%97%E8%A1%A8%20-%20%E4%B8%AD%E6%96%87%E5%81%BD%E6%98%A5%E8%8F%9C%E5%BE%8C%E6%8F%B4%E6%9C%83%20Wiki)にも記載 | 原配布先が到達不能。原版の資料・再配布条件・イベント契約を確定する |
+| `timebkn` | CSAORIにソースあり | 通常日時だけでなく旧暦・六曜も含む。全コマンドとタイムゾーンの確認が必要 |
+| `XPath` | CSAORIにソースあり | 状態付き文書ID、ノード集合とスカラーの返却契約、XMLの外部参照と資源制限 |
+| `KeywordReg` | CSAORIにソースあり | `kenonoke`とは別物。Windows IME依存の読み・漢字変換をどう扱うか |
+| `HandUtil` | 中文偽春菜Wikiに記載 | FMO・HWND・SAKURA API等のWindows依存とmacOSへの対応範囲 |
+
+候補への掲載は未実装機能の対応を示しません。原版資料はreadmeの取り違えもあるため、実際のソースと照合します。
