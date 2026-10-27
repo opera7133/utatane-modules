@@ -27,3 +27,7 @@ python3 scripts/port_balloonselector.py --source ~/ws/balloonselector-port-sourc
 元の辞書はUnlicense、同梱のWindows用YAYAはBSD-3-Clauseです。NARに原版の`LICENSE`を含めます。
 
 [原版とライセンス](https://github.com/nikolat/balloonselector)
+
+## 回帰確認
+
+Utataneの`Scripts/test-real-plugins.py`へ、このModules checkoutと固定コミットの原版checkoutを指定できます。移植NARの生成、実YAYAによるページ送り・全件列挙・選択・キャンセル、一時コピーの削除まで確認します。実プラグインの配布物はfixtureへ同梱せず、取得元とハッシュをレポートへ残します。実行例は[本体のプラグイン開発資料](https://github.com/opera7133/Utatane/blob/main/Docs/Creators/Native-Plugins.md#実プラグインの回帰確認)を参照してください。移植ツールの更新後はNARを再生成してください。

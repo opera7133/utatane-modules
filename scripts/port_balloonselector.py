@@ -45,7 +45,7 @@ PORT_NOTE = f"""BalloonSelector 2.4 / Utatane port 1
 Original: Don / https://github.com/nikolat/balloonselector
 Upstream commit: {UPSTREAM_COMMIT}
 
-Utataneの未リリース開発版と、Modulesから導入したYAYAが必要です。
+Utatane 0.2.16以降と、Modulesから導入したYAYAが必要です。
 macOS版YAYAのFENUMは親ディレクトリを含まないため、列挙の先頭を飛ばさないよう修正しています。
 自由座標配置の互換差を避け、1ページ9件のプレビュー付き一列リストで表示します。
 プラグインID、ページ切替・キャンセル処理、選択時のゴースト通知は原版を使用します。
