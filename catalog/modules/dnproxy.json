@@ -18,7 +18,8 @@
   "limitations": [
     "独立実装です。別途.NET 10ランタイムが必要です。実行時コンパイルには.NET 10 SDKも必要です。",
     "Windows APIに依存しないUTF-8のC#・SHIORI/3.0のみ対応します。既存.NET Framework DLLの無変更動作は保証しません。",
-    "VB/JScript・WinForms・COM・Windows DLL・dnutil・PLUGIN/SAORI等は未対応です。"
+    "VB/JScript・WinForms・COM・Windows DLL・dnutil・PLUGIN/SAORI等は未対応です。",
+    "現行Utataneではゴースト内への手動配置とshiori.macos指定が必要です。共通導入だけでの自動選択には未対応です。"
   ],
   "version": "0.1.0",
   "revision": 1,

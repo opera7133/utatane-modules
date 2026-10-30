@@ -11,7 +11,7 @@
 
 .NETは同梱しません。公式の[.NETダウンロード](https://dotnet.microsoft.com/download/dotnet/10.0)から導入してください。SDKにはランタイムも含まれます。
 
-ZIPの`dnproxy/`を丸ごと共通導入先`~/Library/Application Support/Utatane/NativeShiori/dnproxy/`へ置くか、ゴースト内へ展開します。**`libdnproxy.dylib`だけをコピーせず、同じ階層の`bin/`も保持してください。** `bin/`には.NETホストとインターフェイス定義を収録しています。手動配置の例:
+現行Utataneでは、ZIPの`dnproxy/`を丸ごとゴーストの`ghost/master/`へ置き、下の`shiori.macos`を指定してください。**共通導入だけでの自動選択にはまだ対応していません。** **`libdnproxy.dylib`だけをコピーせず、同じ階層の`bin/`も保持してください。** `bin/`には.NETホストとインターフェイス定義を収録しています。手動配置の例:
 
 ```text
 master/
