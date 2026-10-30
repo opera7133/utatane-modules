@@ -12,20 +12,21 @@
   },
   "delivery": "binary",
   "license": "MIT",
-  "licenseURL": "https://github.com/opera7133/pasta/blob/9360b74c9b41746d046e16ef97340c207afc999d/LICENSE",
+  "licenseURL": "https://github.com/ekicyou/pasta/blob/1c88e1e569d2a940c6437fa5d332141fce16b886/LICENSE",
   "instructions": "docs/pasta.md",
   "limitations": [
+    "0.4.3以降は旧save.json・旧save.datを読み込みません。更新前にセーブデータをバックアップしてください。",
     "Windows専用のLua FFI呼び出しやDLLは実行できません。",
     "同じプロセス内では1セッション。Utataneはゴーストごとにプロセスを分離します。"
   ],
-  "version": "0.4.2",
-  "revision": 1,
+  "version": "0.4.3",
+  "revision": 2,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {
-    "url": "https://github.com/opera7133/pasta.git",
+    "url": "https://github.com/ekicyou/pasta.git",
     "path": "sources/pasta",
-    "commit": "9360b74c9b41746d046e16ef97340c207afc999d"
+    "commit": "1c88e1e569d2a940c6437fa5d332141fce16b886"
   },
   "recipe": "recipes/pasta/build.sh",
   "requiredFiles": [

@@ -11,7 +11,8 @@ work_dir=$(cd "$3" && pwd)
 architectures=$4
 cargo=${CARGO:-cargo}
 toolchain=${PASTA_TOOLCHAIN:-1.93.0}
-cd "$source_dir"
+"${PYTHON:-python3}" "$(dirname "$0")/prepare_source.py" "$source_dir" "$work_dir/source"
+cd "$work_dir/source"
 set --
 for arch in $architectures; do
     case "$arch" in

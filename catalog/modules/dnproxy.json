@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "dnproxy",
+  "displayName": "D.N.Proxy (Portable C#)",
+  "kinds": [
+    "shiori"
+  ],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane-modules",
+    "author": "opera7133"
+  },
+  "originalURL": "https://github.com/nikolat/dnproxy",
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/dnproxy.md",
+  "limitations": [
+    "独立実装です。別途.NET 10ランタイムが必要です。実行時コンパイルには.NET 10 SDKも必要です。",
+    "Windows APIに依存しないUTF-8のC#・SHIORI/3.0のみ対応します。既存.NET Framework DLLの無変更動作は保証しません。",
+    "VB/JScript・WinForms・COM・Windows DLL・dnutil・PLUGIN/SAORI等は未対応です。"
+  ],
+  "version": "0.1.0",
+  "revision": 1,
+  "abi": "shiori-load-request-unload",
+  "minimumOS": "14.0",
+  "source": {
+    "kind": "local",
+    "path": "native"
+  },
+  "recipe": "recipes/dnproxy/build.sh",
+  "requiredFiles": [
+    "lib/libdnproxy.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "README.md",
+    "bin/DnProxyHost.dll",
+    "bin/DnProxyHost.deps.json",
+    "bin/DnProxyHost.runtimeconfig.json",
+    "bin/Ukagaka.NET.Interfaces.dll"
+  ],
+  "windowsFilenames": [
+    "dnproxy.dll",
+    "dnproxy_debug.dll"
+  ]
+}

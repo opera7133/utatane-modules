@@ -12,7 +12,7 @@
   },
   "delivery": "binary",
   "license": "BSD-2-Clause",
-  "licenseURL": "https://github.com/opera7133/satoriya-shiori/blob/bb75c7c9fb632c53d6c91992323bc709759fdc3d/LICENSE.txt",
+  "licenseURL": "https://github.com/opera7133/satoriya-shiori/blob/1785e36951b553a1140e099bb8433d8c7d295224/LICENSE.txt",
   "instructions": "docs/satori.md",
   "limitations": [
     "Unicode版はUTF-8で保存するため、旧版へ戻すとセーブデータが文字化けする場合があります。更新前にバックアップしてください。",
@@ -20,14 +20,14 @@
     "同じプロセス内では1セッション。複数ゴーストは別プロセスで実行してください。",
     "内蔵SAORIの呼び出しにはUtatane 0.2.17以降が必要です。"
   ],
-  "version": "Mc205-5",
-  "revision": 2,
+  "version": "Mc206-4",
+  "revision": 1,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {
     "url": "https://github.com/opera7133/satoriya-shiori.git",
     "path": "sources/satori",
-    "commit": "bb75c7c9fb632c53d6c91992323bc709759fdc3d"
+    "commit": "1785e36951b553a1140e099bb8433d8c7d295224"
   },
   "recipe": "recipes/satori/build.sh",
   "requiredFiles": [

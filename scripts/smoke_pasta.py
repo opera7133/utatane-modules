@@ -94,7 +94,7 @@ def smoke(library):
         assert not lib.request(owned(b"a"), ctypes.byref(n)) and n.value == 0
         assert not lib.request(owned(b"a"), None)
         assert lib.unload() == 1
-        assert (master / "profile/pasta/save/save.json").is_file()
+        assert (master / "profile/pasta/save/save.toml").is_file()
         assert lib.load(owned(directory), len(directory)) == 1
         assert "Value: count=4\r\n" in request(boot)
         assert lib.unload() == 1

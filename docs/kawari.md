@@ -11,10 +11,10 @@ SHIORI/3.0の`loadu`・`load`・`request`・`unload`で読み込めます。電�
 
 配布版は[ukatech/kawari 9.2.0](https://github.com/ukatech/kawari/releases/tag/v9.2.0)を基準にしています。内部文字列はUnicodeで、UTF-8辞書・絵文字を含むパス・`lambda`・新しい正規表現コマンドを利用できます。UTF-8辞書はBOM付きで保存すると文字コードを明示できます。従来のShift_JIS辞書と`kawari.ini`の互換変換も維持しています。
 
-macOS用フォークにはNative SAORIへの接続フックと、macOSのiconvに合わせた文字コード変換の修正を残しています。正規表現エンジンuka_regexpのUnlicenseもZIPに同梱します。Windowsの本体内蔵モジュールをDirectSSTPで呼ぶ機能などは、Utataneでの対応を意味しません。
+Native SAORIへの接続フックと、macOSのiconvに合わせた文字コード変換はModules側で保守しています。正規表現エンジンuka_regexpのUnlicenseもZIPに同梱します。Windowsの本体内蔵モジュールをDirectSSTPで呼ぶ機能などは、Utataneでの対応を意味しません。
 9.1.0の配布リビジョン2では、ファイル選択とドロップのパスを辞書向けのWindows式区切りで渡し、絶対パスをmacOSのパスへ正規化します。`isexist`はOSの存在判定を使い、濁点の結合・分解形式が違っても同じファイルを認識します。日本語・空白・絵文字入りのファイル名と、実ゴーストの音声取り込み・MP3ドロップによるプレイリスト追加を自動テストしています。旧イベント`OnFileDropEx`へのフォールバックには、対応するUtatane本体も必要です。ID3タグ取得用のWindows EXE、UTF-8プレイリスト用EXE、実際のマウス操作はこの確認に含みません。
 
-上流の`utatane-unicode`ブランチ（`5778bafb72f344e405192d91f372e4d3d063656b`）と、その固定済み`uka_regexp`を使用します。ゴースト名による特別処理はありません。共通導入した同じdylibをすべての華和梨ゴーストで利用できます。
+本流`ukatech/kawari`の固定コミット`4de74aeaf99d372aa660378e1b974ed754283da8`と、その固定済み`uka_regexp`を使用します。ゴースト名による特別処理はありません。共通導入した同じdylibをすべての華和梨ゴーストで利用できます。
 
 9.1.0-r3ではpreloadするSAORIのUTF-8交渉を辞書ロード時から接続し、日本語の分解文字や絵文字を含む引数を維持します。共通SAORIのカタログIDはアンダースコアをハイフンへ正規化して検索します。
 
@@ -25,3 +25,7 @@ macOS用フォークにはNative SAORIへの接続フックと、macOSのiconv�
 接続はSHIORIホストと親アプリの専用IPCです。WindowsのWM_COPYDATAによるDirectSSTP、TCP/HTTP経由のSAORI実行には対応していません。以前の配布リビジョンでは利用できません。共通導入版を更新した後、起動中のゴーストを再読み込みしてください。合成した実辞書で同期呼び出し・非同期完了通知をarm64とx86_64で確認しています。実ゴーストの画面操作は未確認です。
 
 9.2.0では上流の辞書診断・日時処理などの更新を取り込みました。macOSのUnicode変換と共通SAORI接続を維持し、2040年の日時往復をテストしています。通常SAORIの呼び出し診断には、Utatane 0.2.18以降の本体を使ってください。
+
+9.2.0-r4では、上流のLICENSEと`ver license`の出力を現在のBSD 2-Clauseの文面へ揃えた更新を取り込みました。Unicode・旧辞書の読み込みとmacOS用SAORI接続を維持します。
+
+9.2.0-r4以降は本流リポジトリを直接固定し、macOSのiconv・SAORI接続をModules側のラッパーで維持します。移植forkはビルドに不要です。

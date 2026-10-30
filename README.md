@@ -22,6 +22,9 @@ Utataneで使うmacOS向けSHIORIなどのビルド・配布用リポジトリ�
 - [華和梨](docs/kawari.md) — macOS移植版
 - [蒼空](docs/aosora.md) — 手動導入の案内
 
+- [真絵（mae）](docs/mae.md) — 公開仕様からの独立実装（部分互換）
+- [D.N.Proxy](docs/dnproxy.md) — 現行.NETのPortable C#向け独立実装
+
 ## SAORI
 
 - [proxy_exと音声タグ](docs/proxy-ex.md) — SAORI BASIC呼び出しと、読み取り専用のmp3tag互換ヘルパー

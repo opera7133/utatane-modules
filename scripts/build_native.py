@@ -47,7 +47,7 @@ def build_native(entry, architectures, cache, destination):
     ese = identity == "ese-shiori"
     saori = entry["kinds"] == ["saori"]
     product = "misaka" if misaka else "niseshiori" if nise else "ese-shiori" if ese else identity.replace("-", "_")
-    smoke_script = "smoke_misaka.py" if misaka else "smoke_niseshiori.py" if nise else "smoke_ese_shiori.py" if ese else f"smoke_{identity}.py" if identity in ("yuhna", "hisui", "shino", "akari", "kawari") else "smoke_saori.py"
+    smoke_script = "smoke_misaka.py" if misaka else "smoke_niseshiori.py" if nise else "smoke_ese_shiori.py" if ese else f"smoke_{identity}.py" if identity in ("yuhna", "hisui", "shino", "akari", "kawari", "mae", "dnproxy") else "smoke_saori.py"
     host = platform.machine()
     if host not in architectures:
         raise ValueError("Include the host architecture to execute the packaged ABI")
@@ -68,8 +68,9 @@ def build_native(entry, architectures, cache, destination):
             subprocess.run(["sh", str(ROOT / entry["recipe"]), str(ROOT / "native"),
                             str(package / "lib"), str(scratch), " ".join(architectures)], check=True)
             verify_library(package / f"lib/lib{product}.dylib", architectures, misaka=misaka)
-            for helper in (package / "bin").glob("*"):
-                verify_library(helper, architectures, executable=True)
+            if identity != "dnproxy":
+                for helper in (package / "bin").glob("*"):
+                    verify_library(helper, architectures, executable=True)
             (package / "LICENSES").mkdir()
             shutil.copyfile(ROOT / "LICENSE", package / "LICENSES/utatane-MIT.txt")
             if identity == "kawari":
@@ -91,6 +92,12 @@ def build_native(entry, architectures, cache, destination):
             inputs += [p for directory in ("native",) for p in (ROOT / directory).rglob("*")
                        if p.is_file() and not any(part.startswith(".") for part in p.relative_to(ROOT).parts)]
             inputs += [ROOT / "scripts" / name for name in ("build.py", "build_native.py", "catalog.py", smoke_script)]
+            if identity in ("mae", "dnproxy"):
+                inputs.append(ROOT / "scripts/conventional_probe.py")
+            if identity == "dnproxy":
+                inputs.append(ROOT / "tests/fixtures/dnproxy/Portable.cs")
+            if identity == "dnproxy":
+                inputs += [p for p in (ROOT / "managed").rglob("*") if p.is_file() and not {"bin", "obj"}.intersection(p.relative_to(ROOT / "managed").parts)]
             inputs += [ROOT / entry["instructions"], ROOT / "schemas/package.schema.json"]
             if saori:
                 inputs.append(ROOT / "recipes/saori/build.sh")

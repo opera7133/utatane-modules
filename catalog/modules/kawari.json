@@ -12,21 +12,21 @@
   },
   "originalURL": "https://sourceforge.net/projects/kawari/",
   "delivery": "binary",
-  "license": "Modified BSD",
-  "licenseURL": "https://github.com/opera7133/kawari/blob/1a05b9b8993ecc191c4613bf81b3aeac4b757594/LICENSE",
+  "license": "BSD-2-Clause",
+  "licenseURL": "https://github.com/ukatech/kawari/blob/4de74aeaf99d372aa660378e1b974ed754283da8/LICENSE",
   "instructions": "docs/kawari.md",
   "limitations": [
     "華和梨9.2.0のmacOS移植版です。Windows固有操作は利用できません。旧kawari.ini辞書の互換変換も維持しています。",
     "内蔵SAORIの呼び出しにはUtatane 0.2.17以降が必要です。"
   ],
   "version": "9.2.0",
-  "revision": 2,
+  "revision": 4,
   "abi": "shiori-load-request-unload",
   "minimumOS": "14.0",
   "source": {
-    "url": "https://github.com/opera7133/kawari.git",
+    "url": "https://github.com/ukatech/kawari.git",
     "path": "native/Sources/CKawariModule/Vendor/KAWARI",
-    "commit": "1a05b9b8993ecc191c4613bf81b3aeac4b757594"
+    "commit": "4de74aeaf99d372aa660378e1b974ed754283da8"
   },
   "recipe": "recipes/kawari/build.sh",
   "requiredFiles": [

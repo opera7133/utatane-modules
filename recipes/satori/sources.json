@@ -19,6 +19,7 @@
   "satori/satori_CreateResponce.cpp",
   "satori/satori_EventOperation.cpp",
   "satori/satori_Kakko.cpp",
+  "satori/satori_lint.cpp",
   "satori/satori_load_dict.cpp",
   "satori/satori_load_unload.cpp",
   "satori/satori_sentence.cpp",

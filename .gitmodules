@@ -8,8 +8,8 @@
 	branch = utatane-macos
 [submodule "sources/pasta"]
 	path = sources/pasta
-	url = https://github.com/opera7133/pasta.git
-	branch = utatane-macos
+	url = https://github.com/ekicyou/pasta.git
+	branch = main
 [submodule "sources/yaya"]
 	path = sources/yaya
 	url = https://github.com/opera7133/yaya-shiori.git
@@ -20,8 +20,8 @@
 	branch = utatane-vendor
 [submodule "native/Sources/CKawariModule/Vendor/KAWARI"]
 	path = native/Sources/CKawariModule/Vendor/KAWARI
-	url = https://github.com/opera7133/kawari.git
-	branch = utatane-unicode
+	url = https://github.com/ukatech/kawari.git
+	branch = master
 [submodule "sources/yaya-6"]
 	path = sources/yaya-6
 	url = https://github.com/YAYA-shiori/yaya-shiori.git

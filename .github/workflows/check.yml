@@ -59,6 +59,11 @@ jobs:
           version: "0.6.14"
           enable-cache: true
       - run: uv sync --locked
+      - name: Set up .NET for the portable DNProxy host
+        if: matrix.group == 'native'
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
       - name: Set up Rust for SHIORI ports
         if: matrix.group == 'minato' || matrix.group == 'pasta'
         run: |
@@ -121,6 +126,9 @@ jobs:
           pattern: modules-universal-zips-*
           merge-multiple: true
           path: dist
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
       - name: Check the same universal ZIPs on arm64
         run: uv run --locked python scripts/smoke_packages.py --report build/abi-arm64.json dist/*.zip
       - uses: actions/upload-artifact@v7
@@ -148,6 +156,9 @@ jobs:
           pattern: modules-universal-zips-*
           merge-multiple: true
           path: dist
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
       - name: Check the same universal ZIPs on Intel
         run: uv run --locked python scripts/smoke_packages.py --report build/abi-x86_64.json dist/*.zip
       - uses: actions/upload-artifact@v7

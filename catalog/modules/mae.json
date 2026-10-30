@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "mae",
+  "displayName": "真絵 (mae Native)",
+  "kinds": [
+    "shiori"
+  ],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane-modules",
+    "author": "opera7133"
+  },
+  "originalURL": "https://efasus.sakura.ne.jp/shiori_mae.html",
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/mae.md",
+  "limitations": [
+    "公開仕様からの独立実装です。mae 3.1.6aと完全互換ではありません。",
+    "初回のみ原作の変数・Newsを取り込み、以後はmae-native-state.jsonへ保存します。原作への書き戻しはしません。",
+    "猫どりふ・BIFF固有処理、全派生イベント、短期記憶の厳密な選出順は未対応です。sprint等の一部の原作との差を導入資料に記載しています。"
+  ],
+  "version": "0.1.0",
+  "revision": 1,
+  "abi": "shiori-load-request-unload",
+  "minimumOS": "14.0",
+  "source": {
+    "kind": "local",
+    "path": "native"
+  },
+  "recipe": "recipes/mae/build.sh",
+  "requiredFiles": [
+    "lib/libmae.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ]
+}

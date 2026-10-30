@@ -69,7 +69,7 @@ def build_upstream(entry, architectures, cache, destination):
                 inputs += ["scripts/compile_cpp.py"]
                 inputs += [str(p.relative_to(ROOT)) for folder in ("recipes/cpp", f"recipes/{identity}") for p in (ROOT / folder).rglob("*") if p.is_file()]
             if identity == "pasta":
-                inputs += ["scripts/rust_licenses.py"]
+                inputs += ["scripts/rust_licenses.py", "recipes/pasta/prepare_source.py", "recipes/pasta/macos.rs"]
                 inputs += [str(p.relative_to(ROOT)) for p in (ROOT / "recipes/pasta/licenses").rglob("*") if p.is_file()]
             manifest = {
                 "schemaVersion": 1,

@@ -85,13 +85,19 @@ python3 scripts/check_upstream.py --fail-on-update
 
 通常は更新候補があっても終了コード0です。`--fail-on-update` を付けると更新候補（試験版・ブランチ更新を含む）がある場合は1、確認失敗がある場合は2を返します。1件の取得に失敗しても残りを確認します。GitHubの認証・通信・API利用制限のエラーも確認失敗として表示します。
 
-追跡設定は `catalog/upstream-watch.json` にあります。YAYAは500/600、里々はunicodeを指定し、タグも系列別に絞ります。その他は上流の既定ブランチを参照します。里々のvendorはsubtreeで履歴が異なるため、取り込み済みの本流コミットを `baseline`、対応するカタログの固定コミットを `baseline_for_source` に記録します。里々を更新したらこの2項目も合わせて更新してください。対応が古い場合は、誤って「更新なし」とせず確認失敗にします。
+追跡設定は `catalog/upstream-watch.json` にあります。YAYAは500/600、里々はunicodeを指定し、タグも系列別に絞ります。その他は上流の既定ブランチを参照します。里々のvendorはsubtreeで履歴が異なるため、取り込み済みの本流コミットを `baseline`、対応するカタログの固定コミットを `baseline_for_source` に記録します。比較基準を指定したモジュールを更新したら、この2項目も合わせて更新してください。対応が古い場合は、誤って「更新なし」とせず確認失敗にします。
 
 ## ソースと依存の更新
 
 移植元は `sources/` のsubmodule、独自実装は `native/`、ビルド手順は `recipes/` に置きます。submoduleを更新したら `catalog/modules/` の固定コミットも更新してください。
 
 YAYA 6は上流 `YAYA-shiori/yaya-shiori` の `600` ブランチを直接参照します。既存checkoutで参照元を変更した場合は `git submodule sync sources/yaya-6` を実行してから再帰更新してください。依存のDEELX・Gumboもsubmoduleとして固定します。Utatane用の32ビットABI・SAORI接続は `recipes/cpp/` とビルド時パッチで維持し、上流に取り込まれたコンパイラ修正は重複させません。YAYA 5と里々は引き続き移植用forkを参照します。
+
+pastaは`ekicyou/pasta`の未改変ソースを固定し、`recipes/pasta/prepare_source.py`で作業用コピーに従来のmacOS ABIを追加します。固定checkout自体は編集しません。華和梨も`ukatech/kawari`を直接固定し、`native/Sources/CKawariModule/`のラッパーでiconvとmacOS用SAORIを接続します。minato・kagari・YAYA 5・里々は移植差分が残るのでforkを維持します。
+
+真絵は`native/Sources/MaeCore/`の独立実装です。`swift test --package-path native --filter MaeTests`で合成辞書を確認します。実ゴーストを試す場合は`MAE_LOCAL_GHOST=/絶対パス/ghost/master`を設定します。実ゴーストはfixtureへコピーしません。
+
+DNProxyのビルドと実行時コンパイル試験には.NET 10 SDKが必要です。`managed/global.json`で10系を選び、`python3 scripts/test_dnproxy_host.py`で管理ホストを、`python3 scripts/smoke_dnproxy.py ZIPへのパス`で配布物を確認します。`recipes/dnproxy/`はCPU非依存の管理ホストとUniversal dylibを同じZIPへ梱包します。管理ホストの変更もCIキャッシュと配布物の入力ハッシュへ含めます。
 
 Python依存は `uv add` または `uv lock --upgrade-package 名前` で変更し、`pyproject.toml` と `uv.lock` を一緒に管理します。
 
@@ -109,3 +115,31 @@ CIはNative・C++・minato・pastaの4グループを並列に処理します。
 変更があったモジュールだけをビルドし、再利用したZIPも含めてarm64・IntelのABI検証を実行します。キャッシュがない場合は通常どおりビルドします。破損したキャッシュは検証エラーになります。再ビルドを強制するときはGitHub Actionsの対応する `packages-v1-` キャッシュを削除してください。
 
 minatoのテストはCIで最適化を無効にし、v0形式のシンボル名を使います。旧形式で長くなりすぎたシンボル名によるAppleリンカーの失敗を避けます。最適化なしで増えるパーサーのスタック使用量に合わせ、テストスレッドのスタックを32 MiBに設定します。テスト用のデバッグ情報を省き、minatoのテストと配布ビルドは同時コンパイルを1つに抑えて、標準ランナーでのメモリ使用量を減らします。配布用レシピはThin LTOと16個のコード生成単位を使います。ソース側のパニック処理設定は維持します。バイナリのビルド設定を変えるときは、配布リビジョンも上げてください。
+
+## 独立SHIORIの本体ホスト確認
+
+```sh
+sh ../utatane/Scripts/build-native-shiori-host.sh /tmp/utatane-shiori-host
+uv run --locked python scripts/test_independent_host.py --host /tmp/utatane-shiori-host \
+  --mae /path/to/mae.zip --dnproxy /path/to/dnproxy.zip
+```
+
+配布ZIPを移設し、本体と同じホストで2つのゴーストの分離・日本語応答・保存再読込を確認します。実画面の確認とは別です。
+
+## 原作maeとのWine比較
+
+原作DLL・辞書はリポジトリへ追加せず、手元の`ghost/master`を一時コピーして使います。
+Wineと、Utatane側の`Scripts/build-windows-dll-host.sh`で作るWindowsホストが必要です。
+
+```sh
+uv run --locked python scripts/compare_mae_wine.py \
+  --original /path/to/original/ghost/master \
+  --wine "/Applications/Wine Devel.app/Contents/Resources/wine/bin/wine" \
+  --host /tmp/utatane-windows-dll-host.exe \
+  --prefix /tmp/utatane-mae-test-prefix \
+  --native /path/to/mae.zip --output build/mae-original-comparison.json
+```
+
+専用のWine prefixを指定してください。入力した原作のフォルダは変更しません。
+32要求、原作が書いた変数・Newsの移行、登録時刻、元ファイルの保全を確認します。
+現在の既知差2件も期待値を固定して記録します。Wineは通常CIの必須条件に含めません。

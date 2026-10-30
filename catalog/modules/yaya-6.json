@@ -26,13 +26,13 @@
     "内蔵SAORIの呼び出しにはUtatane 0.2.17以降が必要です。"
   ],
   "version": "Tc607-2",
-  "revision": 4,
+  "revision": 5,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {
     "url": "https://github.com/YAYA-shiori/yaya-shiori.git",
     "path": "sources/yaya-6",
-    "commit": "21b6c8317bd68561286c2109673f178f1d12173b"
+    "commit": "3ccd7c26f23e56d71a305f1a80e5937588d27cb5"
   },
   "recipe": "recipes/yaya-6/build.sh",
   "requiredFiles": [

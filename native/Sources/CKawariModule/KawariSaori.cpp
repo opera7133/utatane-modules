@@ -4,6 +4,9 @@
 #include "misc/charset.h"
 #include <algorithm>
 #include <cstdlib>
+#include <memory>
+
+extern saori::IModuleFactory *utatane_create_builtin_saori_factory(TKawariLogger &logger);
 #include <sys/stat.h>
 
 namespace saori {
@@ -43,10 +46,15 @@ bool hasNativeSaori(const std::wstring &path) {
 }
 class NativeAwareDirectSSTPFactory : public TModuleFactoryDirectSSTP {
 public:
-    using TModuleFactoryDirectSSTP::TModuleFactoryDirectSSTP;
+    NativeAwareDirectSSTPFactory(TKawariLogger &logger, const dsstp::TBasewareLink *link)
+        : TModuleFactoryDirectSSTP(logger, link), builtin(utatane_create_builtin_saori_factory(logger)) {}
+
     TModule *CreateModule(const std::wstring &path) override {
+        if (auto *module = builtin->CreateModule(path)) return module;
         return hasNativeSaori(path) ? nullptr : TModuleFactoryDirectSSTP::CreateModule(path);
     }
+private:
+    std::unique_ptr<IModuleFactory> builtin;
 };
 }
 // Substitute only the factory constructed by the upstream factory master.

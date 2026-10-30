@@ -26,6 +26,8 @@ def input_key(entry, tracked, toolchain, root=ROOT):
                 'scripts/', 'schemas/', 'tests/')
     if group_for(entry) == 'native':
         prefixes += ('native/',)
+    if entry['id'] == 'dnproxy':
+        prefixes += ('managed/',)
     if group_for(entry) == 'cpp':
         prefixes += ('recipes/cpp/',)
     names = {entry['recipe'], entry['instructions'], f"catalog/modules/{entry['id']}.json",
@@ -72,6 +74,7 @@ def main():
                  'macOS': platform.mac_ver()[0]}
     if args.group == 'native':
         toolchain['swift'] = output('xcrun', 'swift', '--version')
+        toolchain['dotnet'] = subprocess.check_output(['dotnet', '--version'], cwd=ROOT / 'managed', text=True).strip()
     if args.group in ('minato', 'pasta'):
         toolchain['rust'] = output('cargo', '+1.93.0', '--version')
     keys = {entry['id']: input_key(entry, tracked, toolchain) for entry in entries}
@@ -86,6 +89,7 @@ def main():
     if pending:
         if args.group == 'native':
             subprocess.run(['swift', 'test', '--package-path', 'native'], check=True, cwd=ROOT)
+            subprocess.run([sys.executable, 'scripts/test_dnproxy_host.py'], check=True, cwd=ROOT)
         elif args.group == 'minato':
             subprocess.run(['cargo', '+1.93.0', 'test', '--locked', '--features', 'cli'],
                            check=True, cwd=ROOT / 'sources/minato',

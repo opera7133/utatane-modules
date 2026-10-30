@@ -47,6 +47,16 @@ class PackageCacheTests(unittest.TestCase):
         with patch('ci_packages.sha256', side_effect=lambda p: 'after' if p.name == 'KawariSession.swift' else 'before'):
             self.assertNotEqual(first, input_key(entry, tracked, {}))
 
+    def test_managed_host_changes_invalidate_dnproxy_package(self):
+        entries = {entry['id']: entry for entry in modules()}
+        tracked = ['managed/DnProxyHost/Program.cs', 'native/Package.swift']
+        with patch('ci_packages.sha256', return_value='before'):
+            initial_dnproxy = input_key(entries['dnproxy'], tracked, {})
+            initial_mae = input_key(entries['mae'], tracked, {})
+        with patch('ci_packages.sha256', side_effect=lambda p: 'after' if p.name == 'Program.cs' else 'before'):
+            self.assertNotEqual(initial_dnproxy, input_key(entries['dnproxy'], tracked, {}))
+            self.assertEqual(initial_mae, input_key(entries['mae'], tracked, {}))
+
     def test_reuse_preserves_bytes_checks_catalog_and_rejects_corruption(self):
         entry = next(entry for entry in modules() if entry['id'] == 'minato')
         with tempfile.TemporaryDirectory() as temporary:
