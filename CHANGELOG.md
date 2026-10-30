@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- mae 0.1.0-r2で、未定義の`OnTranslate`・`OnBalloonClose`・リソース照会に「ネタ切れ」の台詞を返して再生を繰り返す問題を修正した。`OnAITalk`を通常トークへ接続する。定義済みの翻訳・終了タグは引き続き実行する。
+- mae 0.1.0-r3で、未定義の`OnTranslate`・`OnBalloonClose`・別名定義を含むリソース照会に「ネタ切れ」の台詞を返して再生を繰り返す問題を修正した。`OnAITalk`を通常トークへ接続する。定義済みの翻訳・終了タグは引き続き実行する。
 
 ## 2026-10-30 — SHIORI更新とmae・D.N.Proxy追加
 

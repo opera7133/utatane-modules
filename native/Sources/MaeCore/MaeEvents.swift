@@ -5,6 +5,7 @@ extension MaeSession {
         // Polling, resource queries and playback lifecycle callbacks must stay
         // silent when undefined. In particular OnTranslate/OnBalloonClose can
         // otherwise turn a NothingToTalk response into endless playback.
+        guard id.hasPrefix("On") || id == "Mae.Talk" else { return false }
         guard !["OnTranslate", "OnBalloonClose", "OnSecondChange", "OnMinuteChange", "OnMouseMove", "OnMouseWheel"].contains(id) else { return false }
         return ["OnBoot", "OnFirstBoot", "OnClose", "OnGhostChanging", "OnGhostChanged", "OnShellChanging", "OnShellChanged",
                 "OnMouseDoubleClick", "OnMouseClick", "OnKeyPress", "OnCommunicate", "OnChoiceSelect", "OnAITalk", "Mae.Talk"].contains(id)

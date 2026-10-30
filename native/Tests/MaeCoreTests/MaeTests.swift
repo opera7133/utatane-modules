@@ -343,10 +343,10 @@ struct MaeTests {
         two
         #ReadCount
         ${talks}
-        """)
+        """, files: ["mae_actions.txt": "craftman\t作者名\nusername\t利用者名"])
         defer { try? FileManager.default.removeItem(at: root) }
         let session = try MaeSession(masterDirectoryURL: root)
-        for id in ["OnTranslate", "OnBalloonClose", "OnMinuteChange", "OnUnknown", "version", "otherghostname", "username"] {
+        for id in ["OnTranslate", "OnBalloonClose", "OnMinuteChange", "OnUnknown", "version", "otherghostname", "username", "craftman"] {
             #expect(try session.request(get(id)).statusCode == 204)
         }
         #expect(try session.request(get("ReadCount")).value == "0")
