@@ -21,7 +21,7 @@
     "猫どりふ・BIFF固有処理、全派生イベント、短期記憶の厳密な選出順は未対応です。sprint等の一部の原作との差を導入資料に記載しています。"
   ],
   "version": "0.1.0",
-  "revision": 1,
+  "revision": 2,
   "abi": "shiori-load-request-unload",
   "minimumOS": "14.0",
   "source": {

@@ -1,6 +1,16 @@
 import Foundation
 
 extension MaeSession {
+    func permitsTalkFallback(for id: String) -> Bool {
+        // Polling, resource queries and playback lifecycle callbacks must stay
+        // silent when undefined. In particular OnTranslate/OnBalloonClose can
+        // otherwise turn a NothingToTalk response into endless playback.
+        guard !["OnTranslate", "OnBalloonClose", "OnSecondChange", "OnMinuteChange", "OnMouseMove", "OnMouseWheel"].contains(id) else { return false }
+        return ["OnBoot", "OnFirstBoot", "OnClose", "OnGhostChanging", "OnGhostChanged", "OnShellChanging", "OnShellChanged",
+                "OnMouseDoubleClick", "OnMouseClick", "OnKeyPress", "OnCommunicate", "OnChoiceSelect", "OnAITalk", "Mae.Talk"].contains(id)
+            || actionAliases.values.contains(id)
+    }
+
     func derivedEvents(_ id: String) -> [String] {
         var names: [String] = []
         if id == "OnSecondChange" {

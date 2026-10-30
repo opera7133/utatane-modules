@@ -329,6 +329,40 @@ struct MaeTests {
         #expect(try session.request(get("OnCommunicate", references: ["user", "嫌い"])).value == "Mae.ResponseAgainst")
         #expect(try session.request(get("OnSurfaceRestore", references: ["5", "10"])).value == "Mae.OnSurfaceRestoreSakura.5")
     }
+    @Test func playbackCallbacksAndResourceQueriesDoNotTriggerTalkFallback() throws {
+        let root = try fixture("""
+        #Declaration:
+        var talks;
+        :end
+        #Mae.NothingToTalk:
+        talks = talks + 1;
+        :end
+        missing
+        #Mae.Talk
+        one
+        two
+        #ReadCount
+        ${talks}
+        """)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let session = try MaeSession(masterDirectoryURL: root)
+        for id in ["OnTranslate", "OnBalloonClose", "OnMinuteChange", "OnUnknown", "version", "otherghostname", "username"] {
+            #expect(try session.request(get(id)).statusCode == 204)
+        }
+        #expect(try session.request(get("ReadCount")).value == "0")
+        #expect(try session.request(get("OnAITalk")).value == "one")
+        #expect(try session.request(get("OnTranslate", references: ["one"])).statusCode == 204)
+        #expect(try session.request(get("OnBalloonClose", references: ["one"])).statusCode == 204)
+        #expect(try session.request(get("OnAITalk")).value == "two")
+        #expect(try session.request(get("OnBoot")).value == "missing")
+    }
+    @Test func explicitPlaybackCallbackTagsStillRunWithoutFallback() throws {
+        let root = try fixture("#OnTranslate\ntranslated\n#OnBalloonClose\nclosed\n#Mae.NothingToTalk\nmissing")
+        defer { try? FileManager.default.removeItem(at: root) }
+        let session = try MaeSession(masterDirectoryURL: root)
+        #expect(try session.request(get("OnTranslate")).value == "translated")
+        #expect(try session.request(get("OnBalloonClose")).value == "closed")
+    }
     @Test(.enabled(if: ProcessInfo.processInfo.environment["MAE_LOCAL_GHOST"] != nil))
     func optionalLocalGhostLoadsWithoutModifyingIt() throws {
         guard let path = ProcessInfo.processInfo.environment["MAE_LOCAL_GHOST"] else { return }
@@ -338,6 +372,13 @@ struct MaeTests {
         let response = try session.request(get("OnBoot"))
         #expect(response.statusCode == 200)
         #expect(response.value?.isEmpty == false)
+        for _ in 0 ..< 50 {
+            let talk = try session.request(get("OnAITalk"))
+            #expect(talk.statusCode == 200)
+            #expect(talk.value?.contains("話すネタが思いつかない") != true)
+            #expect(try session.request(get("OnTranslate", references: [talk.value ?? ""])).statusCode == 204)
+            #expect(try session.request(get("OnBalloonClose", references: [talk.value ?? ""])).statusCode == 204)
+        }
         try session.close()
     }
 }

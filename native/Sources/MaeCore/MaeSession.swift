@@ -339,7 +339,8 @@ public final class MaeSession {
         if id == "OnTeach", let name = teachVariable {
             try vm.write(.variable(name, nil), .string(references[0]), vm.globals); teachVariable = nil
         }
-        var names = [id]
+        var names = id == "OnAITalk" ? ["OnAITalk", "Mae.Talk"] : [id]
+        var automaticTalkDue = false
         if ["OnBoot", "OnFirstBoot", "OnKeyPress", "OnUpdateComplete", "OnUpdateFailure", "OnInstallComplete", "OnInstallFailure", "OnBIFFComplete", "OnBIFFFailure", "OnBIFF2Complete", "OnHeadlinesenseComplete", "OnHeadlinesenseFailure"].contains(id), !references[0].isEmpty { names.insert(id + "." + references[0], at: 0) }
         if id == "OnShellChanged", !references[1].isEmpty { names.insert(id + "." + references[1], at: 0) }
         if ["OnMouseDoubleClick", "OnMouseClick"].contains(id) {
@@ -352,11 +353,13 @@ public final class MaeSession {
             let detail = max(0, min(86_400, Int(configuration["TALK_INTERVAL_DETAIL"] ?? "0") ?? 0))
             let duration = min(86_400, minutes * 60 + detail)
             let blocked = (request.headers["Status"] ?? "").split(separator: ",").contains { ["talking", "cantalk", "passive", "timecritical"].contains($0.trimmingCharacters(in: .whitespaces)) }
-            if request.method == "GET", duration > 0, seconds - lastTalk >= duration, !blocked, references[3] != "0" { names.insert("Mae.Talk", at: 0); lastTalk = seconds }
+            if request.method == "GET", duration > 0, seconds - lastTalk >= duration, !blocked, references[3] != "0" { names.insert("Mae.Talk", at: 0); automaticTalkDue = true }
         }
         names = derivedEvents(id) + names
-        let value = try select(names, fallback: request.method == "GET" && !["OnSecondChange", "OnMouseMove", "OnMouseWheel"].contains(id), emit: request.method != "NOTIFY")
+        let fallback = request.method == "GET" && (automaticTalkDue || permitsTalkFallback(for: id))
+        let value = try select(names, fallback: fallback, emit: request.method != "NOTIFY")
         if request.method == "NOTIFY" || value == nil || value == "" { return ShioriResponse(statusCode: 204, reasonPhrase: "No Content") }
+        if id.hasPrefix("On"), id != "OnTranslate" { lastTalk = seconds }
         let adjustmentKey = "\(emotion < 0 ? "M" : "P")\(abs(emotion))_SENTI_ADJUSTMENT"
         setSentiment(sentiment + (Int(configuration[adjustmentKey] ?? "0") ?? 0))
         var headers = ShioriHeaders(); headers.append(name: "Charset", value: charset)
