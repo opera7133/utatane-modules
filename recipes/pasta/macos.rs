@@ -53,7 +53,7 @@ pub unsafe extern "C" fn loadu(directory: *mut c_void, length: i32) -> i32 {
         }
         // A panic or failed teardown prevents reusing an uncertain actor state.
         *state = State::Failed;
-        if lifecycle::spawn_actor(0, path) {
+        if lifecycle::spawn_actor(path) {
             *state = State::Loaded;
             1
         } else {

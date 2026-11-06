@@ -68,6 +68,20 @@ uv run --locked python scripts/test_saori_host.py \
             /path/to/textcopy2.zip /path/to/mciaudior.zip /path/to/wmove.zip /path/to/proxy-ex.zip
 ```
 
+里々のホスト試験には、合成辞書で一時ファイル書込失敗・保存先置換失敗、平文/暗号化保存、辞書フォルダ切替、既存バックアップ保持、読めないセーブデータの退避を確認する8試験も含みます。個別実行は次のとおりです。すべて一時ディレクトリ内で行い、利用中のゴーストへ失敗を注入しません。
+
+```sh
+uv run --locked python scripts/test_satori_recovery.py \
+  --host /path/to/utatane-shiori-host --library /path/to/libsatori.dylib
+```
+
+YAYA 6を指定したホスト結合試験は、ワーカー計算・ネスト、EXECUTE_CAPTUREの出力/終了コード・stdin/出力上限・timeout・中断・unload時の子孫プロセス終了、並行SAORI、本体同期IPCのワーカーからの拒否を確認する8試験も実行します。pasta/minatoのABI試験も、新しい辞書・関数と保存の回帰を含みます。
+
+```sh
+uv run --locked python scripts/test_yaya6_workers.py \
+  --host /path/to/utatane-shiori-host --library /path/to/libyaya-6.dylib
+```
+
 ## 上流更新の一括確認
 
 Python 3.12以降と[GitHub CLI](https://cli.github.com/)を使います。初回は `gh auth login` でGitHubへログインしてください。Pythonの追加依存やsubmoduleの初期化は不要です。

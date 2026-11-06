@@ -107,6 +107,29 @@ def smoke(library):
         response = request(boot)
         assert "こんにちは😀" in response, response
         assert lib.unload() == 1
+        features = root / "DSL 0.5.1"
+        fixture(features, counter=False)
+        config = features / "pasta.toml"
+        config.write_text(config.read_text() + '[ghost]\nline_newlines = 1.8\n', encoding="utf-8")
+        (features / "dic/main.pasta").write_text(
+            '＊OnOrdered　＆順番：２\n　テスト：order-two\n'
+            '＊OnOrdered　＆順番：１\n　テスト：order-one\n'
+            '＊OnWeighted　＆重み：２\n　テスト：weight-two\n'
+            '＊OnWeighted　＆重み：１\n　テスト：weight-one\n'
+            '＊OnLines\n　テスト：first-line\n　　　　：second-line\n', encoding="utf-8")
+        directory = str(features).encode()
+        assert lib.loadu(owned(directory), len(directory)) == 1
+        def event(name):
+            return request(f"GET SHIORI/3.0\r\nCharset: UTF-8\r\nID: {name}\r\n\r\n".encode())
+        for expected in ("order-one", "order-two", "order-one"):
+            response = event("OnOrdered")
+            assert expected in response, response
+        weighted = [event("OnWeighted") for _ in range(3)]
+        assert sum("weight-two" in response for response in weighted) == 2, weighted
+        assert sum("weight-one" in response for response in weighted) == 1, weighted
+        response = event("OnLines")
+        assert "first-line" in response and "second-line" in response and r"\n[180]" in response, response
+        assert lib.unload() == 1
     _ctypes.dlclose(lib._handle)
     print("PASS pasta ABI: UTF-8, DSL, NOTIFY ordering, duplicate load, save/reload, invalid inputs, dlclose")
 

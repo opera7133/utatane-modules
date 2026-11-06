@@ -52,3 +52,15 @@ shiori.macos,dnproxy/lib/libdnproxy.dylib
 VB/JScript、WinForms、COM、Windows DLL、原作dnutil、Win32Resource・EmbeddedResources・LinkedResources・CompilerOptions、SHIORI以外のPLUGIN/SAORI等は未対応です。コンパイル済み.NET Framework DLLの無変更動作やCP932のメモリ契約も保証しません。非対応の設定はエラーとして止めます。
 
 C#の実行時コンパイル、日本語・絵文字の応答、保存・再読込、コンパイル済みDLL、dylibとホストの移設を合成ゴーストで確認しています。原作付属サンプルはWindows Formsに依存するため、この対応範囲には含みません。実ゴーストの画面操作は未確認です。
+
+## Utatane 0.2.21以降の事前診断
+
+「SHIORI読み込み診断」で、実際に使うdotnetの絶対パス・そのdotnetのCPU・.NET 10 runtime・必要な場合だけSDKを照会します。「再診断」で入れ直した環境を確認し、ゴーストを再読み込みしてください。診断ではゴーストのC#をコンパイル・ロードしません。
+
+- モジュール未導入とbin不足は、Modulesの再導入またはlib/binを一組で配置することで直してください。
+- runtime不足なら選ばれたdotnetと同じCPU向けの.NET 10 runtimeを、`dnproxy.ini`があるソース方式でSDK不足なら.NET 10 SDK（またはnet10を対象にできる新しい安定版SDK）を導入してください。コンパイル済みDLL方式ではSDKを要求しません。
+- `UTATANE_DOTNET`を指定した場合は、その実行ファイルを検査・使用します。無効な指定を別のdotnetへ黙って切り替えません。実行できるx64版dotnetをRosetta経由で使うことは、arm64アプリとCPUが違うというだけでは拒否しません。
+- 設定不正・非対応設定と、起動時のコンパイル/assembly解決/ユーザーload失敗は区別します。詳しい起動段階のエラーを本体へ返すにはModules **0.1.0-r2以降**とUtatane 0.2.21以降が必要です。旧本体でもr2を実行できますが、起動失敗の詳細は表示されません。
+- 「実行準備OK」は依存確認が通った意味です。Windows Forms/COM/旧.NET Framework全体の互換や、ユーザーコードの動作成功を保証しません。
+
+照会方法は[公式dotnet CLI](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet)の`--info`・`--list-runtimes`・`--list-sdks`に従います。.NETの自動導入・同梱は行いません。

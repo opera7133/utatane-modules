@@ -47,5 +47,7 @@
   "gumbo/src/util.c",
   "gumbo/src/vector.c",
   "uka_regexp/uka_regexp.cpp",
-  "digest.cpp"
+  "digest.cpp",
+  "proccapture.cpp",
+  "workthread.cpp"
 ]

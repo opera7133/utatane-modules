@@ -56,6 +56,10 @@ def main():
         (root / "talks/main.mnt").write_text(
             "OnBoot => {\n    湊: こんにちは\n}\n"
             "OnSaori => {\n    湊: ${saori('echo.dll', '日本語')[0]}\n}\n"
+            "OnNewFunctions => {\n    湊: pick=${pick([7])},shuffle=${shuffle([8])[0]},count=${talk_count('OnBoot')}\n}\n"
+            "OnDeck => {\n    global save.deck = [1,2]\n    湊: deck-ready\n}\n"
+            "OnDraw => {\n    湊: draw=${draw(save.deck)},left=${len(save.deck)}\n}\n"
+            "OnScope => {\n    func f() { return is_null(x) }\n    let x = 1\n    湊: isolated=${f()}\n}\n"
         )
         # This fixture verifies UTF-8 paths and arguments as well as transferred buffers.
         source = root / "echo.c"
@@ -84,10 +88,15 @@ void *request(void *p, int32_t *n) {
         assert "Charset: UTF-8\r\n" in response and "こんにちは" in response, response
         response = send("OnSaori")
         assert "応答成功" in response, response
+        assert "pick=7,shuffle=8,count=1" in send("OnNewFunctions")
+        assert "isolated=true" in send("OnScope")
+        assert "deck-ready" in send("OnDeck")
+        assert "draw=2,left=1" in send("OnDraw")
         assert library.unload() == 1
         assert (root / "save.json").is_file()
         assert library.loadu(owned(path), len(path)) == 1
         assert "こんにちは" in send("OnBoot")
+        assert "draw=1,left=0" in send("OnDraw")
         assert library.unload() == 1
         for length in (-1, 8 * 1024 * 1024 + 1):
             size = C.c_int32(length)

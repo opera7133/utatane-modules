@@ -5,6 +5,7 @@ import Foundation
 private final class ManagedSession: @unchecked Sendable {
     static let shared = ManagedSession()
     let lock = NSLock()
+    var lastError = ""
     var process: Process?
     var input: FileHandle?
     var output: FileHandle?
@@ -52,8 +53,9 @@ private final class ManagedSession: @unchecked Sendable {
         let imageURL = URL(fileURLWithPath: String(cString: image))
         let host = environment["UTATANE_DNPROXY_HOST"].map { URL(fileURLWithPath: $0) }
             ?? imageURL.deletingLastPathComponent().deletingLastPathComponent().appending(path: "bin/DnProxyHost.dll")
-        let candidates = [environment["UTATANE_DOTNET"], "/usr/local/share/dotnet/dotnet", "/opt/homebrew/bin/dotnet"]
-            .compactMap { $0 } + (environment["PATH"] ?? "").split(separator: ":").map { String($0) + "/dotnet" }
+        let candidates = environment["UTATANE_DOTNET"].map { [$0] }
+            ?? (["/usr/local/share/dotnet/dotnet", "/opt/homebrew/bin/dotnet"]
+                + (environment["PATH"] ?? "").split(separator: ":").map { String($0) + "/dotnet" })
         guard let executable = candidates.first(where: { $0.hasPrefix("/") && FileManager.default.isExecutableFile(atPath: $0) }),
               FileManager.default.fileExists(atPath: host.path) else { return false }
         let process = Process(), incoming = Pipe(), outgoing = Pipe()
@@ -66,7 +68,11 @@ private final class ManagedSession: @unchecked Sendable {
         // A managed host may exit before the next write. Do not deliver SIGPIPE to the SHIORI host.
         guard fcntl(incoming.fileHandleForWriting.fileDescriptor, F_SETNOSIGPIPE, 1) == 0 else { stop(); return false }
         do {
-            guard try packet(seconds: 130) == Data([1]) else { stop(); return false }
+            let status = try packet(seconds: 130)
+            guard status == Data([1]) else {
+                lastError = status.first == 0 ? String(decoding: status.dropFirst(), as: UTF8.self) : "DNProxy: invalid startup response"
+                stop(); return false
+            }
             return true
         } catch { stop(); throw error }
     }
@@ -79,7 +85,12 @@ private func load(_ pointer: UnsafeMutableRawPointer?, _ length: Int32) -> Int32
           directory.hasPrefix("/"), !directory.contains("\0") else { return 0 }
     let session = ManagedSession.shared
     guard session.lock.try() else { return 0 }; defer { session.lock.unlock() }
-    return (try? session.start(directory)) == true ? 1 : 0
+    session.lastError = ""
+    do {
+        if try session.start(directory) { return 1 }
+        if session.lastError.isEmpty { session.lastError = "DNProxy: dotnet / host DLL is missing, or initialization failed" }
+    } catch { session.lastError = "DNProxy: " + error.localizedDescription }
+    return 0
 }
 @_cdecl("loadu")
 public func dnLoadUTF8(_ pointer: UnsafeMutableRawPointer?, _ length: Int32) -> Int32 { load(pointer, length) }
@@ -112,4 +123,19 @@ public func dnRequest(_ pointer: UnsafeMutableRawPointer?, _ length: UnsafeMutab
         response.withUnsafeBytes { result.copyMemory(from: $0.baseAddress!, byteCount: $0.count) }
         length.pointee = Int32(response.count); return result
     } catch { session.stop(); return nil }
+}
+
+// The native SHIORI host copies and frees this bounded diagnostic after load fails.
+@_cdecl("utatane_shiori_last_error")
+public func dnLastError(_ length: UnsafeMutablePointer<Int32>?) -> UnsafeMutableRawPointer? {
+    guard let length else { return nil }
+    length.pointee = 0
+    let session = ManagedSession.shared
+    guard session.lock.try() else { return nil }; defer { session.lock.unlock() }
+    let bytes = Array(String(String.UnicodeScalarView(session.lastError.unicodeScalars.prefix(900))).utf8)
+    guard !bytes.isEmpty, let output = malloc(bytes.count + 1) else { return nil }
+    bytes.withUnsafeBytes { if let source = $0.baseAddress { memcpy(output, source, bytes.count) } }
+    output.storeBytes(of: UInt8(0), toByteOffset: bytes.count, as: UInt8.self)
+    length.pointee = Int32(bytes.count)
+    return output
 }

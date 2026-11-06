@@ -1,6 +1,6 @@
 # 里々
 
-里々Unicode版 Mc206-4を元にしたmacOS 14以降向けのSHIORIです。ZIPの`satori/lib/libsatori.dylib`を`ghost/master/`へ置き、`descript.txt`に追記します。
+里々Unicode版 Mc206-5を元にしたmacOS 14以降向けのSHIORIです。ZIPの`satori/lib/libsatori.dylib`を`ghost/master/`へ置き、`descript.txt`に追記します。
 
 ```text
 shiori.macos,libsatori.dylib
@@ -22,7 +22,7 @@ SAORIへの電文は基本UTF-8です。`GET Version`の応答に`Charset`がな
 
 里々本体のライセンスはBSD 2-Clause。接続部分はMITです。正規表現エンジンDEELXは作者が個人・商用利用を無償としています。各出典と通知はZIP内の`LICENSES/`、固定コミットは`module.json`とソースのsubmoduleに記録しています。
 
-配布カタログは本流の版名`Mc206-4`を表示します。更新判定にはUtatane 0.2.14以降を使用してください。旧表記`2.3.2`からの更新も判定できます。
+配布カタログは本流の版名`Mc206-5`を表示します。更新判定にはUtatane 0.2.14以降を使用してください。旧表記`2.3.2`からの更新も判定できます。
 
 Mc205-1のSAORI over DirectSSTPはWindows・SSP向け機能です。macOSでは同梱または共通導入したmacOS用SAORIを引き続き使います。
 
@@ -38,3 +38,5 @@ Mc205-4-r2以降とUtatane 0.2.17以降を組み合わせると、DLLを配置�
 Mc205-5では上流の更新を取り込み、macOS用のABIと共通SAORI接続を維持しました。通常SAORIの呼び出し診断には、Utatane 0.2.18以降の本体を使ってください。
 
 Mc206-4では`＝`による変数代入で64ビットの計算結果が32ビットへ切り詰められる問題を修正しました。上流の辞書検査処理も取り込みますが、Windows用さとりての画面は配布対象ではありません。
+
+Mc206-5では、辞書リロード時に保存ファイルの入れ替えが失敗しても、保存直前のメモリ上の状態から復元します。バックアップを先に削除せず、セーブデータとバックアップの両方が読めない場合は、元データを`satori_savedata_failed.txt`（暗号化時は`.sat`）へ保持します。ディスクへの保存失敗自体を解消する機能ではありません。

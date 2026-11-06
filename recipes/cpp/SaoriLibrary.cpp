@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <vector>
 #include <algorithm>
 #include <chrono>
@@ -14,6 +15,10 @@ namespace saori {
 namespace {
 using InternalCallback = void *(*)(const void *, int32_t, int32_t *);
 InternalCallback internalCallback = nullptr;
+// YAYA workers may enter different libraries concurrently after releasing the VM lock.
+#if defined(UTATANE_THREADED_SAORI)
+std::recursive_mutex libraryMutex;
+#endif
 std::string normalized(std::string path);
 
 std::string internalName(const std::string &path) {
@@ -69,6 +74,9 @@ std::vector<std::filesystem::path> candidates(const std::filesystem::path &origi
 }
 }
 bool load(const std::string &path) {
+#if defined(UTATANE_THREADED_SAORI)
+    std::lock_guard<std::recursive_mutex> lock(libraryMutex);
+#endif
     if (!internalName(path).empty()) return internalCallback != nullptr;
     const auto started = Clock::now();
     const auto key = normalized(path);
@@ -102,6 +110,9 @@ bool load(const std::string &path) {
     return false;
 }
 bool unload(const std::string &path) {
+#if defined(UTATANE_THREADED_SAORI)
+    std::lock_guard<std::recursive_mutex> lock(libraryMutex);
+#endif
     if (!internalName(path).empty()) return internalCallback != nullptr;
     const auto started = Clock::now();
     auto found = sessions.find(normalized(path));
@@ -112,6 +123,9 @@ bool unload(const std::string &path) {
     return status != 0;
 }
 char *request(const std::string &path, const char *input, long *length) {
+#if defined(UTATANE_THREADED_SAORI)
+    std::lock_guard<std::recursive_mutex> lock(libraryMutex);
+#endif
     if (!input || !length || *length < 0 || *length > limit) return nullptr;
     const auto module = internalName(path);
     if (!module.empty()) {
@@ -146,6 +160,9 @@ char *request(const std::string &path, const char *input, long *length) {
 }
 
 extern "C" __attribute__((visibility("default"))) int32_t utatane_internal_saori_set_callback(saori::InternalCallback callback) {
+#if defined(UTATANE_THREADED_SAORI)
+    std::lock_guard<std::recursive_mutex> lock(saori::libraryMutex);
+#endif
     saori::internalCallback = callback;
     return 1;
 }

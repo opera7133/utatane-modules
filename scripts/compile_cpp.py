@@ -62,6 +62,7 @@ def main():
         sources += [recipe / "NativeSwiftSaori.cpp"]
     common = ["-O2", "-DNDEBUG", "-DPOSIX", "-fvisibility=hidden", "-mmacosx-version-min=14.0",
               "-I", str(tree), "-I", str(tree / "Vendor"), "-I", str(ROOT / "recipes/cpp")]
+    if identity == "yaya-6": common += ["-DUTATANE_THREADED_SAORI"]
     if identity in ("yaya", "yaya-6"): common += ["-DYAYA_MODULE"]
     else: common += ["-DSATORI_DLL", "-DSATORI_UNICODE_MODULE", "-I", str(tree / "Vendor/satori"), "-I", str(tree / "Vendor/_")]
     libraries = []

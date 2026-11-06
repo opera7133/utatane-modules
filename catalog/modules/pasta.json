@@ -12,21 +12,22 @@
   },
   "delivery": "binary",
   "license": "MIT",
-  "licenseURL": "https://github.com/ekicyou/pasta/blob/1c88e1e569d2a940c6437fa5d332141fce16b886/LICENSE",
+  "licenseURL": "https://github.com/ekicyou/pasta/blob/f7518b665769021a06d93e6c8f9b07e91c249113/LICENSE",
   "instructions": "docs/pasta.md",
   "limitations": [
+    "0.5.0以降は引用符なしの単語末尾の＠数を重みとして解釈し、連続するファイル属性などを構文エラーにします。更新前に辞書を確認してください。",
     "0.4.3以降は旧save.json・旧save.datを読み込みません。更新前にセーブデータをバックアップしてください。",
     "Windows専用のLua FFI呼び出しやDLLは実行できません。",
     "同じプロセス内では1セッション。Utataneはゴーストごとにプロセスを分離します。"
   ],
-  "version": "0.4.3",
-  "revision": 2,
+  "version": "0.5.1",
+  "revision": 1,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {
     "url": "https://github.com/ekicyou/pasta.git",
     "path": "sources/pasta",
-    "commit": "1c88e1e569d2a940c6437fa5d332141fce16b886"
+    "commit": "f7518b665769021a06d93e6c8f9b07e91c249113"
   },
   "recipe": "recipes/pasta/build.sh",
   "requiredFiles": [

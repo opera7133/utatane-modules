@@ -95,6 +95,8 @@ static class Program {
         using Stream output = Console.OpenStandardOutput();
         Console.SetOut(Console.Error); // Ghost logging cannot corrupt framed stdout.
         IUnload? unload = null;
+        string stage = "configuration";
+        bool ready = false;
         try {
             if (args.Length != 1 || !Path.IsPathFullyQualified(args[0])) throw new ArgumentException("Expected absolute ghost directory");
             string ghost = Path.GetFullPath(args[0]);
@@ -113,6 +115,7 @@ static class Program {
                 var ini = ReadIni(iniPath);
                 if (ini.TryGetValue("MainClass", out var names)) className = names.Last();
                 if (ini.TryGetValue("OutputAssembly", out var outputs)) assemblyName = outputs.Last();
+                stage = "compile";
                 assembly = Build(ghost, ini, assemblyName, interfaces);
             } else { assembly = FullPath(ghost, assemblyName); }
             var privatePaths = Setting(config, "PrivateBinPath", "lib;plugin;service").Split(';').Select(x => FullPath(ghost, x)).ToArray();
@@ -124,15 +127,18 @@ static class Program {
                 }
                 return null;
             };
+            stage = "assembly";
             object instance = Activator.CreateInstance(AssemblyLoadContext.Default.LoadFromAssemblyPath(assembly).GetType(className, true)!)!;
             if (instance is not ILoad load || instance is not IRequest request || instance is not IUnload closer)
                 throw new InvalidDataException("MainClass must implement ILoad, IRequest, IUnload");
+            stage = "load";
             byte[] directory = Utf8.GetBytes(ghost + Path.DirectorySeparatorChar);
             IntPtr ptr = Marshal.AllocHGlobal(directory.Length); Marshal.Copy(directory, 0, ptr, directory.Length);
             // The user ILoad consumes and frees this allocation, as in D.N.Proxy.
             if (!load.load(ptr, directory.Length)) throw new InvalidDataException("Ghost load failed");
             unload = closer;
             WritePacket(output, new byte[] { 1 });
+            ready = true;
             using Stream input = Console.OpenStandardInput();
             while (true) {
                 byte[] wire;
@@ -154,7 +160,12 @@ static class Program {
             bool result = unload.unload(); unload = null; WritePacket(output, new byte[] { result ? (byte)1 : (byte)0 });
             return result ? 0 : 1;
         } catch (Exception error) {
-            Console.Error.WriteLine("DNProxy: " + (error is TargetInvocationException ? error.InnerException?.Message : error.Message));
+            string message = "DNProxy [" + (error is NotSupportedException ? "unsupported" : stage) + "]: " + (error is TargetInvocationException ? error.InnerException?.Message : error.Message);
+            message = string.Concat(message.EnumerateRunes().Take(900).Select(rune => rune.ToString()));
+            Console.Error.WriteLine(message);
+            if (!ready) {
+                try { WritePacket(output, new byte[] { 0 }.Concat(Utf8.GetBytes(message)).ToArray()); } catch { }
+            }
             return 1;
         } finally { try { unload?.unload(); } catch { } }
     }

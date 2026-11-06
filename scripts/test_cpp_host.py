@@ -8,6 +8,7 @@ import select
 import shutil
 import struct
 import subprocess
+import sys
 import tempfile
 import time
 
@@ -136,6 +137,12 @@ def main():
                 assert ("count=3" if identity in ("yaya", "yaya-6") else "保存できた") in response, response
                 host.close()
             print(f"PASS: Utatane helper + {identity}: shared/bundled libraries, two ghosts, native SAORI, save/reload")
+            if identity == "yaya-6":
+                subprocess.run([sys.executable, str(ROOT / "scripts/test_yaya6_workers.py"),
+                    "--host", str(args.host.resolve()), "--library", str(library)], check=True, timeout=90)
+            if identity == "satori":
+                subprocess.run([sys.executable, str(ROOT / "scripts/test_satori_recovery.py"),
+                    "--host", str(args.host.resolve()), "--library", str(library)], check=True, timeout=60)
 
 
 if __name__ == "__main__": main()

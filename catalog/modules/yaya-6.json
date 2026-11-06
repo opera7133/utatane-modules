@@ -17,22 +17,23 @@
   },
   "delivery": "binary",
   "license": "BSD-3-Clause",
-  "licenseURL": "https://github.com/YAYA-shiori/yaya-shiori/blob/bbea7d958141df3ea4dcdd85b39c011318667fd1/LICENSE",
+  "licenseURL": "https://github.com/YAYA-shiori/yaya-shiori/blob/cc7c800bf9f128e011077fe82617f6f40fdbfd66/LICENSE",
   "instructions": "docs/yaya-6.md",
   "limitations": [
     "YAYA 6 の保存形式を使った変数は YAYA 5 に戻すと壊れることがあります。",
     "Windows用SAORIは実行できません。同梱または共通導入したmacOS用SAORIを使用してください。",
     "同じプロセス内では1セッション。複数ゴーストは別プロセスで実行してください。",
-    "内蔵SAORIの呼び出しにはUtatane 0.2.17以降が必要です。"
+    "内蔵SAORIの呼び出しにはUtatane 0.2.17以降が必要です。",
+    "THREADSTARTのワーカーでは本体への同期IPCを使う内蔵SAORI・ウィンドウ操作SAORIを呼べません。Utatane 0.2.21以降では即座に失敗を返します。本体を更新してからこのモジュールへ更新してください。通常のメインrequestからの呼び出しを使ってください。"
   ],
-  "version": "Tc607-2",
-  "revision": 5,
+  "version": "Tc608-3",
+  "revision": 1,
   "abi": "shiori-utf8-v1",
   "minimumOS": "14.0",
   "source": {
     "url": "https://github.com/YAYA-shiori/yaya-shiori.git",
     "path": "sources/yaya-6",
-    "commit": "3ccd7c26f23e56d71a305f1a80e5937588d27cb5"
+    "commit": "cc7c800bf9f128e011077fe82617f6f40fdbfd66"
   },
   "recipe": "recipes/yaya-6/build.sh",
   "requiredFiles": [
