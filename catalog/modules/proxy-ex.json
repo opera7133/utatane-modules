@@ -15,7 +15,7 @@
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/proxy-ex.md",
   "limitations": [
-    "macOS用の実行ファイルのみ呼び出します。Windows EXEは実行しません。",
+    "macOS用の補助プログラムを呼び出すSAORIです。Windows用EXEの実行は未対応です。",
     "同梱mp3tagはAVFoundation/AudioToolboxが読み取れる音声形式に対応します。",
     "補助プログラムの実行は10秒、標準出力は1MiBまでです。"
   ],

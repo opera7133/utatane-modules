@@ -2,11 +2,15 @@
 
 Donさん作の、インストール済みバルーンを画像一覧から選べるプラグインです。移植版はプレビュー付きの一列リストを1ページ9件で表示し、選んだバルーンへ切り替えます。
 
-この移植は**Utatane 0.2.16以降**を対象にします。Utatane ModulesからmacOS版YAYAを導入しておきます。プラグインIDと、`OnBalloonSelectMenu`・`OnBalloonSelectExec`・`OnBalloonSelectCancel`は原版のままです。
+## 利用前の準備
+
+Utatane 0.2.16以降と、macOS版YAYAが必要です。YAYAは、Utataneの「モジュール」→「モジュールカタログ…」から導入できます。
+
+このページでは、原版からUtatane向けのNARを作る方法を案内しています。ターミナルでの操作と、このUtatane Modulesリポジトリの作業コピーが必要です。NARは、以下の手順で手元に作成してから導入してください。
 
 ## NARの生成と導入
 
-このリポジトリのルートで実行します。作業フォルダが既にある場合は、別の空のフォルダを指定してください。
+ターミナルでUtatane Modulesのフォルダへ移動し、次のコマンドを順に実行します。原版の取得先として`~/ws/balloonselector-port-source`を使うので、その場所に別の作業がある場合は、コマンド内のパスを空いている場所へ変更してください。
 
 ```sh
 git clone https://github.com/nikolat/balloonselector.git ~/ws/balloonselector-port-source
@@ -17,6 +21,8 @@ python3 scripts/port_balloonselector.py --source ~/ws/balloonselector-port-sourc
 生成したNARをUtataneへ導入し、ゴーストの右クリックメニューのプラグインからBalloonSelectorを実行します。対応ゴーストなら、`\![raiseplugin,BalloonSelector,OnMenuExec]`でも呼べます。カタログからの自動導入や配布サーバーへのNAR掲載はまだありません。
 
 ## 移植内容
+
+プラグインIDと、`OnBalloonSelectMenu`・`OnBalloonSelectExec`・`OnBalloonSelectCancel`は原版と共通です。
 
 - 自由座標を使う原版の3×3配置は、Utataneの文字配置との互換差を避けるため一列のリストに変更します。
 - 原版のYAYA辞書を使用し、macOS版YAYAのフォルダ列挙で先頭のバルーンを飛ばす箇所を修正します。

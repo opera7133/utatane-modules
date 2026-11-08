@@ -8,22 +8,29 @@
     <script src="./catalog.js?v=__CATALOG_JS_SHA256__" defer></script>
   </head>
   <body>
-    <header class="navbar">
-      <div class="container">
-        <a class="brand" href="./">Utatane Modules</a>
-        <nav class="related-links" aria-label="関連サイト">
-          <a href="https://dl.wmsci.com/utatane/">Utatane公式サイト</a>
-          <a href="https://utatane-validate.wmsci.com/">NAR検査</a>
-          <a href="./index.json">カタログAPI</a>
-        </nav>
-      </div>
-    </header>
+<header class="site-header">
+  <div class="site-shell">
+    <a class="site-brand" href="https://dl.wmsci.com/utatane/">Utatane / 転寝</a>
+    <nav class="site-nav" aria-label="関連サイト">
+        <a href="https://dl.wmsci.com/utatane/">公式サイト</a>
+        <a href="https://utatane-validate.wmsci.com/">NAR検査</a>
+        <a href="https://dl.wmsci.com/utatane/modules/" aria-current="page">モジュール</a>
+        <a href="https://dl.wmsci.com/utatane/docs/">使い方</a>
+    </nav>
+  </div>
+</header>
 
     <main class="container">
       <h1>モジュールを探す</h1>
       <p class="intro">
         macOS向けのSHIORI・SAORI・プラグインを探せます。配布物や導入方法を確認できます。
       </p>
+      <dl class="kind-guide" aria-label="モジュールの種類">
+        <div class="kind-shiori"><dt>SHIORI</dt><dd>ゴーストの会話や反応を動かす</dd></div>
+        <div class="kind-saori"><dt>SAORI</dt><dd>音声再生やコピーなどの機能を足す</dd></div>
+        <div class="kind-plugin"><dt>プラグイン</dt><dd>メニューから呼び出して使う拡張機能</dd></div>
+      </dl>
+      <p class="install-note">Utataneで使う場合は、メニューバーの「モジュール」→「モジュールカタログ…」から導入できます。手動配置や追加の準備が必要なものは、各項目の「導入手順」を確認してください。</p>
       <div class="toolbar">
         <label class="search">
           <span class="visually-hidden">モジュールを検索</span>
@@ -73,15 +80,19 @@
       </div>
     </dialog>
 
-    <footer>
-      <div class="container">
-        <p>同梱・再配布の前に、各モジュールのライセンスを確認してください。</p>
-        <nav class="related-links" aria-label="関連リンク">
-          <a href="https://dl.wmsci.com/utatane/">Utatane公式サイト</a>
-          <a href="https://utatane-validate.wmsci.com/">NAR検査</a>
-          <a href="https://github.com/opera7133/utatane-modules">ソースコード</a>
-        </nav>
-      </div>
-    </footer>
+<footer class="site-footer">
+  <div class="site-shell">
+    <div><p><strong>Utatane / 転寝</strong></p>
+      <p>各モジュールの利用・再配布条件は、ライセンスで確認できます。</p></div>
+    <nav class="site-nav" aria-label="関連リンク">
+        <a href="https://dl.wmsci.com/utatane/">公式サイト</a>
+        <a href="https://utatane-validate.wmsci.com/">NAR検査</a>
+        <a href="https://dl.wmsci.com/utatane/modules/">モジュール</a>
+        <a href="https://dl.wmsci.com/utatane/docs/">使い方</a>
+        <a href="./index.json">カタログAPI</a>
+        <a href="https://github.com/opera7133/utatane-modules">ソースコード</a>
+    </nav>
+  </div>
+</footer>
   </body>
 </html>

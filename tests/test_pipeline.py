@@ -116,9 +116,11 @@ class CatalogTests(unittest.TestCase):
         self.assertNotIn("originalURL", entries["kenonoke"])
         self.assertTrue((self.root / "snapshot/docs/aosora.md").is_file())
         page = (self.root / "snapshot/index.html").read_text()
-        self.assertIn(f'href="./catalog.css?v={sha256(self.root / "site/catalog.css")}"', page)
+        self.assertIn(f'href="./catalog.css?v={sha256(self.root / "snapshot/catalog.css")}"', page)
         self.assertIn(f'src="./catalog.js?v={sha256(self.root / "site/catalog.js")}"', page)
         self.assertTrue((self.root / "snapshot/catalog.css").is_file())
+        self.assertIn((self.root / "site/site-shell.css").read_bytes(),
+                      (self.root / "snapshot/catalog.css").read_bytes())
         self.assertTrue((self.root / "snapshot/catalog.js").is_file())
 
     def test_existing_catalog_not_replaced(self):

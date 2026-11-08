@@ -16,7 +16,7 @@
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
   "limitations": [
-    "WAVEの非同期再生。Windowsシステム音はmacOSの音へ対応付け。WAVEは64MiBまで。実際の音声出力は手動確認が必要です。"
+    "WAVE音声を再生します。Windowsのシステム音はmacOSの音へ置き換えます。ファイルは64MiBまでで、実際の音声出力は利用環境で確認してください。"
   ],
   "version": "0.1.0",
   "revision": 1,

@@ -16,7 +16,7 @@
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
   "limitations": [
-    "keygenとHMAC-SHA1のtotp。RFC 6238に従い桁数・Base32処理を修正。不正な引数は400。原版の未定義動作は再現しません。"
+    "認証用の秘密鍵と、時刻に基づくワンタイムパスワードを生成します。原版と結果が異なる場合があるため、引数と互換性の説明を確認してください。"
   ],
   "version": "0.1.0",
   "revision": 1,

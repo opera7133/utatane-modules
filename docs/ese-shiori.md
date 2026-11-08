@@ -1,4 +1,16 @@
-# ese-shiori (Native)
+# ese-shiori
+
+ese-shioriの辞書を使うゴースト向けの、macOS用SHIORIです。Windows版3.03を元にした独立実装です。
+
+## Utataneで使う
+
+1. Utataneのメニューバーで「モジュール」→「モジュールカタログ…」を開きます。
+2. このモジュールを選び、ダウンロードします。
+3. 導入後は「機能」→「復旧操作」→「現在のゴーストを再読み込み」で、ゴーストを読み込み直します。
+
+ゴーストにmacOS用のSHIORIが同梱されている場合は、そちらが優先されます。更新した版が使われているかは、「SHIORI読み込み診断」で確認できます。
+
+## 手動で配置する・ゴーストへ同梱する
 
 ZIP内の`ese-shiori/lib/libese-shiori.dylib`を`ghost/master/`に置きます。Utataneでは既存の`descript.txt`の指定をそのまま使えます。
 
@@ -8,7 +20,7 @@ shiori,ese-shiori.dll
 
 他のベースウェアで必要なら`shiori.macos,libese-shiori.dylib`を追加してください。
 
-SHIORI/3.0の`loadu`・`load`・`request`・`unload`で読み込めます。電文はUTF-8・Shift_JIS・EUC-KRに対応します。辞書には`eseai.ini`と`eseai_*.txt`または`.dic`が必要です。
+開発者向けには、SHIORI/3.0の標準的な呼び出し口（`loadu`・`load`・`request`・`unload`）を用意しています。電文はUTF-8・Shift_JIS・EUC-KRに対応します。辞書には`eseai.ini`と`eseai_*.txt`または`.dic`が必要です。
 
 状態は既定で`ghost/master/ese-shiori-state.json`へ保存します。ベースウェアから`UTATANE_GHOST_STATE_DIR`に絶対パスを渡すと、そのフォルダに保存します。`$WRITEFILE`の出力は保存先と同じ親フォルダの`ese-shiori-files/`に置きます。
 

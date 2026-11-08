@@ -13,7 +13,7 @@
 
 ### Utatane 0.2.20以降
 
-Utatane 0.2.20以降では、設定の「SHIORI対応状況」からD.N.Proxyを共通導入し、ゴーストを再読み込みできます。`ghost/master/`に`dnproxy.ini`または`dnproxy.dll.config`があれば、Windows用の指定が`shiori.dll`という汎用名でも判別します。通常は`shiori.macos`の追加は不要です。
+Utatane 0.2.20以降では、メニューバーの「モジュール」→「モジュールカタログ…」からD.N.Proxyをダウンロードできます。導入後は「機能」→「復旧操作」→「現在のゴーストを再読み込み」で、ゴーストを読み込み直してください。`ghost/master/`に`dnproxy.ini`または`dnproxy.dll.config`があれば、Windows用の指定が`shiori.dll`という汎用名でも判別します。通常は`shiori.macos`の追加は不要です。
 
 共通導入では`NativeShiori/dnproxy/`の`lib/`と`bin/`を一組で保持します。ゴースト側の設定・C#ソースはそのまま使います。既存の手動配置から切り替える場合は、追加した`shiori.macos`指定を外し、古いゴースト内のmacOS用ライブラリを別の場所へ退避してから再読み込みしてください。明示指定やゴースト内のライブラリが共通導入版より優先されます。ゴーストの設定・ソース・保存データは移動する必要はありません。
 

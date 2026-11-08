@@ -16,7 +16,7 @@
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
   "limitations": [
-    "GetLocalIP（有効な非ループバックIPv4の先頭）・GetLocalHostnameに対応。複数NICの選択はWindowsと一致しない場合がある。GetInternetIPは未対応（501）。"
+    "MacのローカルIPv4アドレスとホスト名を取得します。複数のネットワーク接続がある場合はWindows版と選ばれる接続が異なることがあります。GetInternetIPは未対応です。"
   ],
   "version": "0.1.0",
   "revision": 1,

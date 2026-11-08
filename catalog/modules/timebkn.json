@@ -16,7 +16,7 @@
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
   "limitations": [
-    "time/system/tick/fromdate/local/strftime。qreki（旧暦・六曜）は非対応で501。macOSのローカル時刻とstrftimeを使用します。"
+    "現在時刻の取得、日付の変換、書式に合わせた日時の出力に対応しています。旧暦・六曜を扱うqrekiは未対応です。"
   ],
   "version": "0.1.0",
   "revision": 1,

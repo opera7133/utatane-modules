@@ -16,7 +16,7 @@
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
   "limitations": [
-    "全引数を改行で結合し、文字列中の\\nを改行へ変換してコピー。macOSのUnicodeクリップボードを使用する。"
+    "複数の引数を改行でつなぎ、macOSのクリップボードへコピーします。文字列中の\\nも改行に変換します。"
   ],
   "version": "0.1.0",
   "revision": 1,

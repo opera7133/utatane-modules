@@ -16,7 +16,7 @@
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
   "limitations": [
-    "open/close/get。XMLとXPathのサイズ・文書数・計算量を制限。DTDと外部エンティティは非対応。TinyXPathとlibxml2の細部は一致しない場合があります。"
+    "XMLファイルを開き、XPathで値を取り出します。文書の大きさや計算量に上限があり、DTDと外部実体は未対応です。"
   ],
   "version": "0.1.0",
   "revision": 1,

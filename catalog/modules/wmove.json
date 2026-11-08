@@ -15,7 +15,7 @@
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
   "limitations": [
-    "Windows版のすべての機能を再現するものではありません。対応コマンドは導入手順を参照してください。",
+    "ゴーストのウィンドウ位置の取得と移動に対応しています。利用できる操作は導入手順で確認できます。",
     "ウィンドウ操作にはホストからの接続が必要です。接続がない場合は501を返します。"
   ],
   "version": "0.1.0",

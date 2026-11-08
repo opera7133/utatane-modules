@@ -50,13 +50,15 @@ function externalLink(label, url) {
 }
 
 function appendInline(parent, source, baseURL) {
-  const pattern = /(`[^`]+`|\[[^\]]+\]\([^)]+\))/g;
+  const pattern = /(`[^`]+`|\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g;
   let position = 0;
   for (const match of source.matchAll(pattern)) {
     parent.append(document.createTextNode(source.slice(position, match.index)));
     const token = match[0];
     if (token.startsWith("`")) {
       parent.append(element("code", "", token.slice(1, -1)));
+    } else if (token.startsWith("**")) {
+      appendInline(parent.appendChild(element("strong")), token.slice(2, -2), baseURL);
     } else {
       const separator = token.indexOf("](");
       const label = token.slice(1, separator);
@@ -147,15 +149,16 @@ function renderMarkdown(source, baseURL) {
       continue;
     }
     table = null;
-    const bullet = /^[-*]\s+(.+)$/.exec(line);
+    const bullet = /^([-*]|\d+\.)\s+(.+)$/.exec(line);
     if (bullet) {
       flushParagraph();
-      if (!list) {
-        list = element("ul");
+      const tag = /^\d/.test(bullet[1]) ? "ol" : "ul";
+      if (!list || list.localName !== tag) {
+        list = element(tag);
         fragment.append(list);
       }
       const item = element("li");
-      appendInline(item, bullet[1], baseURL);
+      appendInline(item, bullet[2], baseURL);
       list.append(item);
       continue;
     }
@@ -227,8 +230,12 @@ function card(module) {
   const item = element("article", "module");
   const info = element("div", "module-info");
   const badges = element("div", "badges");
-  for (const kind of module.kinds)
-    badges.append(element("span", "badge", kind.toUpperCase()));
+  const kindLabels = { shiori: "SHIORI", saori: "SAORI", plugin: "プラグイン" };
+  for (const kind of module.kinds) {
+    const badge = element("span", "badge", kindLabels[kind] ?? kind);
+    if (Object.hasOwn(kindLabels, kind)) badge.classList.add(`kind-${kind}`);
+    badges.append(badge);
+  }
   info.append(element("h2", "", module.displayName), badges);
   if (module.limitations.length)
     info.append(element("p", "detail", module.limitations[0]));

@@ -1,6 +1,14 @@
-# YAYA
+# YAYA 5
 
-YAYA 5 系（Tc574-11）の macOS 14以降向けSHIORIです。ZIPの`yaya/lib/libyaya.dylib`を`ghost/master/`へ置き、`descript.txt`に追記します。
+YAYA 5系（Tc574-11）のmacOS 14以降向けSHIORIです。通常はYAYA 6を使い、5系が必要なゴーストでこちらを選んでください。
+
+## 導入と選択
+
+Utataneの「モジュール」→「モジュールカタログ…」からYAYA 5をダウンロードします。「SHIORI読み込み診断」でゴーストが使うSHIORIとして5系を選択し、ゴーストを再読み込みしてください。
+
+## 手動で配置する・ゴーストへ同梱する
+
+ZIPの`yaya/lib/libyaya.dylib`を`ghost/master/`へ置き、`descript.txt`に追記します。
 
 ```text
 shiori.macos,libyaya.dylib

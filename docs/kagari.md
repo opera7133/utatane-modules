@@ -1,5 +1,17 @@
 # kagari
 
+Luaを使うSHIORI「kagari」のmacOS移植版です。macOS 14以降で利用でき、Lua 5.4も配布物に含まれています。
+
+## Utataneで使う
+
+1. Utataneのメニューバーで「モジュール」→「モジュールカタログ…」を開きます。
+2. このモジュールを選び、ダウンロードします。
+3. 導入後は「機能」→「復旧操作」→「現在のゴーストを再読み込み」で、ゴーストを読み込み直します。
+
+ゴーストにmacOS用のSHIORIが同梱されている場合は、そちらが優先されます。更新した版が使われているかは、「SHIORI読み込み診断」で確認できます。
+
+## 手動で配置する・ゴーストへ同梱する
+
 [Tatakinov/kagari_shiori](https://github.com/Tatakinov/kagari_shiori)の[macOS移植版](https://github.com/opera7133/kagari_shiori)。macOS 14以降、Lua 5.4に対応しています。
 
 ## 共通導入

@@ -1,10 +1,22 @@
 # 華和梨
 
+華和梨の辞書を使うゴースト向けの、macOS移植版SHIORIです。UTF-8と従来のShift_JISの辞書を読み込めます。
+
+## Utataneで使う
+
+1. Utataneのメニューバーで「モジュール」→「モジュールカタログ…」を開きます。
+2. このモジュールを選び、ダウンロードします。
+3. 導入後は「機能」→「復旧操作」→「現在のゴーストを再読み込み」で、ゴーストを読み込み直します。
+
+ゴーストにmacOS用のSHIORIが同梱されている場合は、そちらが優先されます。更新した版が使われているかは、「SHIORI読み込み診断」で確認できます。
+
+## 手動で配置する・ゴーストへ同梱する
+
 ZIP内の`kawari/lib/libkawari.dylib`を`ghost/master/`に置きます。Utataneでは、`kawarirc.kis`または`kawari.ini`があれば既存の`descript.txt`を変更せずに使えます。
 
 他のベースウェアで必要なら`shiori.macos,libkawari.dylib`を追加してください。
 
-SHIORI/3.0の`loadu`・`load`・`request`・`unload`で読み込めます。電文はUTF-8とShift_JISに対応し、辞書はUTF-8・従来のShift_JIS形式を読み込みます。内部とファイルパスはUnicodeで扱います。共通導入版SAORIを使う場合は`UTATANE_SAORI_ROOT`に、`<名前>/lib/lib<名前>.dylib`を含むフォルダの絶対パスを指定してください。
+開発者向けには、SHIORI/3.0の標準的な呼び出し口（`loadu`・`load`・`request`・`unload`）を用意しています。電文はUTF-8とShift_JISに対応し、辞書はUTF-8・従来のShift_JIS形式を読み込みます。内部とファイルパスはUnicodeで扱います。共通導入版SAORIを使う場合は`UTATANE_SAORI_ROOT`に、`<名前>/lib/lib<名前>.dylib`を含むフォルダの絶対パスを指定してください。
 
 このdylibには華和梨のmacOS向けC++移植を含みます。元のWindows版の全機能との互換性は保証しません。再配布時はZIPの`LICENSES/`を同梱してください。
 

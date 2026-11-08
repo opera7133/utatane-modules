@@ -231,8 +231,11 @@ def generate(output, packages, root=ROOT, abi_reports=()):
             source = within(root, f"site/{name}")
             if page.count(marker) != 1:
                 raise ValueError(f"Missing cache version marker: {marker}")
-            page = page.replace(marker, sha256(source))
-            shutil.copyfile(source, staging / name)
+            content = source.read_bytes()
+            if name == "catalog.css":
+                content += b"\n" + within(root, "site/site-shell.css").read_bytes()
+            page = page.replace(marker, hashlib.sha256(content).hexdigest())
+            (staging / name).write_bytes(content)
         (staging / "index.html").write_text(page, encoding="utf-8")
         staging.rename(output)
 

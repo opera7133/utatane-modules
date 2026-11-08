@@ -16,7 +16,7 @@
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
   "limitations": [
-    "textcopy2と同じ引数仕様。返却指定と第3引数の改行置換に対応。macOSのUnicodeクリップボードを使用する。"
+    "文字列をmacOSのクリップボードへコピーします。引数の指定方法はtextcopy2と共通です。"
   ],
   "version": "0.1.0",
   "revision": 1,

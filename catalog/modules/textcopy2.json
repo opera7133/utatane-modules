@@ -16,7 +16,7 @@
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
   "limitations": [
-    "Windows版のすべての機能を再現するものではありません。対応コマンドは導入手順を参照してください。"
+    "文字列をmacOSのクリップボードへコピーします。引数による改行の置き換えにも対応しています。"
   ],
   "version": "0.1.0",
   "revision": 6,
