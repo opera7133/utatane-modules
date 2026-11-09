@@ -23,6 +23,8 @@ Utataneで使うmacOS向けSHIORIなどのビルド・配布用リポジトリ�
 - [蒼空](docs/aosora.md) — 手動導入の案内
 
 - [真絵（mae）](docs/mae.md) — 公開仕様からの独立実装（部分互換）
+- [ひとみ。](docs/hitomi.md) — 条件分岐・PSY・単語学習の部分互換版
+- [此栞](docs/konoka.md) — XDI・XDC辞書、TeachBoxと保存の取り込みに対応する試験版
 - [D.N.Proxy](docs/dnproxy.md) — 現行.NETのPortable C#向け独立実装
 
 ## SAORI

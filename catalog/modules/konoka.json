@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "konoka",
+  "displayName": "此栞 (Konoka Native)",
+  "kinds": [
+    "shiori"
+  ],
+  "origin": "independent",
+  "upstream": {
+    "url": "https://github.com/opera7133/utatane-modules",
+    "author": "opera7133"
+  },
+  "originalURL": "https://web.archive.org/web/20040214165534/http://thor.prohosting.com/~kayono/technote.html",
+  "delivery": "binary",
+  "license": "MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
+  "instructions": "docs/konoka.md",
+  "limitations": [
+    "公開技術メモと原作DLLの観測による独立実装の試験版です。",
+    "XDI・XDCの読み書き、XDC自動生成、OnTeachと311・312応答、values.datの初回取り込みに対応します。",
+    "SHIORI/3.0へ接続する部分互換版です。チェイン会話・DTX・全組み込みの一致と原作へ戻す保存互換は今後の対応範囲です。"
+  ],
+  "version": "0.2.0",
+  "revision": 1,
+  "abi": "shiori-load-request-unload",
+  "minimumOS": "14.0",
+  "source": {
+    "kind": "local",
+    "path": "native"
+  },
+  "recipe": "recipes/konoka/build.sh",
+  "requiredFiles": [
+    "lib/libkonoka.dylib",
+    "bin/konoka-dictionary",
+    "LICENSES/utatane-MIT.txt",
+    "README.md"
+  ]
+}

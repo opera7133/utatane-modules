@@ -47,7 +47,7 @@ def build_native(entry, architectures, cache, destination):
     ese = identity == "ese-shiori"
     saori = entry["kinds"] == ["saori"]
     product = "misaka" if misaka else "niseshiori" if nise else "ese-shiori" if ese else identity.replace("-", "_")
-    smoke_script = "smoke_misaka.py" if misaka else "smoke_niseshiori.py" if nise else "smoke_ese_shiori.py" if ese else f"smoke_{identity}.py" if identity in ("yuhna", "hisui", "shino", "akari", "kawari", "mae", "dnproxy") else "smoke_saori.py"
+    smoke_script = "smoke_misaka.py" if misaka else "smoke_niseshiori.py" if nise else "smoke_ese_shiori.py" if ese else f"smoke_{identity}.py" if identity in ("yuhna", "hisui", "shino", "akari", "kawari", "mae", "dnproxy", "konoka", "hitomi") else "smoke_saori.py"
     host = platform.machine()
     if host not in architectures:
         raise ValueError("Include the host architecture to execute the packaged ABI")
@@ -73,6 +73,8 @@ def build_native(entry, architectures, cache, destination):
                     verify_library(helper, architectures, executable=True)
             (package / "LICENSES").mkdir()
             shutil.copyfile(ROOT / "LICENSE", package / "LICENSES/utatane-MIT.txt")
+            if identity == "hitomi":
+                shutil.copyfile(ROOT / "recipes/hitomi/licenses/Hitomi-BSD.txt", package / "LICENSES/Hitomi-BSD.txt")
             if identity == "kawari":
                 shutil.copyfile(ROOT / "native/Sources/CKawariModule/Vendor/KAWARI/LICENSE",
                                 package / "LICENSES/KAWARI.txt")
@@ -92,7 +94,9 @@ def build_native(entry, architectures, cache, destination):
             inputs += [p for directory in ("native",) for p in (ROOT / directory).rglob("*")
                        if p.is_file() and not any(part.startswith(".") for part in p.relative_to(ROOT).parts)]
             inputs += [ROOT / "scripts" / name for name in ("build.py", "build_native.py", "catalog.py", smoke_script)]
-            if identity in ("mae", "dnproxy"):
+            if identity == "hitomi":
+                inputs.append(ROOT / "recipes/hitomi/licenses/Hitomi-BSD.txt")
+            if identity in ("mae", "dnproxy", "konoka", "hitomi"):
                 inputs.append(ROOT / "scripts/conventional_probe.py")
             if identity == "dnproxy":
                 inputs.append(ROOT / "tests/fixtures/dnproxy/Portable.cs")

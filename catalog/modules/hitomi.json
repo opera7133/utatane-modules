@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "hitomi",
+  "displayName": "ひとみ。 (Native 部分互換版)",
+  "kinds": [
+    "shiori"
+  ],
+  "origin": "upstream-port",
+  "upstream": {
+    "url": "https://web.archive.org/web/20100301000000/http://fetish-jp.org/sakura/hitomi-dll.shtml",
+    "author": "Holonics / NAKAUE.T"
+  },
+  "delivery": "binary",
+  "license": "BSD-3-Clause AND MIT",
+  "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/recipes/hitomi/licenses/Hitomi-BSD.txt",
+  "instructions": "docs/hitomi.md",
+  "limitations": [
+    "Phase 0.2のソースと0.4系の公開資料・原作DLLを元にした部分互換の試験版です。",
+    "条件式、PSY、OnTeach、Heartsの登録・関連照会、タイマー、ユーザー名変更に対応します。好感度伝播・忘却・昇格・チェイン会話・外部SAORIは今後の対応範囲です。",
+    "原作のhitomi.datとPSY辞書は初回に取り込み、Native側の状態へ保存します。原作へ戻す保存互換とWindows用DLL接続は未対応です。"
+  ],
+  "version": "0.3.0",
+  "revision": 2,
+  "abi": "shiori-load-request-unload",
+  "minimumOS": "14.0",
+  "source": {
+    "kind": "local",
+    "path": "native"
+  },
+  "recipe": "recipes/hitomi/build.sh",
+  "requiredFiles": [
+    "lib/libhitomi.dylib",
+    "LICENSES/utatane-MIT.txt",
+    "LICENSES/Hitomi-BSD.txt",
+    "README.md"
+  ]
+}

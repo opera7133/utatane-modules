@@ -19,6 +19,8 @@ Utataneは辞書や設定からSHIORIを判別し、macOS向けの実装へ接�
 | 灯 | `res/*.txt`、`.azr`、amb.exe 1.1形式の `main.amb`。例外、クラス、Windows固有操作等は対象外 |
 | ese-shiori | `eseai.ini`、平文・難読化辞書。SAORI構文は対象外 |
 | 偽栞 | `ai*.txt` / `ai*.dtx`。単語間チェイン、TEACH全体、SAORI構文等は対象外 |
+| [ひとみ。](hitomi.md) | 0.2の辞書・イベントと0.4.6の条件式・PSY・学習・タイマーの一部。好感度伝播・忘却・チェイン会話は今後の対応範囲 |
+| [此栞](konoka.md) | 試験版。イベント・式・単語、XDI / XDC辞書、TeachBoxと保存の取り込み。チェイン会話・DTXは今後の対応範囲 |
 | 忍 | Shift_JISの `ai*.txt`。Windowsのプロセス・HWND等は対象外 |
 | 翡翠 | TLK、設定、単語辞書、変数と感情値。クリック等からの独自の感情学習やSAORI構文は対象外 |
 | FIRST | 対応する原版 `first.dll` の文字列・リソースを読む専用人格。DLLは実行せず、会話本文は配布しません |

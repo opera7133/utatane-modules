@@ -1,0 +1,49 @@
+//---------------------------------------------------------------------------
+//
+// Inverse用 SHIORI/2.0 「ひとみ。」
+// HITOMI In The Ovum of Machine Intelligence.
+//
+// by Holonics. keppi@fetish-jp.org
+//
+// hitomi.dll 配布条件
+//
+//---------------------------------------------------------------------------
+
+本プログラムはフリーソフトウェアです。
+下記プログラムのソース・コードを用いて作成されました。
+
+|shiori.dll(ほぼ)互換 暫定偽AIモジュール
+|「"華和梨" for あれ以外の何か以外の何か」Phase 0.42
+|Programed by NAKAUE.T (Meister)
+
+前述プログラムの提示する条件に従い「修正BSDライセンス」にて本プログラムを配布
+します。同様に、本ソフトウェアの配布条件に関しては、以下「修正BSDライセンス」
+を参照して下さい。
+
+
+ 1. Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+ 2. Redistributions  in  binary  form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. The name of the author may not be used to endorse or promote products
+    derived from this software without specific prior written permission.
+
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+
+//---------------------------------------------------------------------------
+"華和梨"の一次配布WEBページ(2001年4月29日現在)
+http://meister-d-i.hoops.ne.jp/
+
+"ひとみ。"の一時配布先Webページ(2001年4月29日現在)
+http://fetish-jp.org/sakura/
