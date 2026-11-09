@@ -250,7 +250,7 @@ public final class KonokaSession {
             }
         default:
             if let template = dictionary.words.first(where: { $0.0 == name })?.1.randomElement() {
-                return try expand(template.replacingOccurrences(of: "%argv%", with: try protectData(value)), depth: depth + 1)
+                return try expand(template.replacingOccurrences(of: "%argv%", with: protectData(value)), depth: depth + 1)
             }
             result = value
         }
@@ -275,7 +275,15 @@ public final class KonokaSession {
                 continue
             }
             var changed = false
-            let keys = dictionary.words.map(\.0).filter { !["e", "ft", "hl", "re", "ch", "ev", "u", "id"].contains($0) } + state.variables.keys.sorted { $0.count > $1.count } + state.learned.keys.sorted() + (teachContext?.keys.sorted { $0.count > $1.count } ?? []) + (0 ... 7).map { "ref\($0)" } + ["year", "month", "day", "week", "hour", "minute", "second", "sender", "sentence", "selfname2", "selfname", "keroname"] + (1 ... 9).map { "rand\($0)" }
+            var keys: [String] = dictionary.words.map(\.0).filter { !["e", "ft", "hl", "re", "ch", "ev", "u", "id"].contains($0) }
+            keys.append(contentsOf: state.variables.keys.sorted { $0.count > $1.count })
+            keys.append(contentsOf: state.learned.keys.sorted())
+            if let teachContext {
+                keys.append(contentsOf: teachContext.keys.sorted { $0.count > $1.count })
+            }
+            keys.append(contentsOf: (0 ... 7).map { "ref\($0)" })
+            keys.append(contentsOf: ["year", "month", "day", "week", "hour", "minute", "second", "sender", "sentence", "selfname2", "selfname", "keroname"])
+            keys.append(contentsOf: (1 ... 9).map { "rand\($0)" })
             for key in keys where output.contains("%" + key) {
                 guard let value = try cache[key] ?? read(key, depth: depth + 1) else { continue }
                 let replacement = isData(key) ? try protectData(value) : value
