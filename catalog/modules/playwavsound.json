@@ -15,9 +15,7 @@
   "license": "MIT",
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
-  "limitations": [
-    "WAVE音声を再生します。Windowsのシステム音はmacOSの音へ置き換えます。ファイルは64MiBまでで、実際の音声出力は利用環境で確認してください。"
-  ],
+  "limitations": ["WAVE音声と一部のシステム音を再生します。"],
   "version": "0.1.0",
   "revision": 1,
   "abi": "saori-utf8-v1",

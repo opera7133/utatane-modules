@@ -20,6 +20,8 @@ shiori,hisui.dll
 
 他のベースウェアで必要なら`shiori.macos,libhisui.dylib`を追加してください。
 
-開発者向けには、SHIORI/3.0の標準的な呼び出し口（`loadu`・`load`・`request`・`unload`）を用意しています。電文はUTF-8とShift_JISに対応します。辞書と設定には`.tlk`・`.mem`、`hisuiconf.xml`または`hisui_preference.def`を使います。
+## 互換範囲
 
-状態は既定で`ghost/master/hisui-state.json`へ保存します。ベースウェアから`UTATANE_GHOST_STATE_DIR`に絶対パスを渡すと、そのフォルダに保存します。このdylibは翡翠 phase00.20の独自再実装で、元のWindows DLLと完全互換ではありません。再配布時はZIPの`LICENSES/`も確認してください。
+翡翠 phase00.20の辞書で、基本の会話・クリック反応・変数保存に対応します。感情値の自動学習は対象外です。
+
+再配布時はZIPの`LICENSES/`も含めてください。

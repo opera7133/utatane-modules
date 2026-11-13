@@ -20,8 +20,8 @@ shiori,ese-shiori.dll
 
 他のベースウェアで必要なら`shiori.macos,libese-shiori.dylib`を追加してください。
 
-開発者向けには、SHIORI/3.0の標準的な呼び出し口（`loadu`・`load`・`request`・`unload`）を用意しています。電文はUTF-8・Shift_JIS・EUC-KRに対応します。辞書には`eseai.ini`と`eseai_*.txt`または`.dic`が必要です。
+## 互換範囲
 
-状態は既定で`ghost/master/ese-shiori-state.json`へ保存します。ベースウェアから`UTATANE_GHOST_STATE_DIR`に絶対パスを渡すと、そのフォルダに保存します。`$WRITEFILE`の出力は保存先と同じ親フォルダの`ese-shiori-files/`に置きます。
+ese-shiori 3.03の平文・難読化辞書で基本の会話やイベントを扱います。SAORIと旧SHIORI/2.x電文は対象外です。
 
-このdylibはWindows版ese-shiori 3.03の独自再実装であり、すべての辞書機能や旧SHIORI/2.x電文との互換性は保証しません。再配布時はZIPの`LICENSES/`も確認してください。
+再配布時はZIPの`LICENSES/`も含めてください。

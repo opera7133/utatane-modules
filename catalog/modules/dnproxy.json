@@ -15,12 +15,7 @@
   "license": "MIT",
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/dnproxy.md",
-  "limitations": [
-    "独立実装です。別途.NET 10ランタイムが必要です。実行時コンパイルには.NET 10 SDKも必要です。",
-    "Windows APIに依存しないUTF-8のC#・SHIORI/3.0のみ対応します。既存.NET Framework DLLの無変更動作は保証しません。",
-    "VB/JScript・WinForms・COM・Windows DLL・dnutil・PLUGIN/SAORI等は未対応です。",
-    "Utatane 0.2.20以降は設定ファイルから自動判別し、共通導入版を選べます。0.2.19ではゴースト内への手動配置とshiori.macos指定が必要です。"
-  ],
+  "limitations": [".NET 10が必要です。Windows APIに依存しないC#のSHIORIに対応します。"],
   "version": "0.1.0",
   "revision": 2,
   "abi": "shiori-load-request-unload",

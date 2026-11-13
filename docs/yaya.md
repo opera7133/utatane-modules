@@ -18,18 +18,8 @@ Utatane 0.2.14以降では通常のゴーストにYAYA 6を使います。5系�
 
 Windows用の`shiori`指定は残してください。再配布時は`LICENSES/`も同梱します。
 
-通常の`loadu` / `load`・`request`・`unload`で呼び出せます。パス・電文はUTF-8、長さは32ビット符号付き整数。入力はライブラリが、応答は呼び出し側が`free`します。1プロセスにつき1セッションです。
+## 互換範囲
 
-SAORIのWindows DLL指定に対して、同じフォルダの`lib名前.dylib`を読み込みます。共通導入先は`~/Library/Application Support/Utatane/NativeSaori/<ID>/lib/`です。`saori_cpuid`のIDは`saori-cpuid`です。`UTATANE_SAORI_ROOT`で共通導入先を変更できます。辞書側のSAORIフォルダに置く設定・辞書ファイルは、共通導入時もそのまま使います。
+YAYA 5の辞書とmacOS用SAORIに対応します。内蔵SAORIを使うにはUtatane 0.2.17以降が必要です。[内蔵SAORIの案内](https://github.com/opera7133/Utatane/blob/main/Docs/Support/Native-SHIORI.md)
 
-[ネイティブSAORIの対応内容](saori.md)も確認してください。
-
-ライセンスはBSD 3-Clause。接続部分はMITです。出典と固定コミットはZIP内の`module.json`に記録しています。
-
-Tc574-11では上流5系への不具合修正のバックポートを含みます。`STRDIGEST`の出力値が変わるため、ハッシュを保存・比較する辞書は更新時に確認してください。
-
-## 内蔵SAORI接続
-
-Tc574-11-r2以降とUtatane 0.2.17以降を組み合わせると、DLLを配置せずに`internal_system`・`internal_text`・`internal_random`・`internal_data`・`internal_crypto`の対応関数を呼べます。対応関数と非同期通知の仕様は[Utataneの案内](https://github.com/opera7133/Utatane/blob/main/Docs/Support/Native-SHIORI.md)を確認してください。
-
-接続はSHIORIホストと親アプリの専用IPCです。WindowsのWM_COPYDATAによるDirectSSTP、TCP/HTTP経由のSAORI実行には対応していません。以前の配布リビジョンでは利用できません。共通導入版を更新した後、起動中のゴーストを再読み込みしてください。合成した実辞書で同期呼び出し・非同期完了通知をarm64とx86_64で確認しています。実ゴーストの画面操作は未確認です。
+SAORIの配置方法は共通の案内を参照してください。[SAORIの導入](saori.md)

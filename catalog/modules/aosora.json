@@ -14,8 +14,5 @@
   "license": "LicenseRef-Aosora-Source-Terms",
   "licenseURL": "https://github.com/kanadelab/aosora-shiori/blob/HEAD/license.txt",
   "instructions": "docs/aosora.md",
-  "limitations": [
-    "蒼空は手動導入の案内を掲載しています。macOS用モジュールはソースからビルドして用意してください。",
-    "記載したSHIORI/SAORIは上流の用途。Utataneで両方を検証済みという意味ではない。"
-  ]
+  "limitations": ["ソースからmacOS用モジュールをビルドして導入します。UtataneでのSAORI動作は未確認です。"]
 }

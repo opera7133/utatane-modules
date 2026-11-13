@@ -19,13 +19,7 @@
   "license": "BSD-3-Clause",
   "licenseURL": "https://github.com/YAYA-shiori/yaya-shiori/blob/cc7c800bf9f128e011077fe82617f6f40fdbfd66/LICENSE",
   "instructions": "docs/yaya-6.md",
-  "limitations": [
-    "YAYA 6 の保存形式を使った変数は YAYA 5 に戻すと壊れることがあります。",
-    "Windows用SAORIは実行できません。同梱または共通導入したmacOS用SAORIを使用してください。",
-    "同じプロセス内では1セッション。複数ゴーストは別プロセスで実行してください。",
-    "内蔵SAORIの呼び出しにはUtatane 0.2.17以降が必要です。",
-    "THREADSTARTのワーカーでは本体への同期IPCを使う内蔵SAORI・ウィンドウ操作SAORIを呼べません。Utatane 0.2.21以降では即座に失敗を返します。本体を更新してからこのモジュールへ更新してください。通常のメインrequestからの呼び出しを使ってください。"
-  ],
+  "limitations": ["Utatane 0.2.21以降が必要です。YAYA 5へ戻す前に保存データを確認してください。"],
   "version": "Tc608-3",
   "revision": 1,
   "abi": "shiori-utf8-v1",

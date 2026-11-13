@@ -14,10 +14,7 @@
   "license": "MIT",
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
-  "limitations": [
-    "ゴーストのウィンドウ位置の取得と移動に対応しています。利用できる操作は導入手順で確認できます。",
-    "ウィンドウ操作にはホストからの接続が必要です。接続がない場合は501を返します。"
-  ],
+  "limitations": ["対応するベースウェアでゴーストの位置を取得・移動します。"],
   "version": "0.1.0",
   "revision": 6,
   "abi": "saori-utf8-v1",

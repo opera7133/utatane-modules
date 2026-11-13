@@ -15,9 +15,7 @@
   "license": "MIT",
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
-  "limitations": [
-    "MacのローカルIPv4アドレスとホスト名を取得します。複数のネットワーク接続がある場合はWindows版と選ばれる接続が異なることがあります。GetInternetIPは未対応です。"
-  ],
+  "limitations": ["ローカルIPv4アドレスとホスト名を取得します。"],
   "version": "0.1.0",
   "revision": 1,
   "abi": "saori-utf8-v1",

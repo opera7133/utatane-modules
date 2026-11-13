@@ -20,35 +20,8 @@ shiori.macos,libsatori.dylib
 
 Windows用の`shiori`指定は残してください。再配布時は`LICENSES/`も同梱します。
 
-通常の`loadu` / `load`・`request`・`unload`で呼び出せます。パス・電文はUTF-8、長さは32ビット符号付き整数。入力はライブラリが、応答は呼び出し側が`free`します。1プロセスにつき1セッションです。内部もUnicodeで、絵文字などCP932にない文字も扱えます。
+## 互換範囲
 
-従来のCP932辞書とセーブデータ（暗号化した`.sat`を含む）は読み込めます。UTF-8辞書も自動判定で読み込みます。**更新前にセーブデータをバックアップしてください。** Unicode版はUTF-8で保存するため、旧版へ戻すと文字化けする場合があります。
+CP932・UTF-8の辞書、従来のセーブデータ、macOS用SAORIに対応します。保存はUTF-8です。旧版との辞書の違いは公式資料で確認できます。[里々Unicode版の変更点](https://ukatech.github.io/satori-docs/other/unicode-changes/)
 
-通常の辞書はそのまま使えますが、完全に同じ挙動ではありません。`（バイト値、n）`はnをUnicodeコードポイントとして1文字を返し、文字列長の比較や括弧展開サイズ制限はバイト数から文字数へ変わります。計算式の`^`や`sprintf`の一部など、旧版の不具合修正で結果が変わる処理もあります。該当する辞書は[公式のACP版との違い](https://ukatech.github.io/satori-docs/other/unicode-changes/)を確認してください。
-
-SAORIのWindows DLL指定に対して、同じフォルダの`lib名前.dylib`を読み込みます。共通導入先は`~/Library/Application Support/Utatane/NativeSaori/<ID>/lib/`です。`saori_cpuid`のIDは`saori-cpuid`です。`UTATANE_SAORI_ROOT`で共通導入先を変更できます。辞書側のSAORIフォルダに置く設定・辞書ファイルは、共通導入時もそのまま使います。
-
-[ネイティブSAORIの対応内容](saori.md)も確認してください。
-
-SAORIへの電文は基本UTF-8です。`GET Version`の応答に`Charset`がないSAORIへは、従来どおりCP932で送信します。
-
-里々本体のライセンスはBSD 2-Clause。接続部分はMITです。正規表現エンジンDEELXは作者が個人・商用利用を無償としています。各出典と通知はZIP内の`LICENSES/`、固定コミットは`module.json`とソースのsubmoduleに記録しています。
-
-配布カタログは本流の版名`Mc206-5`を表示します。更新判定にはUtatane 0.2.14以降を使用してください。旧表記`2.3.2`からの更新も判定できます。
-
-Mc205-1のSAORI over DirectSSTPはWindows・SSP向け機能です。macOSでは同梱または共通導入したmacOS用SAORIを引き続き使います。
-
-
-Mc205-4では正規表現エンジンをuka_regexpへ更新しています。パターンの互換差やバックトラック抑制の変更は上流のリリース情報を確認してください。uka_regexpのUnlicenseは配布ZIPに同梱します。
-
-## 内蔵SAORI接続
-
-Mc205-4-r2以降とUtatane 0.2.17以降を組み合わせると、DLLを配置せずに`internal_system`・`internal_text`・`internal_random`・`internal_data`・`internal_crypto`の対応関数を呼べます。対応関数と非同期通知の仕様は[Utataneの案内](https://github.com/opera7133/Utatane/blob/main/Docs/Support/Native-SHIORI.md)を確認してください。
-
-接続はSHIORIホストと親アプリの専用IPCです。WindowsのWM_COPYDATAによるDirectSSTP、TCP/HTTP経由のSAORI実行には対応していません。以前の配布リビジョンでは利用できません。共通導入版を更新した後、起動中のゴーストを再読み込みしてください。合成した実辞書で同期呼び出し・非同期完了通知をarm64とx86_64で確認しています。実ゴーストの画面操作は未確認です。
-
-Mc205-5では上流の更新を取り込み、macOS用のABIと共通SAORI接続を維持しました。通常SAORIの呼び出し診断には、Utatane 0.2.18以降の本体を使ってください。
-
-Mc206-4では`＝`による変数代入で64ビットの計算結果が32ビットへ切り詰められる問題を修正しました。上流の辞書検査処理も取り込みますが、Windows用さとりての画面は配布対象ではありません。
-
-Mc206-5では、辞書リロード時に保存ファイルの入れ替えが失敗しても、保存直前のメモリ上の状態から復元します。バックアップを先に削除せず、セーブデータとバックアップの両方が読めない場合は、元データを`satori_savedata_failed.txt`（暗号化時は`.sat`）へ保持します。ディスクへの保存失敗自体を解消する機能ではありません。
+SAORIの配置方法は共通の案内を参照してください。[SAORIの導入](saori.md)

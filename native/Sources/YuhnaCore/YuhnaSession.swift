@@ -18,6 +18,8 @@ public final class YuhnaSession {
     private var state: YuhnaState
     private var talkSeconds = 0
     private var selfName = ""
+    private var notifiedUserName = ""
+    private var pendingNameInput: String?
     private var strokeKey: String?
     private var strokeCount = 0
 
@@ -55,11 +57,35 @@ public final class YuhnaSession {
         } else if ["OnMouseLeave", "OnMouseLeaveAll"].contains(request.id ?? "") {
             resetStroke()
         }
-        if id.caseInsensitiveCompare("OnYuhnaUsername") == .orderedSame,
-           let username = request.reference(0), !username.isEmpty
-        {
+        if id.caseInsensitiveCompare("OnNotifyUserInfo") == .orderedSame {
+            notifiedUserName = request.reference(0) ?? ""
+            return response(nil, for: request, charset: charset)
+        }
+        if id.caseInsensitiveCompare("OnYuhnaUsername") == .orderedSame {
+            let continuation = pendingNameInput
+            pendingNameInput = nil
+            guard let username = request.reference(0), !username.isEmpty else {
+                return response(nil, for: request, charset: charset)
+            }
+            let previousState = state
+            let previousTalkSeconds = talkSeconds
             state.variables["username"] = username
-            try saveState()
+            let value = continuation.map { expand($0, request: request) }
+            do {
+                try saveState()
+            } catch {
+                state = previousState
+                talkSeconds = previousTalkSeconds
+                pendingNameInput = continuation
+                throw error
+            }
+            return response(value, for: request, charset: charset)
+        }
+        if id.caseInsensitiveCompare("OnUserInputCancel") == .orderedSame,
+           request.reference(0) == "OnYuhnaUsername"
+        {
+            pendingNameInput = nil
+            return response(nil, for: request, charset: charset)
         }
         if id.caseInsensitiveCompare("OnSecondChange") == .orderedSame {
             talkSeconds += 1
@@ -85,30 +111,21 @@ public final class YuhnaSession {
                 $0.key.caseInsensitiveCompare("OnYuhnaRandomTalk") == .orderedSame
             }?.value ?? []
         }
-        guard let rule = selectedRules.randomElement(), var value = rule.scripts.randomElement() else {
-            // OnSecondChange is handled by the native interval counter even when it does not speak.
-            // Returning an empty script prevents a configured Wine fallback from running a second timer.
+        guard let rule = selectedRules.randomElement(), let script = rule.scripts.randomElement() else {
             return response(nil, for: request, charset: charset)
         }
-        for index in 0 ... 31 {
-            value = value.replacingOccurrences(of: "%ref\(index)", with: request.reference(index) ?? "")
+        let previousState = state
+        let previousTalkSeconds = talkSeconds
+        let value = expand(script, request: request)
+        if state.variables != previousState.variables || state.talkInterval != previousState.talkInterval {
+            do {
+                try saveState()
+            } catch {
+                state = previousState
+                talkSeconds = previousTalkSeconds
+                throw error
+            }
         }
-        value = value.replacingOccurrences(of: "%selfname", with: selfName)
-        value = value.replacingOccurrences(of: "%username", with: state.variables["username", default: ""])
-        let expanded = expandVariables(in: value)
-        value = expanded.value
-        if let interval = firstCapture(pattern: #"\$i\[([0-9]+)\]"#, in: value).flatMap(Int.init) {
-            state.talkInterval = interval
-            talkSeconds = 0
-            try saveState()
-        } else if expanded.changed {
-            try saveState()
-        }
-        value = value.replacingOccurrences(of: #"\$i\[[0-9]+\]"#, with: "", options: .regularExpression)
-        value = value.replacingOccurrences(
-            of: "$n",
-            with: #"\![open,inputbox,OnYuhnaUsername,0]"#
-        )
         return response(value, for: request, charset: charset)
     }
 
@@ -118,7 +135,9 @@ public final class YuhnaSession {
 
     private func response(_ value: String?, for request: ShioriRequest, charset: String) -> ShioriResponse {
         var headers = ShioriHeaders([.init(name: "Charset", value: charset)])
-        if let value, !value.isEmpty { headers.append(name: "Value", value: value) }
+        if let value, !value.isEmpty {
+            headers.append(name: "Value", value: value)
+        }
         let hasValue = value?.isEmpty == false
         return ShioriResponse(version: request.version, statusCode: hasValue ? 200 : 204,
                               reasonPhrase: hasValue ? "OK" : "No Content", headers: headers)
@@ -169,7 +188,7 @@ public final class YuhnaSession {
             return selfName
         }
         if value == "%username" {
-            return state.variables["username", default: ""]
+            return state.variables["username"] ?? notifiedUserName
         }
         if value.hasPrefix("{"), value.hasSuffix("}") {
             return state.variables[String(value.dropFirst().dropLast()), default: "0"]
@@ -177,48 +196,70 @@ public final class YuhnaSession {
         return value
     }
 
-    private func expandVariables(in source: String) -> (value: String, changed: Bool) {
-        var output = source
-        var changed = false
-        let assignmentPattern = #"\{([A-Za-z_][A-Za-z0-9_]*)=([^{}]+)\}"#
-        while let regex = try? NSRegularExpression(pattern: assignmentPattern),
-              let match = regex.firstMatch(in: output, range: NSRange(output.startIndex..., in: output)),
-              let wholeRange = Range(match.range(at: 0), in: output),
-              let nameRange = Range(match.range(at: 1), in: output),
-              let expressionRange = Range(match.range(at: 2), in: output)
-        {
-            let name = String(output[nameRange])
-            let expression = String(output[expressionRange])
-            state.variables[name] = evaluateExpression(expression)
-            output.replaceSubrange(wholeRange, with: "")
-            changed = true
+    private func expand(_ script: String, request: ShioriRequest) -> String {
+        let prompt = script.range(of: "$n")
+        let prefix = prompt.map { String(script[..<$0.lowerBound]) } ?? script
+        let source = replaceMatches(in: prefix, pattern: #"\{([A-Za-z_][A-Za-z0-9_]*)=([^{}]+)\}"#) { _, groups in
+            let name = groups[0]
+            let expression = groups[1]
+            state.variables[name] = evaluateExpression(expression, request: request)
+            return ""
         }
-        guard let variableRegex = try? NSRegularExpression(pattern: #"\{([A-Za-z_][A-Za-z0-9_]*)\}"#)
-        else { return (output, changed) }
-        while let match = variableRegex.firstMatch(in: output, range: NSRange(output.startIndex..., in: output)),
-              let wholeRange = Range(match.range(at: 0), in: output),
-              let nameRange = Range(match.range(at: 1), in: output)
-        {
-            let name = String(output[nameRange])
-            output.replaceSubrange(wholeRange, with: state.variables[name, default: "0"])
+        var hasInterval = false
+        let expanded = replaceMatches(in: source, pattern: #"\$i\[[0-9]+\]|%ref[0-9]+|%selfname|%username|\{[A-Za-z_][A-Za-z0-9_]*\}"#) { token, _ in
+            if token.hasPrefix("$i[") {
+                if !hasInterval, let interval = Int(token.dropFirst(3).dropLast()) {
+                    state.talkInterval = interval
+                    talkSeconds = 0
+                    hasInterval = true
+                }
+                return ""
+            }
+            return resolve(token, request: request)
         }
-        return (output, changed)
+        guard let prompt else { return expanded }
+        pendingNameInput = String(script[prompt.upperBound...])
+        return expanded + #"\![open,inputbox,OnYuhnaUsername,0]"#
     }
 
-    private func evaluateExpression(_ source: String) -> String {
-        let expression = source.trimmingCharacters(in: CharacterSet(charactersIn: "() "))
+    private func evaluateExpression(_ source: String, request: ShioriRequest) -> String {
+        let expression = source.trimmingCharacters(in: .whitespacesAndNewlines)
         if expression == "%[d6]" {
             return String(Int.random(in: 1 ... 6))
         }
-        let terms = expression.split(separator: "+").map {
-            String($0).trimmingCharacters(in: .whitespacesAndNewlines)
+        var evaluator = YuhnaIntegerExpression(expression) { [self] key in
+            if key.hasPrefix("%ref") || key == "%username" || key == "%selfname" {
+                return resolve(key, request: request)
+            }
+            return state.variables[key]
         }
-        guard !terms.isEmpty,
-              terms.allSatisfy({ Int($0) != nil || state.variables[$0].flatMap(Int.init) != nil })
-        else { return state.variables[expression, default: expression] }
-        return String(terms.reduce(0) { result, term in
-            result + (Int(term) ?? state.variables[term].flatMap(Int.init) ?? 0)
-        })
+        if let value = evaluator.evaluate() {
+            return String(value)
+        }
+        let literal = expression.trimmingCharacters(in: CharacterSet(charactersIn: "() "))
+        if let value = state.variables[literal] {
+            return value
+        }
+        return replaceMatches(in: literal, pattern: #"%ref[0-9]+|%selfname|%username"#) { token, _ in
+            resolve(token, request: request)
+        }
+    }
+
+    private func replaceMatches(in source: String, pattern: String, with replacement: (String, [String]) -> String) -> String {
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return source }
+        var result = ""
+        var cursor = source.startIndex
+        for match in regex.matches(in: source, range: NSRange(source.startIndex..., in: source)) {
+            guard let range = Range(match.range, in: source) else { continue }
+            result += source[cursor ..< range.lowerBound]
+            let groups = (1 ..< match.numberOfRanges).map {
+                Range(match.range(at: $0), in: source).map { String(source[$0]) } ?? ""
+            }
+            result += replacement(String(source[range]), groups)
+            cursor = range.upperBound
+        }
+        result += source[cursor...]
+        return result
     }
 
     private func saveState() throws {
@@ -232,14 +273,6 @@ public final class YuhnaSession {
     private func resetStroke() {
         strokeKey = nil
         strokeCount = 0
-    }
-
-    private func firstCapture(pattern: String, in value: String) -> String? {
-        guard let regex = try? NSRegularExpression(pattern: pattern),
-              let match = regex.firstMatch(in: value, range: NSRange(value.startIndex..., in: value)),
-              let range = Range(match.range(at: 1), in: value)
-        else { return nil }
-        return String(value[range])
     }
 
     private static func loadSelfName(_ directory: URL) -> String {
@@ -271,7 +304,8 @@ private enum YuhnaDictionaryParser {
         else { throw CocoaError(.fileReadCorruptFile) }
         var cursor = randomName.lowerBound - 2
         let declaredCountOffset = cursor - 4
-        let declaredCount = Int(readUInt32(data, at: declaredCountOffset) ?? 0)
+        // The count can be preceded by another section's final text bytes.
+        let declaredCount = Int(readUInt16(data, at: declaredCountOffset + 2) ?? 0)
         guard declaredCount > 0, declaredCount < 10000 else { throw CocoaError(.fileReadCorruptFile) }
 
         var events: [String: [YuhnaRule]] = [:]
@@ -328,12 +362,12 @@ private enum YuhnaDictionaryParser {
         guard let rawLabelLength = readUInt16(data, at: cursor) else { return nil }
         let labelLength = Int(rawLabelLength)
         cursor += 2
-        guard labelLength > 0,
+        guard labelLength > 0, labelLength <= 512,
               let labelBytes = slice(data, at: cursor, count: labelLength),
-              let label = LegacyTextDecoder.decode(labelBytes),
-              let eventMarker = label.range(of: "@On", options: .backwards)
+              let eventMarker = labelBytes.range(of: Data("@On".utf8), options: .backwards),
+              let eventName = String(data: labelBytes.suffix(from: eventMarker.lowerBound + 1), encoding: .ascii),
+              eventName.utf8.allSatisfy({ (48 ... 57).contains($0) || (65 ... 90).contains($0) || (97 ... 122).contains($0) || $0 == 95 })
         else { return nil }
-        let eventName = String(label[eventMarker.lowerBound...].dropFirst())
         cursor += labelLength
 
         guard let rawParentLength = readUInt16(data, at: cursor) else { return nil }
@@ -374,15 +408,8 @@ private enum YuhnaDictionaryParser {
         guard candidateCount > 0, candidateCount <= 64 else { return nil }
         var scripts: [String] = []
         for _ in 0 ..< candidateCount {
-            guard let length = readUInt16(data, at: cursor) else { return nil }
-            cursor += 2
-            guard cursor < data.count, data[cursor] == 0 else { return nil }
-            cursor += 1
-            guard let bytes = slice(data, at: cursor, count: Int(length)),
-                  let script = LegacyTextDecoder.decode(bytes)
-            else { return nil }
-            cursor += Int(length)
-            scripts.append(script.replacingOccurrences(of: "¥", with: "\\"))
+            guard let script = parseScript(data, cursor: &cursor) else { return nil }
+            scripts.append(script)
         }
         return ((eventName, condition, scripts), cursor)
     }
@@ -418,17 +445,23 @@ private enum YuhnaDictionaryParser {
         }
         var scripts: [String] = []
         for _ in 0 ..< candidateCount {
-            guard let length = readUInt16(data, at: cursor) else { return nil }
-            cursor += 2
-            guard cursor < data.count, data[cursor] == 0 else { return nil }
-            cursor += 1
-            guard let bytes = slice(data, at: cursor, count: Int(length)),
-                  let script = LegacyTextDecoder.decode(bytes)
-            else { return nil }
-            cursor += Int(length)
-            scripts.append(script.replacingOccurrences(of: "¥", with: "\\"))
+            guard let script = parseScript(data, cursor: &cursor) else { return nil }
+            scripts.append(script)
         }
         return (name, scripts, cursor)
+    }
+
+    private static func parseScript(_ data: Data, cursor: inout Int) -> String? {
+        // YDF/1.07 stores the script byte count with a two-byte field
+        // and an additional count of 256-byte blocks.
+        guard let lowWord = readUInt16(data, at: cursor), cursor + 2 < data.count else { return nil }
+        let length = Int(lowWord) + Int(data[cursor + 2]) * 256
+        cursor += 3
+        guard let bytes = slice(data, at: cursor, count: length),
+              let script = LegacyTextDecoder.decode(bytes)
+        else { return nil }
+        cursor += length
+        return script.replacingOccurrences(of: "¥", with: "\\")
     }
 
     private static func nextEventRecord(in data: Data, after offset: Int) -> Int? {

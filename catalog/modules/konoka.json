@@ -15,11 +15,7 @@
   "license": "MIT",
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/konoka.md",
-  "limitations": [
-    "公開技術メモと原作DLLの観測による独立実装の試験版です。",
-    "XDI・XDCの読み書き、XDC自動生成、OnTeachと311・312応答、values.datの初回取り込みに対応します。",
-    "SHIORI/3.0へ接続する部分互換版です。チェイン会話・DTX・全組み込みの一致と原作へ戻す保存互換は今後の対応範囲です。"
-  ],
+  "limitations": ["辞書・会話・TeachBoxに部分対応します。XDI・XDC辞書を読み込めます。"],
   "version": "0.2.0",
   "revision": 1,
   "abi": "shiori-load-request-unload",

@@ -20,8 +20,10 @@ shiori,shino.dll
 
 他のベースウェアで必要なら`shiori.macos,libshino.dylib`を追加してください。
 
-開発者向けには、SHIORI/3.0の標準的な呼び出し口（`loadu`・`load`・`request`・`unload`）を用意しています。電文はUTF-8とShift_JISに対応します。辞書は`ai*.txt`を読み込みます。
+## 互換範囲
 
-状態は既定で`ghost/master/shino-state.json`へ保存します。ベースウェアから`UTATANE_GHOST_STATE_DIR`に絶対パスを渡すと、そのフォルダに保存します。`%saori`はゴースト直下の`filename.dylib`または`libfilename.dylib`を読み込みます。共通導入版SAORIを使う場合は`UTATANE_SAORI_ROOT`に、`<名前>/lib/lib<名前>.dylib`を含むフォルダの絶対パスを指定してください。
+忍 0.9.7の辞書で、基本の会話・クリック反応・macOS用SAORIに対応します。Windows固有の操作は対象外です。
 
-このdylibは忍 0.9.7の独自再実装で、元のWindows DLLと完全互換ではありません。再配布時はZIPの`LICENSES/`も確認してください。
+共通導入版SAORIの場所を手動で指定する場合は、`UTATANE_SAORI_ROOT`に格納先の絶対パスを設定してください。
+
+再配布時はZIPの`LICENSES/`も含めてください。

@@ -14,11 +14,7 @@
   "license": "MIT",
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/proxy-ex.md",
-  "limitations": [
-    "macOS用の補助プログラムを呼び出すSAORIです。Windows用EXEの実行は未対応です。",
-    "同梱mp3tagはAVFoundation/AudioToolboxが読み取れる音声形式に対応します。",
-    "補助プログラムの実行は10秒、標準出力は1MiBまでです。"
-  ],
+  "limitations": ["macOS用の補助プログラムを呼び出します。音楽タグを読むmp3tagも付属します。"],
   "version": "0.1.0",
   "revision": 6,
   "abi": "saori-utf8-v1",

@@ -20,8 +20,8 @@ shiori,niseshiori.dll
 
 他のベースウェアで必要なら`shiori.macos,libniseshiori.dylib`を追加してください。
 
-開発者向けには、SHIORI/3.0の標準的な呼び出し口（`loadu`・`load`・`request`・`unload`）を用意しています。UTF-8とShift_JISの電文に対応します。同一プロセス内の同時セッションは1つです。
+## 互換範囲
 
-`ai*.txt`と`ai*.dtx`を読み込み、状態を`ghost/master/nise-shiori-state.json`に保存します。ベースウェアから`UTATANE_GHOST_STATE_DIR`に絶対パスを渡すと、そのフォルダに保存します。保存先には書き込み権限が必要です。元のWindows版が持つすべての機能を再現するものではありません。
+平文と暗号化された偽栞の辞書を読み込み、基本の会話やイベントに対応します。単語間のチェインやSAORIには制限があります。
 
-同梱・再配布時はZIPの`LICENSES/`も確認してください。
+再配布時はZIPの`LICENSES/`も含めてください。

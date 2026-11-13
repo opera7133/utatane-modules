@@ -16,10 +16,7 @@
   "license": "MIT",
   "licenseURL": "https://github.com/opera7133/utatane/blob/69ad7a2cd0c45bdd845e2978863c572b194dec19/LICENSE",
   "instructions": "docs/misaka.md",
-  "limitations": [
-    "美坂の辞書を実行する独立実装です。Windows版との互換性は部分対応です。",
-    "電文はUTF-8のSHIORI/3.0・PLUGIN/2.0に対応します。SAORIはホストサービスが必要です。"
-  ],
+  "limitations": ["平文の美坂辞書を扱います。暗号化辞書は対象外です。"],
   "version": "101",
   "revision": 7,
   "abi": "shiori-load-request-unload",

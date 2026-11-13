@@ -15,9 +15,7 @@
   "license": "MIT",
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
-  "limitations": [
-    "Web上のデータの取得・保存や、本文からの文字列抽出に対応しています。非同期通知にはUtatane 0.2.18以降が必要です。ダウンロードは32MBまでで、プロキシの個別設定は未対応です。"
-  ],
+  "limitations": ["Web上のデータを取得・保存します。非同期通知にはUtatane 0.2.18以降が必要です。"],
   "version": "0.1.0",
   "revision": 6,
   "abi": "saori-utf8-v1",

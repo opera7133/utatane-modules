@@ -15,9 +15,7 @@
   "license": "MIT",
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
-  "limitations": [
-    "認証用の秘密鍵と、時刻に基づくワンタイムパスワードを生成します。原版と結果が異なる場合があるため、引数と互換性の説明を確認してください。"
-  ],
+  "limitations": ["時刻に基づくワンタイムパスワードを生成します。"],
   "version": "0.1.0",
   "revision": 1,
   "abi": "saori-utf8-v1",

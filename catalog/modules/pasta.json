@@ -14,12 +14,7 @@
   "license": "MIT",
   "licenseURL": "https://github.com/ekicyou/pasta/blob/f7518b665769021a06d93e6c8f9b07e91c249113/LICENSE",
   "instructions": "docs/pasta.md",
-  "limitations": [
-    "0.5.0以降は引用符なしの単語末尾の＠数を重みとして解釈し、連続するファイル属性などを構文エラーにします。更新前に辞書を確認してください。",
-    "0.4.3以降は旧save.json・旧save.datを読み込みません。更新前にセーブデータをバックアップしてください。",
-    "Windows専用のLua FFI呼び出しやDLLは実行できません。",
-    "同じプロセス内では1セッション。Utataneはゴーストごとにプロセスを分離します。"
-  ],
+  "limitations": ["古い保存形式と一部の辞書に互換差があります。更新前にバックアップしてください。"],
   "version": "0.5.1",
   "revision": 1,
   "abi": "shiori-utf8-v1",

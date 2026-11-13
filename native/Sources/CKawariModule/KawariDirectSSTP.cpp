@@ -60,11 +60,11 @@ int ParseExecuteResponse(const std::string &response, std::vector<std::wstring> 
 
 bool TBasewareLink::Send(const std::string &request, std::string &response, unsigned int) const {
     response.clear();
-    // Generic SSTP is not handled by this private endpoint. Never misroute a
-    // SHIORI baseware command into internal SAORI.
+    // The parent handles only GetProperty on this private SSTP endpoint.
     if (!allowed || !callback || request.size() > static_cast<size_t>(maximumBytes) ||
         (request.rfind("EXECUTE SAORI/1.0\r\n", 0) != 0 &&
-         request.rfind("GET Version SAORI/1.0\r\n", 0) != 0)) return false;
+         request.rfind("GET Version SAORI/1.0\r\n", 0) != 0 &&
+         request.rfind("EXECUTE SSTP/1.1\r\n", 0) != 0)) return false;
     int32_t size = 0;
     void *output = callback(request.data(), static_cast<int32_t>(request.size()), &size);
     if (!output || size < 0 || size > maximumBytes) { free(output); return false; }

@@ -15,9 +15,7 @@
   "license": "MIT",
   "licenseURL": "https://github.com/opera7133/utatane-modules/blob/main/LICENSE",
   "instructions": "docs/saori.md",
-  "limitations": [
-    "XMLファイルを開き、XPathで値を取り出します。文書の大きさや計算量に上限があり、DTDと外部実体は未対応です。"
-  ],
+  "limitations": ["XMLからXPath 1.0で値を取得します。"],
   "version": "0.1.0",
   "revision": 1,
   "abi": "saori-utf8-v1",

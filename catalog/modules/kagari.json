@@ -14,10 +14,7 @@
   "license": "MIT",
   "licenseURL": "https://github.com/opera7133/kagari_shiori/blob/491f119ada7b680a4cc75146019eebedd0a7d031/LICENSE",
   "instructions": "docs/kagari.md",
-  "limitations": [
-    "Lua 5.4を使うSHIORIです。Utatane専用の接続方式を使うため、手動配置ではkagariの導入手順を確認してください。",
-    "Windows用SAORI/DLLやLua拡張は実行できない。"
-  ],
+  "limitations": ["Lua 5.4のmacOS移植版です。Windows用の拡張は対象外です。"],
   "version": "1.0.1",
   "revision": 6,
   "abi": "kagari-instance-v1",
